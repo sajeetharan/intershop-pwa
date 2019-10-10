@@ -1,4 +1,3 @@
-import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -17,14 +16,10 @@ export class FilterService {
   constructor(private apiService: ApiService, private filterNavigationMapper: FilterNavigationMapper) {}
 
   getFilterForCategory(categoryUniqueId: string): Observable<FilterNavigation> {
-    const idList = categoryUniqueId.split('.');
+    const idList = categoryUniqueId.split('.').join('/');
     // TODO from REST
-    const categoryDomainName = this.getDomainId(idList[0]);
-    const params = new HttpParams()
-      .set('CategoryDomainName', categoryDomainName)
-      .set('CategoryName', idList[idList.length - 1]);
     return this.apiService
-      .get<FilterNavigationData>('filters', { params, skipApiErrorHandling: true })
+      .get<FilterNavigationData>(`categories/${idList}/productfilters`, { skipApiErrorHandling: true })
       .pipe(
         map(filter => this.filterNavigationMapper.fromData(filter)),
         map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
@@ -35,7 +30,7 @@ export class FilterService {
     // tslint:disable-next-line:ish-no-object-literal-type-assertion
     const searchParameter = SearchParameterMapper.toData({ queryTerm: searchTerm } as SearchParameter);
     return this.apiService
-      .get<FilterNavigationData>(`filters/default;SearchParameter=${searchParameter}`, { skipApiErrorHandling: true })
+      .get<FilterNavigationData>(`productfilters;SearchParameter=${searchParameter}`, { skipApiErrorHandling: true })
       .pipe(
         map(filter => this.filterNavigationMapper.fromData(filter)),
         map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
@@ -43,25 +38,18 @@ export class FilterService {
   }
 
   applyFilter(searchParameter: string): Observable<FilterNavigation> {
-    return this.apiService.get<FilterNavigationData>(`filters/default;SearchParameter=${searchParameter}`).pipe(
+    return this.apiService.get<FilterNavigationData>(`productfilters;SearchParameter=${searchParameter}`).pipe(
       map(filter => this.filterNavigationMapper.fromData(filter)),
       map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
     );
   }
 
   getFilteredProducts(searchParameter: string): Observable<{ total: number; productSKUs: string[] }> {
-    return this.apiService.get(`filters/default;SearchParameter=${searchParameter}/hits`).pipe(
+    return this.apiService.get(`products;SearchParameter=${searchParameter}`).pipe(
       map((x: { total: number; elements: Link[] }) => ({
         productSKUs: x.elements.map(l => l.uri).map(ProductMapper.parseSKUfromURI),
         total: x.total,
       }))
     );
-  }
-
-  private getDomainId(rootName: string) {
-    if (rootName === 'Specials' || rootName === 'Cameras-Camcorders') {
-      return 'inSPIRED-inTRONICS-' + rootName;
-    }
-    return 'inSPIRED-' + rootName;
   }
 }
