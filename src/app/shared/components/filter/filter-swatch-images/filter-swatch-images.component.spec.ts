@@ -21,8 +21,8 @@ describe('Filter Swatch Images Component', () => {
     const filterElement = {
       name: 'Color',
       facets: [
-        { name: 'Black', count: 4, displayName: 'Black' },
-        { name: 'Red', count: 5, displayName: 'Red', selected: true },
+        { name: 'Black', count: 4, displayName: 'Black', mappedValue: 'black' },
+        { name: 'Red', count: 5, displayName: 'Red', mappedValue: 'red', selected: true },
       ],
       filterValueMap: {
         Black: { type: 'colorcode', mapping: 'black' },
