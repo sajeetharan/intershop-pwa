@@ -62,16 +62,17 @@ export class FilterNavigationMapper {
   }
 
   private mapFacetData(filterData: FilterData) {
-    return filterData.facets
-      ? filterData.facets.reduce((acc, facet) => {
+    return filterData.filterEntries
+      ? filterData.filterEntries.reduce((acc, facet) => {
           if (facet.name !== 'Show all') {
             acc.push({
               name: facet.name,
               count: facet.count,
               selected: facet.selected,
-              displayName: facet.link.title,
+              displayName: facet.displayValue || undefined,
               searchParameter: facet.link.uri.split(';SearchParameter=')[1],
               level: facet.level || 0,
+              mappedValue: facet.mappedValue || undefined,
             });
           } else {
             console.warn(`Limiting filters is not supported. Set limit to -1 in the BackOffice (${filterData.name})`);

@@ -41,7 +41,7 @@ describe('Filter Navigation Mapper', () => {
 
     it('should parse objects when elements exists with facets', () => {
       const data = {
-        elements: [{ facets: [{ name: 'testName', link: { uri: '/filters/uri;SearchParameter=param' } }] }],
+        elements: [{ filterEntries: [{ name: 'testName', link: { uri: '/filters/uri;SearchParameter=param' } }] }],
       } as FilterNavigationData;
 
       const model = mapper.fromData(data);

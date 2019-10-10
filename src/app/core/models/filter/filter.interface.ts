@@ -11,7 +11,7 @@ export interface FilterData {
   name: string;
   type: string;
   id: string;
-  facets: FacetData[];
+  filterEntries: FacetData[];
   displayType: string;
   selectionType: string;
   limitCount: number;

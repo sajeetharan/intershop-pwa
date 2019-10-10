@@ -5,4 +5,5 @@ export class Facet {
   displayName: string;
   searchParameter: string;
   level: number;
+  mappedValue?: string;
 }

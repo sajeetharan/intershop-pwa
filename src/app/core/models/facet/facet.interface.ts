@@ -7,4 +7,6 @@ export class FacetData {
   selected: boolean;
   link: Link;
   level: number;
+  mappedValue?: string;
+  displayValue: string;
 }
