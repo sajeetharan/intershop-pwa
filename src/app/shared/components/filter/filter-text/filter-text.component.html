@@ -10,7 +10,7 @@
           <span class="count"> ({{ facet.count }}) </span>
         </ng-container>
         <ng-template #textTemplate>
-          <a (click)="filter(facet)">
+          <a (click)="filter(facet)" [attr.data-testing-id]="'filter-link-' + (facet.name | sanitize)">
             <span class="filter-item-name"> {{ facet.displayName }} </span>
             <span class="count"> ({{ facet.count }}) </span>
             <ng-container *ngIf="filterElement.displayType === 'text_clear'">
@@ -25,7 +25,7 @@
         <a
           class="filter-item-name"
           (click)="filter(facet)"
-          [attr.data-testing-id]="'filter-link-' + (facet.displayName | sanitize)"
+          [attr.data-testing-id]="'filter-link-' + (facet.name | sanitize)"
         >
           {{ facet.displayName }}
           <ng-container *ngIf="facet.level === maxLevel"> ({{ facet.count }}) </ng-container>

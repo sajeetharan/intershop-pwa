@@ -95,7 +95,7 @@ describe('Missing Data', () => {
       });
       at(SearchResultPage, page => {
         page.productList.visibleProducts.should('have.length.gte', 1);
-        page.filterNavigation.filter('Color').filterClick('Red');
+        page.filterNavigation.filter('Color').filterClick('Colour_of_product_Red');
       });
       waitLoadingEnd();
       at(SearchResultPage, page => {
