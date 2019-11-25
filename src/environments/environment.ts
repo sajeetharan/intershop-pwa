@@ -13,6 +13,7 @@ export const environment: Environment = {
   icmServer: 'INTERSHOP/rest/WFS',
   icmServerStatic: 'INTERSHOP/static/WFS',
   icmChannel: 'inSPIRED-inTRONICS-Site',
+  icmApplication: 'rest',
 
   mockServerAPI: true,
 
