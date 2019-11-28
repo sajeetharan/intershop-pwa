@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Store, select } from '@ngrx/store';
 
-import { FilterData } from 'ish-core/models/filter/filter.interface';
+import { FilterData, FilterValueMap } from 'ish-core/models/filter/filter.interface';
+import { getICMStaticURL } from 'ish-core/store/configuration';
 
 import { FilterNavigationData } from './filter-navigation.interface';
 import { FilterNavigation } from './filter-navigation.model';
