@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import b64u from 'b64u';
 import { Observable } from 'rxjs';
 
 import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
@@ -27,7 +26,7 @@ export class FilterNavigationComponent implements OnInit {
     this.router.navigate([], {
       queryParamsHandling: 'merge',
       relativeTo: this.activatedRoute,
-      queryParams: { filters: b64u.decode(b64u.fromBase64(event.searchParameter)), page: 1 },
+      queryParams: { filters: event.searchParameter, page: 1 },
       fragment: this.fragmentOnRouting,
     });
   }

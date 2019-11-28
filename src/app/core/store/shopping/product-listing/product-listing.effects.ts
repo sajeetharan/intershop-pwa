@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
-import b64u from 'b64u';
 import { isEqual } from 'lodash-es';
 import { distinctUntilChanged, filter, map, mapTo, mergeMap, switchMap, take } from 'rxjs/operators';
 
@@ -100,7 +99,7 @@ export class ProductListingEffects {
         // TODO: work-around for client side computation of master variations
         ['search', 'category'].includes(id.type)
       ) {
-        const searchParameter = b64u.toBase64(b64u.encode(filters));
+        const searchParameter = filters;
         return new LoadProductsForFilter({ id: { ...id, filters }, searchParameter });
       } else {
         switch (id.type) {
@@ -133,7 +132,7 @@ export class ProductListingEffects {
         // TODO: work-around for client side computation of master variations
         ['search', 'category'].includes(type)
       ) {
-        const searchParameter = b64u.toBase64(b64u.encode(filters));
+        const searchParameter = filters;
         return new ApplyFilter({ searchParameter });
       } else {
         switch (type) {
@@ -172,7 +171,7 @@ export class ProductListingEffects {
           return [
             new actions.SetProductListingPages(
               this.productListingMapper.createPages(products, id.type, id.value, {
-                filters: filters ? b64u.toBase64(b64u.encode(filters)) : undefined,
+                filters: filters ? filters : undefined,
               })
             ),
             new LoadFilterSuccess({ filterNavigation }),

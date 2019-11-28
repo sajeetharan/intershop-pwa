@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import b64u from 'b64u';
 import { groupBy } from 'lodash-es';
 
 import { Facet } from 'ish-core/models/facet/facet.model';
@@ -76,7 +75,7 @@ export class ProductMasterVariationsService {
     };
     return {
       name: attribute.value,
-      searchParameter: b64u.toBase64(b64u.encode(formParamsToString(newFilters))),
+      searchParameter: formParamsToString(newFilters),
       count:
         this.potentialMatches(newFilters, variations).length &&
         variations.filter(variation =>

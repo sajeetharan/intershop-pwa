@@ -139,9 +139,9 @@ describe('Product Listing Effects', () => {
           page: undefined
         [Shopping] Load Products For Filter:
           id: {"type":"search","value":"term","filters":"blablubb"}
-          searchParameter: "YmxhYmx1YmI="
+          searchParameter: "blablubb"
         [Shopping] Apply Filter:
-          searchParameter: "YmxhYmx1YmI="
+          searchParameter: "blablubb"
       `);
     }));
 
@@ -158,9 +158,9 @@ describe('Product Listing Effects', () => {
           page: undefined
         [Shopping] Load Products For Filter:
           id: {"type":"category","value":"cat","filters":"blablubb"}
-          searchParameter: "YmxhYmx1YmI="
+          searchParameter: "blablubb"
         [Shopping] Apply Filter:
-          searchParameter: "YmxhYmx1YmI="
+          searchParameter: "blablubb"
       `);
     }));
   });

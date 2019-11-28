@@ -64,7 +64,7 @@ export class FilterNavigationMapper {
               count: facet.count,
               selected: facet.selected,
               displayName: facet.displayValue || undefined,
-              searchParameter: decodeURIComponent(facet.link.uri.split('?SearchParameter=')[1]),
+              searchParameter: facet.link.uri.split('?')[1] || '',
               level: facet.level || 0,
               mappedValue: facet.mappedValue || undefined,
             });

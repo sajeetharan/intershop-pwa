@@ -58,7 +58,7 @@ describe('Filter Service', () => {
 
   it("should get Filter data when 'applyFilter' is called", done => {
     when(apiService.get('productfilters?SearchParameter=b')).thenReturn(of(filterMock));
-    filterService.applyFilter('b').subscribe(data => {
+    filterService.applyFilter('SearchParameter=b').subscribe(data => {
       expect(data.filter).toHaveLength(1);
       expect(data.filter[0].facets).toHaveLength(2);
       expect(data.filter[0].facets[0].name).toEqual('a');
@@ -70,7 +70,7 @@ describe('Filter Service', () => {
 
   it("should get Product SKUs when 'getFilteredProducts' is called", done => {
     when(apiService.get('products?SearchParameter=b&returnSortKeys=true')).thenReturn(of(productsMock));
-    filterService.getFilteredProducts('b').subscribe(data => {
+    filterService.getFilteredProducts('SearchParameter=b').subscribe(data => {
       expect(data).toEqual({
         productSKUs: ['123', '234'],
         total: 2,

@@ -30,7 +30,7 @@ export class FilterService {
     // tslint:disable-next-line:ish-no-object-literal-type-assertion
     const searchParameter = SearchParameterMapper.toData({ queryTerm: searchTerm } as SearchParameter);
     return this.apiService
-      .get<FilterNavigationData>(`productfilters?SearchParameter=${searchParameter}`, { skipApiErrorHandling: true })
+      .get<FilterNavigationData>(`productfilters?${searchParameter}`, { skipApiErrorHandling: true })
       .pipe(
         map(filter => this.filterNavigationMapper.fromData(filter)),
         map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
@@ -38,7 +38,7 @@ export class FilterService {
   }
 
   applyFilter(searchParameter: string): Observable<FilterNavigation> {
-    return this.apiService.get<FilterNavigationData>(`productfilters?SearchParameter=${searchParameter}`).pipe(
+    return this.apiService.get<FilterNavigationData>(`productfilters?${searchParameter}`).pipe(
       map(filter => this.filterNavigationMapper.fromData(filter)),
       map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
     );
@@ -47,7 +47,7 @@ export class FilterService {
   getFilteredProducts(
     searchParameter: string
   ): Observable<{ total: number; productSKUs: string[]; sortKeys: string[] }> {
-    return this.apiService.get(`products?SearchParameter=${searchParameter}&returnSortKeys=true`).pipe(
+    return this.apiService.get(`products?${searchParameter}&returnSortKeys=true`).pipe(
       map((x: { total: number; elements: Link[]; sortKeys: string[] }) => ({
         productSKUs: x.elements.map(l => l.uri).map(ProductMapper.parseSKUfromURI),
         total: x.total,

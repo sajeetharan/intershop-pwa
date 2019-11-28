@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import b64u from 'b64u';
 
 import { Filter } from 'ish-core/models/filter/filter.model';
 import { VariationProductMasterView, VariationProductView } from 'ish-core/models/product-view/product-view.model';
@@ -32,10 +31,7 @@ describe('Product Master Variations Service', () => {
       print: (val: Filter, serialize) =>
         `${val.id}: ` +
         serialize(
-          val.facets.map(
-            facet =>
-              `${facet.name}:${facet.selected}:${facet.count} -> ${b64u.decode(b64u.fromBase64(facet.searchParameter))}`
-          )
+          val.facets.map(facet => `${facet.name}:${facet.selected}:${facet.count} -> ${facet.searchParameter}`)
         ),
     });
 
