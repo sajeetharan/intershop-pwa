@@ -5,11 +5,12 @@ import { ViewType } from 'ish-core/models/viewtype/viewtype.types';
 import { FilterActionTypes, FilterActions } from 'ish-core/store/shopping/filter';
 import { ProductsAction, ProductsActionTypes } from 'ish-core/store/shopping/products';
 import { SearchAction, SearchActionTypes } from 'ish-core/store/shopping/search';
+import { formParamsToString } from 'ish-core/utils/url-form-params';
 
 import { ProductListingAction, ProductListingActionTypes } from './product-listing.actions';
 
 export function serializeProductListingID(id: ProductListingID) {
-  return `${id.type}@${id.value}@${id.filters || id.sorting}`;
+  return `${id.type}@${id.value}@${formParamsToString(id.filters) || id.sorting}`;
 }
 
 export const adapter = createEntityAdapter<ProductListingType>({

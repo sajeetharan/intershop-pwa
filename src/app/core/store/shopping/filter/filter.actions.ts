@@ -3,6 +3,7 @@ import { Action } from '@ngrx/store';
 import { FilterNavigation } from 'ish-core/models/filter-navigation/filter-navigation.model';
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 import { ProductListingID } from 'ish-core/models/product-listing/product-listing.model';
+import { URLFormParams } from 'ish-core/utils/url-form-params';
 
 export enum FilterActionTypes {
   LoadFilterForCategory = '[Shopping] Load Filter For Category',
@@ -37,12 +38,12 @@ export class LoadFilterForSearch implements Action {
 
 export class ApplyFilter implements Action {
   readonly type = FilterActionTypes.ApplyFilter;
-  constructor(public payload: { searchParameter: string }) {}
+  constructor(public payload: { searchParameter: URLFormParams }) {}
 }
 
 export class ApplyFilterSuccess implements Action {
   readonly type = FilterActionTypes.ApplyFilterSuccess;
-  constructor(public payload: { availableFilter: FilterNavigation; searchParameter: string }) {}
+  constructor(public payload: { availableFilter: FilterNavigation; searchParameter: URLFormParams }) {}
 }
 
 export class ApplyFilterFail implements Action {
@@ -52,7 +53,7 @@ export class ApplyFilterFail implements Action {
 
 export class LoadProductsForFilter implements Action {
   readonly type = FilterActionTypes.LoadProductsForFilter;
-  constructor(public payload: { id: ProductListingID; searchParameter: string }) {}
+  constructor(public payload: { id: ProductListingID; searchParameter: URLFormParams }) {}
 }
 
 export type FilterActions =

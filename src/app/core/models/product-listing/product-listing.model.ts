@@ -1,8 +1,10 @@
+import { URLFormParams } from 'ish-core/utils/url-form-params';
+
 export interface ProductListingID {
   type: string;
   value: string;
   sorting?: string;
-  filters?: string;
+  filters?: URLFormParams;
 }
 
 export interface ProductListingType {

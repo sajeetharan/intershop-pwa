@@ -2,6 +2,7 @@ import { Action } from '@ngrx/store';
 
 import { ProductListingID, ProductListingType } from 'ish-core/models/product-listing/product-listing.model';
 import { ViewType } from 'ish-core/models/viewtype/viewtype.types';
+import { URLFormParams } from 'ish-core/utils/url-form-params';
 
 export enum ProductListingActionTypes {
   SetProductListingPages = '[ProductListing] Set Product Listing Pages',
@@ -29,7 +30,7 @@ export class LoadMoreProducts implements Action {
 
 export class LoadMoreProductsForParams implements Action {
   readonly type = ProductListingActionTypes.LoadMoreProductsForParams;
-  constructor(public payload: { id: ProductListingID; page: number; sorting: string; filters: string }) {}
+  constructor(public payload: { id: ProductListingID; page: number; sorting: string; filters: URLFormParams }) {}
 }
 
 export class SetViewType implements Action {
@@ -39,7 +40,7 @@ export class SetViewType implements Action {
 
 export class LoadPagesForMaster implements Action {
   readonly type = ProductListingActionTypes.LoadPagesForMaster;
-  constructor(public payload: { id: ProductListingID; filters: string; sorting: string }) {}
+  constructor(public payload: { id: ProductListingID; filters: URLFormParams; sorting: string }) {}
 }
 
 export type ProductListingAction =

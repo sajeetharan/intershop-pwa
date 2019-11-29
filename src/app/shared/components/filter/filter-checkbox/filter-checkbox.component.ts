@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 
 import { Facet } from 'ish-core/models/facet/facet.model';
 import { Filter } from 'ish-core/models/filter/filter.model';
+import { URLFormParams } from 'ish-core/utils/url-form-params';
 
 /**
  * The Filter Checkbox Component displays a filter group. The items of the filter group are presented as checkboxes.
@@ -19,7 +20,7 @@ import { Filter } from 'ish-core/models/filter/filter.model';
 })
 export class FilterCheckboxComponent {
   @Input() filterElement: Filter;
-  @Output() applyFilter: EventEmitter<{ searchParameter: string }> = new EventEmitter();
+  @Output() applyFilter: EventEmitter<{ searchParameter: URLFormParams }> = new EventEmitter();
 
   filter(facet: Facet) {
     this.applyFilter.emit({ searchParameter: facet.searchParameter });

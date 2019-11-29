@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 
 import { Facet } from 'ish-core/models/facet/facet.model';
 import { Filter } from 'ish-core/models/filter/filter.model';
+import { URLFormParams } from 'ish-core/utils/url-form-params';
 
 /**
  * The Filter Text Component displays a filter group. The facets of the filter group are presented as links with optional clear-button.
@@ -19,7 +20,7 @@ import { Filter } from 'ish-core/models/filter/filter.model';
 })
 export class FilterTextComponent implements OnInit {
   @Input() filterElement: Filter;
-  @Output() applyFilter: EventEmitter<{ searchParameter: string }> = new EventEmitter();
+  @Output() applyFilter: EventEmitter<{ searchParameter: URLFormParams }> = new EventEmitter();
 
   maxLevel = 0;
   facets: Facet[] = [];

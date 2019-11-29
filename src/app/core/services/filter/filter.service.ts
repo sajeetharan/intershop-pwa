@@ -10,6 +10,7 @@ import { ProductMapper } from 'ish-core/models/product/product.mapper';
 import { SearchParameterMapper } from 'ish-core/models/search-parameter/search-parameter.mapper';
 import { SearchParameter } from 'ish-core/models/search-parameter/search-parameter.model';
 import { ApiService } from 'ish-core/services/api/api.service';
+import { URLFormParams, formParamsToString } from 'ish-core/utils/url-form-params';
 
 @Injectable({ providedIn: 'root' })
 export class FilterService {
@@ -37,17 +38,19 @@ export class FilterService {
       );
   }
 
-  applyFilter(searchParameter: string): Observable<FilterNavigation> {
-    return this.apiService.get<FilterNavigationData>(`productfilters?${searchParameter}`).pipe(
+  applyFilter(searchParameter: URLFormParams): Observable<FilterNavigation> {
+    const params = formParamsToString(searchParameter);
+    return this.apiService.get<FilterNavigationData>(`productfilters?${params}`).pipe(
       map(filter => this.filterNavigationMapper.fromData(filter)),
       map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
     );
   }
 
   getFilteredProducts(
-    searchParameter: string
+    searchParameter: URLFormParams
   ): Observable<{ total: number; productSKUs: string[]; sortKeys: string[] }> {
-    return this.apiService.get(`products?${searchParameter}&returnSortKeys=true`).pipe(
+    const params = formParamsToString(searchParameter);
+    return this.apiService.get(`products?${params}&returnSortKeys=true`).pipe(
       map((x: { total: number; elements: Link[]; sortKeys: string[] }) => ({
         productSKUs: x.elements.map(l => l.uri).map(ProductMapper.parseSKUfromURI),
         total: x.total,

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 
 import { Facet } from 'ish-core/models/facet/facet.model';
 import { Filter } from 'ish-core/models/filter/filter.model';
+import { URLFormParams } from 'ish-core/utils/url-form-params';
 
 /**
  * The Filter Swatch Images Component displays filter group for colors. The facets of the filter group are presented as swatch images.
@@ -23,7 +24,7 @@ export class FilterSwatchImagesComponent {
    * The filter group.
    */
   @Input() filterElement: Filter;
-  @Output() applyFilter: EventEmitter<{ searchParameter: string }> = new EventEmitter();
+  @Output() applyFilter: EventEmitter<{ searchParameter: URLFormParams }> = new EventEmitter();
 
   /**
    * Applies a facet of the filter group and shows the new filtered result.

@@ -11,9 +11,8 @@ import { URLFormParams, formParamsToString, stringToFormParams } from 'ish-core/
 export class ProductMasterVariationsService {
   getFiltersAndFilteredVariationsForMasterProduct(
     product: VariationProductMasterView,
-    filterString: string
+    filters: URLFormParams
   ): { filterNavigation: FilterNavigation; products: string[] } {
-    const filters = stringToFormParams(filterString);
     return {
       filterNavigation: this.createFilterNavigation(product, filters),
       products: this.filterVariations(product, filters),
@@ -75,7 +74,7 @@ export class ProductMasterVariationsService {
     };
     return {
       name: attribute.value,
-      searchParameter: formParamsToString(newFilters),
+      searchParameter: this.formParamsToMap(newFilters),
       count:
         this.potentialMatches(newFilters, variations).length &&
         variations.filter(variation =>
@@ -87,6 +86,12 @@ export class ProductMasterVariationsService {
       selected,
       level: 0,
     };
+  }
+
+  private formParamsToMap(x: { [key: string]: string[] }): URLFormParams {
+    const xx = {};
+    Object.keys(x).forEach(k => (xx[k] = x[k].concat(',')));
+    return xx;
   }
 
   private createFilterNavigation(product: VariationProductMasterView, filters: URLFormParams): FilterNavigation {
