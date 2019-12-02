@@ -19,12 +19,10 @@ export class FilterService {
   getFilterForCategory(categoryUniqueId: string): Observable<FilterNavigation> {
     const categoryPath = categoryUniqueId.split('.').join('/');
     // TODO from REST
-    return this.apiService
-      .get<FilterNavigationData>(`categories/${categoryPath}/productfilters`, { skipApiErrorHandling: true })
-      .pipe(
-        map(filter => this.filterNavigationMapper.fromData(filter)),
-        map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
-      );
+    return this.applyFilterWithCategory('', categoryPath).pipe(
+      map(filter => this.filterNavigationMapper.fromData(filter)),
+      map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
+    );
   }
 
   getFilterForSearch(searchTerm: string): Observable<FilterNavigation> {
@@ -39,8 +37,12 @@ export class FilterService {
   }
 
   applyFilter(searchParameter: URLFormParams): Observable<FilterNavigation> {
-    const params = formParamsToString(searchParameter);
-    return this.apiService.get<FilterNavigationData>(`productfilters?${params}`).pipe(
+    const params = formParamsToString({ ...searchParameter, category: undefined });
+    const categoryPath = searchParameter.category ? searchParameter.category[0] : undefined;
+    return (categoryPath
+      ? this.applyFilterWithCategory(params, categoryPath)
+      : this.applyFilterWithoutCategory(params)
+    ).pipe(
       map(filter => this.filterNavigationMapper.fromData(filter)),
       map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
     );
@@ -49,13 +51,41 @@ export class FilterService {
   getFilteredProducts(
     searchParameter: URLFormParams
   ): Observable<{ total: number; productSKUs: string[]; sortKeys: string[] }> {
-    const params = formParamsToString(searchParameter);
-    return this.apiService.get(`products?${params}&returnSortKeys=true`).pipe(
+    const params = formParamsToString({ ...searchParameter, category: undefined });
+    const categoryPath = searchParameter.category ? searchParameter.category[0] : undefined;
+    return (categoryPath
+      ? this.getFilteredProductsWithCategory(params, categoryPath)
+      : this.getFilteredProductsWithoutCategory(params)
+    ).pipe(
       map((x: { total: number; elements: Link[]; sortKeys: string[] }) => ({
         productSKUs: x.elements.map(l => l.uri).map(ProductMapper.parseSKUfromURI),
         total: x.total,
         sortKeys: x.sortKeys,
       }))
     );
+  }
+
+  private getFilteredProductsWithoutCategory(searchParameter: string) {
+    const params = (searchParameter ? `?${searchParameter}&` : '?') + 'returnSortKeys=true';
+    return this.apiService.get(`products${params}`);
+  }
+
+  private getFilteredProductsWithCategory(searchParameter: string, category: string) {
+    const params = (searchParameter ? `?${searchParameter}&` : '?') + 'returnSortKeys=true';
+    return this.apiService.get(`categories/${category}/products${params}`);
+  }
+
+  private applyFilterWithoutCategory(searchParameter: string): Observable<FilterNavigationData> {
+    const params = searchParameter ? `?${searchParameter}` : '';
+    return this.apiService.get<FilterNavigationData>(`productfilters${params}`, {
+      skipApiErrorHandling: true,
+    });
+  }
+
+  private applyFilterWithCategory(searchParameter: string, category: string): Observable<FilterNavigationData> {
+    const params = searchParameter ? `?${searchParameter}` : '';
+    return this.apiService.get<FilterNavigationData>(`categories/${category}/productfilters${params}`, {
+      skipApiErrorHandling: true,
+    });
   }
 }

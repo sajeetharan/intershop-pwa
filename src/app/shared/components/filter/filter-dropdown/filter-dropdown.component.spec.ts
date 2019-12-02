@@ -18,6 +18,15 @@ describe('Filter Dropdown Component', () => {
     }).compileComponents();
   }));
 
+  const facet = (n, value) => ({
+    name: value,
+    searchParameter: { [n]: value },
+    displayName: value,
+    count: 0,
+    selected: false,
+    level: 0,
+  });
+
   beforeEach(() => {
     fixture = TestBed.createComponent(FilterDropdownComponent);
     component = fixture.componentInstance;
@@ -25,15 +34,7 @@ describe('Filter Dropdown Component', () => {
     component.filterElement = {
       name: 'Color',
       id: 'Color_of_Product',
-      facets: [
-        { displayName: 'Red', name: 'Red', selected: false, searchParameter: 'red' },
-        {
-          displayName: 'Blue',
-          name: 'Blue',
-          selected: true,
-          searchParameter: 'blue',
-        },
-      ] as Facet[],
+      facets: [facet('Color_of_Product', 'Red'), { ...facet('Color_of_Product', 'Blue'), selected: true }] as Facet[],
     } as Filter;
   });
 

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { map } from 'rxjs/operators';
 
 import { FilterData, FilterValueMap } from 'ish-core/models/filter/filter.interface';
 import { getICMStaticURL } from 'ish-core/store/configuration';
-import { URLFormParams, stringToFormParams } from 'ish-core/utils/url-form-params';
+import { stringToFormParams } from 'ish-core/utils/url-form-params';
 
 import { FilterNavigationData } from './filter-navigation.interface';
 import { FilterNavigation } from './filter-navigation.model';
@@ -62,13 +61,19 @@ export class FilterNavigationMapper {
   private mapFacetData(filterData: FilterData) {
     return filterData.filterEntries
       ? filterData.filterEntries.reduce((acc, facet) => {
+          const category = facet.link.uri.includes('/categories/')
+            ? [facet.link.uri.split('/productfilters')[0].split('/categories/')[1]]
+            : undefined;
           if (facet.name !== 'Show all') {
             acc.push({
               name: facet.name,
               count: facet.count,
               selected: facet.selected,
               displayName: facet.displayValue || undefined,
-              searchParameter: stringToFormParams(facet.link.uri.split('?')[1] || ''),
+              searchParameter: {
+                ...stringToFormParams(facet.link.uri.split('?')[1] || ''),
+                category,
+              },
               level: facet.level || 0,
               mappedValue: facet.mappedValue || undefined,
             });

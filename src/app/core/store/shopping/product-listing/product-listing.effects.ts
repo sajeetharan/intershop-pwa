@@ -71,7 +71,7 @@ export class ProductListingEffects {
           id,
           sorting: params.sorting || undefined,
           page: +params.page || page || undefined,
-          filters: params.filters || undefined,
+          filters: params.filters ? { ...params.filters, searchTerm: [id.value] } : undefined,
         }))
       )
     ),
@@ -91,17 +91,16 @@ export class ProductListingEffects {
     ),
     map(({ id, sorting, page, filters, viewAvailable }) => {
       if (viewAvailable) {
-        return new actions.SetProductListingPages({ id: { sorting, filters, ...id } });
+        return new actions.SetProductListingPages({ id: { sorting, ...id } });
       }
       if (
         filters &&
         // TODO: work-around for different products/hits-result without filters
-        (id.type !== 'search' ||
-          (id.type === 'search' && filters.searchTerm.includes(id.value) && filters.OnlineFlag.includes('1'))) &&
+        (id.type !== 'search' || this.isSearchFor(filters.searchTerm, id)) &&
         // TODO: work-around for client side computation of master variations
         ['search', 'category'].includes(id.type)
       ) {
-        return new LoadProductsForFilter({ id: { ...id, filters }, searchParameter: filters });
+        return new LoadProductsForFilter({ id: { ...id }, searchParameter: filters });
       } else {
         switch (id.type) {
           case 'category':
@@ -126,13 +125,10 @@ export class ProductListingEffects {
     map(({ id, filters }) => ({ type: id.type, value: id.value, filters })),
     distinctUntilChanged(isEqual),
     map(({ type, value, filters }) => {
-      console.table(filters);
-      debugger;
       if (
         filters &&
         // TODO: work-around for different products/hits-result without filters
-        (type !== 'search' ||
-          (type === 'search' && filters.searchTerm.includes(value) && filters.OnlineFlag.includes('1'))) &&
+        (type !== 'search' || this.isSearchFor(filters.searchTerm, { type, value })) &&
         // TODO: work-around for client side computation of master variations
         ['search', 'category'].includes(type)
       ) {
@@ -184,4 +180,8 @@ export class ProductListingEffects {
       )
     )
   );
+
+  private isSearchFor(searchTerm: string[], id: { type: string; value: string }): boolean {
+    return id.type === 'search' && searchTerm && searchTerm.includes(id.value);
+  }
 }

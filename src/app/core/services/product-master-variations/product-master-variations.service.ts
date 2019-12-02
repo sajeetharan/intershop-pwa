@@ -5,7 +5,7 @@ import { Facet } from 'ish-core/models/facet/facet.model';
 import { FilterNavigation } from 'ish-core/models/filter-navigation/filter-navigation.model';
 import { VariationAttribute } from 'ish-core/models/product-variation/variation-attribute.model';
 import { VariationProductMasterView, VariationProductView } from 'ish-core/models/product-view/product-view.model';
-import { URLFormParams, formParamsToString, stringToFormParams } from 'ish-core/utils/url-form-params';
+import { URLFormParams } from 'ish-core/utils/url-form-params';
 
 @Injectable({ providedIn: 'root' })
 export class ProductMasterVariationsService {
@@ -74,7 +74,7 @@ export class ProductMasterVariationsService {
     };
     return {
       name: attribute.value,
-      searchParameter: this.formParamsToMap(newFilters),
+      searchParameter: newFilters,
       count:
         this.potentialMatches(newFilters, variations).length &&
         variations.filter(variation =>
@@ -86,12 +86,6 @@ export class ProductMasterVariationsService {
       selected,
       level: 0,
     };
-  }
-
-  private formParamsToMap(x: { [key: string]: string[] }): URLFormParams {
-    const xx = {};
-    Object.keys(x).forEach(k => (xx[k] = x[k].concat(',')));
-    return xx;
   }
 
   private createFilterNavigation(product: VariationProductMasterView, filters: URLFormParams): FilterNavigation {

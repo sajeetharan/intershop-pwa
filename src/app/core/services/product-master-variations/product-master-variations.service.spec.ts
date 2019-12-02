@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { Filter } from 'ish-core/models/filter/filter.model';
 import { VariationProductMasterView, VariationProductView } from 'ish-core/models/product-view/product-view.model';
+import { URLFormParams, formParamsToString } from 'ish-core/utils/url-form-params';
 
 import { ProductMasterVariationsService } from './product-master-variations.service';
 
@@ -31,7 +32,9 @@ describe('Product Master Variations Service', () => {
       print: (val: Filter, serialize) =>
         `${val.id}: ` +
         serialize(
-          val.facets.map(facet => `${facet.name}:${facet.selected}:${facet.count} -> ${facet.searchParameter}`)
+          val.facets.map(
+            facet => `${facet.name}:${facet.selected}:${facet.count} -> ${formParamsToString(facet.searchParameter)}`
+          )
         ),
     });
 
@@ -54,7 +57,7 @@ describe('Product Master Variations Service', () => {
 
   describe('without extra filters activated', () => {
     it('should respond with unselected filters and all variations when queried', () => {
-      expect(productMasterVariationsService.getFiltersAndFilteredVariationsForMasterProduct(master, ''))
+      expect(productMasterVariationsService.getFiltersAndFilteredVariationsForMasterProduct(master, {}))
         .toMatchInlineSnapshot(`
         Object {
           "filterNavigation": Object {
@@ -85,7 +88,10 @@ describe('Product Master Variations Service', () => {
   describe('with extra single filters activated', () => {
     it('should respond with selected filters and all variations when queried', () => {
       expect(
-        productMasterVariationsService.getFiltersAndFilteredVariationsForMasterProduct(master, 'HDD=512GB&COL=Red')
+        productMasterVariationsService.getFiltersAndFilteredVariationsForMasterProduct(master, {
+          HDD: ['512GB'],
+          COL: ['Red'],
+        } as URLFormParams)
       ).toMatchInlineSnapshot(`
         Object {
           "filterNavigation": Object {
@@ -111,8 +117,11 @@ describe('Product Master Variations Service', () => {
 
   describe('with extra single filters restricting other filters activated', () => {
     it('should respond with selected filters and all variations when queried', () => {
-      expect(productMasterVariationsService.getFiltersAndFilteredVariationsForMasterProduct(master, 'COL=Black'))
-        .toMatchInlineSnapshot(`
+      expect(
+        productMasterVariationsService.getFiltersAndFilteredVariationsForMasterProduct(master, {
+          COL: ['Black'],
+        } as URLFormParams)
+      ).toMatchInlineSnapshot(`
         Object {
           "filterNavigation": Object {
             "filter": Array [
@@ -137,10 +146,10 @@ describe('Product Master Variations Service', () => {
   describe('with extra multi filters activated', () => {
     it('should respond with selected filters and all variations when queried', () => {
       expect(
-        productMasterVariationsService.getFiltersAndFilteredVariationsForMasterProduct(
-          master,
-          'HDD=512GB,256GB&COL=Red'
-        )
+        productMasterVariationsService.getFiltersAndFilteredVariationsForMasterProduct(master, {
+          HDD: ['512GB', '256GB'],
+          COL: ['Red'],
+        } as URLFormParams)
       ).toMatchInlineSnapshot(`
         Object {
           "filterNavigation": Object {

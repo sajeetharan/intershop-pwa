@@ -25,15 +25,19 @@ describe('Filter Navigation Badges Component', () => {
     component = fixture.componentInstance;
     element = fixture.nativeElement;
 
+    const facet = (n, value, selected) => ({
+      name: value,
+      searchParameter: { [n]: value },
+      displayName: value,
+      count: 0,
+      selected,
+      level: 0,
+    });
     component.filterNavigation = {
       filter: [
         {
           name: 'Color',
-          facets: [
-            { name: 'Red', searchParameter: 'red' },
-            { name: 'Blue', searchParameter: 'blue', selected: true },
-            { name: 'Black', searchParameter: 'black', selected: true },
-          ],
+          facets: [facet('Color', 'Red', false), facet('Color', 'Blue', true), facet('Color', 'Black', true)],
         },
         {
           name: 'HDD',

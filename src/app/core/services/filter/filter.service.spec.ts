@@ -5,6 +5,7 @@ import { anything, instance, mock, verify, when } from 'ts-mockito';
 import { FilterNavigationData } from 'ish-core/models/filter-navigation/filter-navigation.interface';
 import { ApiService } from 'ish-core/services/api/api.service';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
+import { URLFormParams } from 'ish-core/utils/url-form-params';
 
 import { FilterService } from './filter.service';
 
@@ -57,20 +58,22 @@ describe('Filter Service', () => {
   });
 
   it("should get Filter data when 'applyFilter' is called", done => {
-    when(apiService.get('productfilters?SearchParameter=b')).thenReturn(of(filterMock));
-    filterService.applyFilter('SearchParameter=b').subscribe(data => {
+    when(apiService.get<FilterNavigationData>('productfilters?SearchParameter=b', anything())).thenReturn(
+      of(filterMock)
+    );
+    filterService.applyFilter({ SearchParameter: ['b'] } as URLFormParams).subscribe(data => {
       expect(data.filter).toHaveLength(1);
       expect(data.filter[0].facets).toHaveLength(2);
       expect(data.filter[0].facets[0].name).toEqual('a');
       expect(data.filter[0].facets[1].name).toEqual('b');
-      verify(apiService.get('productfilters?SearchParameter=b')).once();
+      verify(apiService.get('productfilters?SearchParameter=b', anything())).once();
       done();
     });
   });
 
   it("should get Product SKUs when 'getFilteredProducts' is called", done => {
     when(apiService.get('products?SearchParameter=b&returnSortKeys=true')).thenReturn(of(productsMock));
-    filterService.getFilteredProducts('SearchParameter=b').subscribe(data => {
+    filterService.getFilteredProducts({ SearchParameter: ['b'] } as URLFormParams).subscribe(data => {
       expect(data).toEqual({
         productSKUs: ['123', '234'],
         total: 2,
