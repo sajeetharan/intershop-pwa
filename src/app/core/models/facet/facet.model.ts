@@ -8,4 +8,5 @@ export class Facet {
   searchParameter: URLFormParams;
   level: number;
   mappedValue?: string;
+  mappedType?: 'colorcode' | 'image' | 'text';
 }

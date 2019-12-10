@@ -8,5 +8,6 @@ export class FacetData {
   link: Link;
   level: number;
   mappedValue?: string;
+  mappedType?: 'colorcode' | 'image' | 'text';
   displayValue: string;
 }

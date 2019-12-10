@@ -34,18 +34,10 @@ export class FilterSwatchImagesComponent {
   }
 
   getBackgroundColor(facet: Facet) {
-    return this.filterElement.filterValueMap[facet.displayName] &&
-      this.filterElement.filterValueMap[facet.displayName].type
-      ? this.filterElement.filterValueMap[facet.displayName].type === 'colorcode'
-        ? this.filterElement.filterValueMap[facet.displayName].mapping
-        : undefined
-      : facet.displayName.toLowerCase();
+    return facet.mappedType === 'colorcode' ? facet.mappedValue : undefined;
   }
 
   getBackgroundImage(facet: Facet) {
-    return this.filterElement.filterValueMap[facet.displayName] &&
-      this.filterElement.filterValueMap[facet.displayName].type === 'image'
-      ? this.filterElement.filterValueMap[facet.displayName].mapping
-      : undefined;
+    return facet.mappedType === 'image' ? facet.mappedValue : undefined;
   }
 }

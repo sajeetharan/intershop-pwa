@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 
-import { FilterData, FilterValueMap } from 'ish-core/models/filter/filter.interface';
+import { FacetData } from 'ish-core/models/facet/facet.interface';
+import { FilterData } from 'ish-core/models/filter/filter.interface';
 import { getICMStaticURL } from 'ish-core/store/configuration';
 import { stringToFormParams } from 'ish-core/utils/url-form-params';
 
@@ -25,7 +26,6 @@ export class FilterNavigationMapper {
               name: filterData.name,
               displayType: filterData.displayType,
               facets: this.mapFacetData(filterData),
-              filterValueMap: this.parseFilterValueMap(filterData.filterValueMap),
               selectionType: filterData.selectionType || 'single',
             }))
           : [],
@@ -35,27 +35,12 @@ export class FilterNavigationMapper {
   /**
    * parse ish-link to
    */
-  private parseFilterValueMapUrl(url: string) {
-    const urlParts = url.split(':');
-    return `${this.icmStaticURL}/${urlParts[0]}/-${urlParts[1]}`;
-  }
-
-  /**
-   * parse FilterValueMap for image-links
-   */
-  private parseFilterValueMap(filterValueMap: FilterValueMap): FilterValueMap {
-    return filterValueMap
-      ? Object.keys(filterValueMap).reduce((acc, k) => {
-          acc[k] = {
-            mapping:
-              filterValueMap[k].type === 'image'
-                ? `url(${this.parseFilterValueMapUrl(filterValueMap[k].mapping)})`
-                : filterValueMap[k].mapping,
-            type: filterValueMap[k].type,
-          };
-          return acc;
-        }, {})
-      : {};
+  private parseFilterValue(filerEntry: FacetData): string {
+    if (filerEntry.mappedType === 'image' && filerEntry.mappedValue) {
+      const urlParts = filerEntry.mappedValue.split(':');
+      return `url(${this.icmStaticURL}/${urlParts[0]}/-${urlParts[1]})`;
+    }
+    return filerEntry.mappedValue;
   }
 
   private mapFacetData(filterData: FilterData) {
@@ -75,10 +60,13 @@ export class FilterNavigationMapper {
                 category,
               },
               level: facet.level || 0,
-              mappedValue: facet.mappedValue || undefined,
+              mappedValue: this.parseFilterValue(facet),
+              mappedType: facet.mappedType || undefined,
             });
           } else {
-            console.warn(`Limiting filters is not supported. Set limit to -1 in the BackOffice (${filterData.name})`);
+            console.warn(
+              `;Limiting; filters; is; not; supported. Set; limit; to -1 in the; BackOffice (${filterData.name})`
+            );
           }
           return acc;
         }, [])
