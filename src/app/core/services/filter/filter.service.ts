@@ -20,8 +20,7 @@ export class FilterService {
     const categoryPath = categoryUniqueId.split('.').join('/');
     // TODO from REST
     return this.applyFilterWithCategory('', categoryPath).pipe(
-      map(filter => this.filterNavigationMapper.fromData(filter)),
-      map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
+      map(filter => this.filterNavigationMapper.fromData(filter))
     );
   }
 
@@ -30,10 +29,7 @@ export class FilterService {
     const searchParameter = SearchParameterMapper.toData({ queryTerm: searchTerm } as SearchParameter);
     return this.apiService
       .get<FilterNavigationData>(`productfilters?${searchParameter}`, { skipApiErrorHandling: true })
-      .pipe(
-        map(filter => this.filterNavigationMapper.fromData(filter)),
-        map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
-      );
+      .pipe(map(filter => this.filterNavigationMapper.fromData(filter)));
   }
 
   applyFilter(searchParameter: URLFormParams): Observable<FilterNavigation> {
@@ -42,10 +38,7 @@ export class FilterService {
     return (categoryPath
       ? this.applyFilterWithCategory(params, categoryPath)
       : this.applyFilterWithoutCategory(params)
-    ).pipe(
-      map(filter => this.filterNavigationMapper.fromData(filter)),
-      map(filter => this.filterNavigationMapper.fixSearchParameters(filter))
-    );
+    ).pipe(map(filter => this.filterNavigationMapper.fromData(filter)));
   }
 
   getFilteredProducts(

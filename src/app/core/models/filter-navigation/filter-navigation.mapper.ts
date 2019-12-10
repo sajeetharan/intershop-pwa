@@ -84,13 +84,4 @@ export class FilterNavigationMapper {
         }, [])
       : [];
   }
-
-  fixSearchParameters(filterNavigation: FilterNavigation) {
-    filterNavigation.filter.forEach(filter => {
-      filter.id = filter.id.replace(/\ /g, '+');
-
-      filter.facets.forEach(facet => (facet.name = facet.name.replace(/\ /g, '+')));
-    });
-    return filterNavigation;
-  }
 }
