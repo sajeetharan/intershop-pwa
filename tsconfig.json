@@ -16,9 +16,7 @@
       "ish-shared/*": ["src/app/shared/*"],
       "ish-shell/*": ["src/app/shell/*"]
     },
-    "lib": ["es2018", "dom"],
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "lib": ["es2018", "dom"]
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
