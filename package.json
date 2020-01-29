@@ -32,7 +32,8 @@
     "webpack:server": "webpack --config webpack.server.config.js",
     "start": "npm run build && npm run serve",
     "start:local": "npm run build:local && npm run serve",
-    "serve": "node dist/server"
+    "serve": "node dist/server",
+    "morph-action-creators": "node ./morphs/migration-script/enable-rule.js && ng lint --fix --force && ng lint --fix && npx ts-node ./morphs/migration-script/store-migration.ts && ng lint --fix --force=true && npx ts-node ./morphs/migration-script/fix-unused.ts && ng lint --fix"
   },
   "dependencies": {
     "@angular/animations": "~8.2.14",
