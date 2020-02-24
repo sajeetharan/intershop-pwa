@@ -32,15 +32,23 @@ const PORT = process.env.PORT || 4200;
 const DIST_FOLDER = join(process.cwd(), 'dist');
 
 // * NOTE :: leave this as require() since this file is built Dynamically from webpack
-const { AppServerModuleNgFactory, LAZY_MODULE_MAP, ngExpressEngine, provideModuleMap } = require('./dist/server/main');
+const {
+  AppServerModuleNgFactory,
+  LAZY_MODULE_MAP,
+  ngExpressEngine,
+  provideModuleMap,
+  APP_BASE_HREF,
+} = require('./dist/server/main');
 
 // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
-app.engine(
-  'html',
+app.engine('html', (path, options: { req: express.Request }, callback) =>
   ngExpressEngine({
     bootstrap: AppServerModuleNgFactory,
-    providers: [provideModuleMap(LAZY_MODULE_MAP)],
-  })
+    providers: [
+      provideModuleMap(LAZY_MODULE_MAP),
+      { provide: APP_BASE_HREF, useValue: '/' + options.req.originalUrl.split('/')[1] },
+    ],
+  })(path, options, callback)
 );
 
 app.set('view engine', 'html');
@@ -98,8 +106,16 @@ app.get('*', (req: express.Request, res: express.Response) => {
       req,
       res,
     },
-    (err: Error, html: string) => {
-      res.status(html ? res.statusCode : 500).send(html || err.message);
+    (err, html) => {
+      if (html) {
+        let newHtml: string;
+
+        newHtml = html.replace('<head>', `<head><base href="/${req.originalUrl.split('/')[1]}" />`);
+
+        res.status(res.statusCode).send(newHtml || html);
+      } else {
+        res.status(500).send(err.message);
+      }
       if (logging) {
         console.log(`RES ${res.statusCode} ${req.url}`);
         if (err) {

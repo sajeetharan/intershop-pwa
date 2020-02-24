@@ -75,7 +75,7 @@
                   "maximumError": "10kb"
                 }
               ],
-              "serviceWorker": true,
+              "serviceWorker": false,
               "ngswConfigPath": "ngsw-config.json"
             },
             "local": {
@@ -97,7 +97,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "aot": true,
-            "browserTarget": "intershop-pwa:build"
+            "browserTarget": "intershop-pwa:build",
+            "baseHref": "/"
           },
           "configurations": {
             "production": {
