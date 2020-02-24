@@ -25,6 +25,7 @@ export class FilterNavigationMapper {
               id: filterData.id,
               name: filterData.name,
               displayType: filterData.displayType,
+              limitCount: filterData.limitCount,
               facets: this.mapFacetData(filterData),
               selectionType: filterData.selectionType || 'single',
             }))

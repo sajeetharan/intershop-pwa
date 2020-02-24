@@ -1,6 +1,8 @@
 <!--- TODO: implement Show All-->
 <ul class="filter-list">
-  <ng-container *ngFor="let facet of facets">
+  <ng-container
+    *ngFor="let facet of filterElement.limitCount === -1 ? facets : facets.slice(0, filterElement.limitCount)"
+  >
     <li class="filter-item filter-layer{{ facet.level }}" [ngClass]="{ 'filter-selected': facet.selected }">
       <!-- selected -->
       <ng-container *ngIf="facet.selected && facet.level === maxLevel; else notSelectedBox">

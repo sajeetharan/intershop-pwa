@@ -6,4 +6,5 @@ export interface Filter {
   id: string;
   facets: Facet[];
   selectionType: string;
+  limitCount?: number;
 }
