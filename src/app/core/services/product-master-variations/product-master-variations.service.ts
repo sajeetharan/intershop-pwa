@@ -62,9 +62,10 @@ export class ProductMasterVariationsService {
   private createFacet(
     filterName: string,
     attribute: VariationAttribute,
-    filters: URLFormParams,
+    filtersURLFormParams: URLFormParams,
     variations: VariationProductView[]
   ): Facet {
+    const filters = filtersURLFormParams || {};
     const selected = !!filters[filterName] && filters[filterName].includes(attribute.value);
     const newFilters = {
       ...filters,
