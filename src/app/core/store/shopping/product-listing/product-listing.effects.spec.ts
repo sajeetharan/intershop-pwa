@@ -133,12 +133,12 @@ describe('Product Listing Effects', () => {
         [ProductListing] Load More Products:
           id: {"type":"search","value":"term"}
         [ProductListing Internal] Load More Products For Params:
-          id: {"type":"search","value":"term"}
+          id: {"type":"search","value":"term","filters":{"param":[1],"sear...
           filters: {"param":[1],"searchTerm":[1]}
           sorting: undefined
           page: undefined
         [Shopping] Load Products For Filter:
-          id: {"type":"search","value":"term"}
+          id: {"type":"search","value":"term","filters":{"param":[1],"sear...
           searchParameter: {"param":[1],"searchTerm":[1]}
         [Shopping] Apply Filter:
           searchParameter: {"param":[1],"searchTerm":[1]}
@@ -162,12 +162,12 @@ describe('Product Listing Effects', () => {
         [ProductListing] Load More Products:
           id: {"type":"category","value":"cat"}
         [ProductListing Internal] Load More Products For Params:
-          id: {"type":"category","value":"cat"}
+          id: {"type":"category","value":"cat","filters":{"param":[1]}}
           filters: {"param":[1]}
           sorting: undefined
           page: undefined
         [Shopping] Load Products For Filter:
-          id: {"type":"category","value":"cat"}
+          id: {"type":"category","value":"cat","filters":{"param":[1]}}
           searchParameter: {"param":[1]}
         [Shopping] Apply Filter:
           searchParameter: {"param":[1]}

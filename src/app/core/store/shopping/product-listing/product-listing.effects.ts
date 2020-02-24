@@ -23,7 +23,6 @@ import {
 import { LoadProductsForCategory, getProduct } from 'ish-core/store/shopping/products';
 import { SearchProducts } from 'ish-core/store/shopping/search';
 import { mapToPayload, whenFalsy, whenTruthy } from 'ish-core/utils/operators';
-import { stringToFormParams } from 'ish-core/utils/url-form-params';
 
 import * as actions from './product-listing.actions';
 import { getProductListingView, getProductListingViewType } from './product-listing.selectors';
@@ -67,17 +66,20 @@ export class ProductListingEffects {
     switchMap(({ id, page }) =>
       this.store.pipe(
         select(selectQueryParams),
-        map(params => ({
-          id,
-          sorting: params.sorting || undefined,
-          page: +params.page || page || undefined,
-          filters: params.filters
+        map(params => {
+          const filters = params.get('filters')
             ? {
                 ...params.filters,
                 ...(id.type === 'search' ? { searchTerm: [id.value] } : {}),
               }
-            : undefined,
-        }))
+            : undefined;
+          return {
+            id: { ...id, filters },
+            sorting: params.sorting || undefined,
+            page: +params.page || page || undefined,
+            filters,
+          };
+        })
       )
     ),
     distinctUntilChanged(isEqual),
@@ -96,7 +98,7 @@ export class ProductListingEffects {
     ),
     map(({ id, sorting, page, filters, viewAvailable }) => {
       if (viewAvailable) {
-        return new actions.SetProductListingPages({ id: { sorting, ...id } });
+        return new actions.SetProductListingPages({ id: { sorting, filters, ...id } });
       }
       if (
         filters &&

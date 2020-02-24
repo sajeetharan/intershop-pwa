@@ -86,7 +86,8 @@ const createView = (data, itemsPerPage): ProductListingView => {
 };
 
 function calculateLookUpID(id: ProductListingID, settings: Pick<ProductListingID, 'filters' | 'sorting'>) {
-  const currentSettings = settings[serializeProductListingID({ type: id.type, value: id.value })] || {};
+  const currentSettings =
+    settings[serializeProductListingID({ type: id.type, value: id.value, filters: id.filters })] || {};
   return serializeProductListingID({ ...currentSettings, ...id });
 }
 
@@ -100,7 +101,7 @@ export const getProductListingView = createSelector(
     (entities, _, settings, id: ProductListingID) =>
       JSON.stringify([
         entities[calculateLookUpID(id, settings)],
-        settings[serializeProductListingID({ type: id.type, value: id.value })],
+        settings[serializeProductListingID({ type: id.type, value: id.value, filters: id.filters })],
       ])
   )
 );
