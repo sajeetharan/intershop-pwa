@@ -59,4 +59,33 @@ export class RuleHelpers {
     }
     return;
   }
+
+  static getAllStarImportNodes(sourceFile: ts.SourceFile): ts.Node[] {
+    return RuleHelpers.filterTreeByCondition(
+      sourceFile,
+      node => node.kind === ts.SyntaxKind.PropertyAccessExpression || node.kind === ts.SyntaxKind.QualifiedName
+    );
+  }
+
+  static hasChildNodesWithText(node: ts.Node, text: string): boolean {
+    return node.getChildren().filter(child => child.getText() === text).length > 0;
+  }
+
+  /**
+   *  filters trees by a condition. If a node matches the condition, it's children will not be traversed.
+   * @param node node whose subtree should be filtered
+   * @param callBack filtering condition
+   */
+  private static filterTreeByCondition(node: ts.Node, callBack: (n: ts.Node) => boolean): ts.Node[] {
+    const nodesList: ts.Node[] = [];
+    // add node to list if it matches kind
+    if (callBack(node)) {
+      nodesList.push(node);
+    }
+    // recursively filter all children
+    node.getChildren().forEach(c => {
+      RuleHelpers.filterTreeByCondition(c, callBack).forEach(e => nodesList.push(e));
+    });
+    return nodesList;
+  }
 }

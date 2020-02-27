@@ -58,6 +58,22 @@ var RuleHelpers = (function () {
         }
         return;
     };
+    RuleHelpers.getAllStarImportNodes = function (sourceFile) {
+        return RuleHelpers.filterTreeByCondition(sourceFile, function (node) { return node.kind === ts.SyntaxKind.PropertyAccessExpression || node.kind === ts.SyntaxKind.QualifiedName; });
+    };
+    RuleHelpers.hasChildNodesWithText = function (node, text) {
+        return node.getChildren().filter(function (child) { return child.getText() === text; }).length > 0;
+    };
+    RuleHelpers.filterTreeByCondition = function (node, callBack) {
+        var nodesList = [];
+        if (callBack(node)) {
+            nodesList.push(node);
+        }
+        node.getChildren().forEach(function (c) {
+            RuleHelpers.filterTreeByCondition(c, callBack).forEach(function (e) { return nodesList.push(e); });
+        });
+        return nodesList;
+    };
     return RuleHelpers;
 }());
 exports.RuleHelpers = RuleHelpers;
