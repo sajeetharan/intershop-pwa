@@ -16,4 +16,9 @@ export class FilterNavigationSidebarComponent {
    * keeps the collapsed state of subcomponents when changing filters
    */
   collapsedElements = {};
+
+  /**
+   * keeps the show all state of subcomponents when changing filters
+   */
+  showAllElements = {};
 }

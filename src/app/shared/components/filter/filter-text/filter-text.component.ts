@@ -22,6 +22,19 @@ export class FilterTextComponent implements OnInit {
   @Input() filterElement: Filter;
   @Output() applyFilter: EventEmitter<{ searchParameter: URLFormParams }> = new EventEmitter();
 
+  // two-way-binding (banana in a box) [(showAll)]="showAllElements[element.name]"
+  @Output()
+  showAllChange = new EventEmitter<boolean>();
+  private showAllValue = false;
+  @Input()
+  get showAll() {
+    return this.showAllValue;
+  }
+  set showAll(val) {
+    this.showAllValue = val;
+    this.showAllChange.emit(this.showAllValue);
+  }
+
   maxLevel = 0;
   facets: Facet[] = [];
 
