@@ -23,6 +23,7 @@ describe('Filter Text Component', () => {
   beforeEach(() => {
     const filterElement = {
       name: 'Brands',
+      limitCount: -1,
       facets: [
         { name: 'AsusName', level: 0, count: 4, displayName: 'Asus' },
         { name: 'LogitechName', level: 0, count: 5, displayName: 'Logitech', selected: true },

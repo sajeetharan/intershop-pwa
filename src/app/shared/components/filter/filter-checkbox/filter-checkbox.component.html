@@ -1,12 +1,6 @@
 <!--- TODO: implement Show All-->
 <ul class="filter-list">
-  <ng-container
-    *ngFor="
-      let facet of showAll || filterElement.limitCount === -1
-        ? filterElement.facets
-        : filterElement.facets.slice(0, filterElement.limitCount)
-    "
-  >
+  <ng-container *ngFor="let facet of getFacets()">
     <li class="filter-item filter-layer{{ facet.level }}" [ngClass]="{ 'filter-selected': facet.selected }">
       <div>
         <label class="filter-item-checkbox-label-native">

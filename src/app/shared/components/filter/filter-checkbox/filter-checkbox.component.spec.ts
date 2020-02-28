@@ -24,6 +24,7 @@ describe('Filter Checkbox Component', () => {
   beforeEach(() => {
     const filterElement = {
       name: 'Brands',
+      limitCount: -1,
       facets: [
         { name: 'AsusName', count: 4, displayName: 'Asus' },
         { name: 'LogitechName', count: 5, displayName: 'Logitech', selected: true },

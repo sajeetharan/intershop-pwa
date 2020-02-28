@@ -38,4 +38,19 @@ export class FilterCheckboxComponent {
   filter(facet: Facet) {
     this.applyFilter.emit({ searchParameter: facet.searchParameter });
   }
+
+  /**
+   * sort selected to top, increase limitCount to selectedCount on showLess
+   */
+  getFacets() {
+    const facets = [...this.filterElement.facets];
+
+    const selectedFacetsCount = facets.filter(x => x.selected).length;
+
+    return this.showAll || this.filterElement.limitCount === -1
+      ? facets
+      : facets
+          .sort((a, b) => (a.selected > b.selected ? -1 : a.selected < b.selected ? 1 : 0))
+          .slice(0, Math.max(this.filterElement.limitCount || 0, selectedFacetsCount));
+  }
 }

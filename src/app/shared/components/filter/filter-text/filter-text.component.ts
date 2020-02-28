@@ -50,4 +50,21 @@ export class FilterTextComponent implements OnInit {
   filter(facet: Facet) {
     this.applyFilter.emit({ searchParameter: facet.searchParameter });
   }
+
+  /**
+   * sort selected to top, increase limitCount to selectedCount on showLess
+   */
+  getFacets() {
+    const facets = [...this.facets];
+
+    if (this.showAll || this.maxLevel >= 1 || this.filterElement.limitCount === -1) {
+      return facets;
+    }
+
+    const selectedFacetsCount = facets.filter(x => x.selected).length;
+
+    return facets
+      .sort((a, b) => (a.selected > b.selected ? -1 : a.selected < b.selected ? 1 : 0))
+      .slice(0, Math.max(this.filterElement.limitCount || 0, selectedFacetsCount));
+  }
 }
