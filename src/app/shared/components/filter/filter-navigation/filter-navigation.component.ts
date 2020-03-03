@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
 import { FilterNavigation } from 'ish-core/models/filter-navigation/filter-navigation.model';
+import { whenTruthy } from 'ish-core/utils/operators';
 import { URLFormParams, formParamsToString } from 'ish-core/utils/url-form-params';
 
 @Component({
@@ -14,13 +16,19 @@ import { URLFormParams, formParamsToString } from 'ish-core/utils/url-form-param
 export class FilterNavigationComponent implements OnInit {
   @Input() fragmentOnRouting: string;
   @Input() orientation: 'sidebar' | 'horizontal' = 'sidebar';
+  @Input() showCategoryFilter = true;
 
   filter$: Observable<FilterNavigation>;
 
   constructor(private shoppingFacade: ShoppingFacade, private router: Router, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.filter$ = this.shoppingFacade.currentFilter$;
+    this.filter$ = this.shoppingFacade.currentFilter$.pipe(
+      whenTruthy(),
+      map(x =>
+        this.showCategoryFilter ? x : { ...x, filter: x.filter.filter(f => f.id !== 'CategoryUUIDLevelMulti') }
+      )
+    );
   }
 
   applyFilter(event: { searchParameter: URLFormParams }) {
