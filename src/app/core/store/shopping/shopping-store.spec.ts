@@ -772,6 +772,9 @@ describe('Shopping Store', () => {
             event: {"id":2,"url":"/category/A.123.456"}
           [ProductListing] Load More Products:
             id: {"type":"category","value":"A.123.456"}
+          @ngrx/router-store/navigated:
+            routerState: {"url":"/category/A.123.456","params":{"categoryUniqueId":"A...
+            event: {"id":2,"url":"/category/A.123.456"}
           [ProductListing Internal] Load More Products For Params:
             id: {"type":"category","value":"A.123.456"}
             filters: undefined
@@ -794,9 +797,6 @@ describe('Shopping Store', () => {
             sortKeys: []
           [Shopping] Load Filter Success:
             filterNavigation: {}
-          @ngrx/router-store/navigated:
-            routerState: {"url":"/category/A.123.456","params":{"categoryUniqueId":"A...
-            event: {"id":2,"url":"/category/A.123.456"}
         `);
       }));
 

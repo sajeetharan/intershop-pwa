@@ -147,6 +147,7 @@ describe('Product Listing Effects', () => {
           id: {"type":"search","value":"term","filters":{"param":[1],"sear...
           searchParameter: {"param":[1],"searchTerm":[1]}
           page: undefined
+          sorting: undefined
         [Shopping] Apply Filter:
           searchParameter: {"param":[1],"searchTerm":[1]}
       `);
@@ -179,6 +180,7 @@ describe('Product Listing Effects', () => {
           id: {"type":"category","value":"cat","filters":{"param":[1]}}
           searchParameter: {"param":[1]}
           page: undefined
+          sorting: undefined
         [Shopping] Apply Filter:
           searchParameter: {"param":[1]}
       `);

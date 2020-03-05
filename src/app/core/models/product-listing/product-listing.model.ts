@@ -5,6 +5,7 @@ export interface ProductListingID {
   value: string;
   sorting?: string;
   filters?: URLFormParams;
+  page?: number;
 }
 
 export interface ProductListingType {

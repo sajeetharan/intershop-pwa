@@ -58,14 +58,16 @@ export class FilterEffects {
   loadFilteredProducts$ = this.actions$.pipe(
     ofType<filterActions.LoadProductsForFilter>(filterActions.FilterActionTypes.LoadProductsForFilter),
     mapToPayload(),
-    switchMap(({ id, searchParameter, page }) =>
-      this.filterService.getFilteredProducts(searchParameter, page).pipe(
-        mergeMap(({ productSKUs, total }) => [
+    switchMap(({ id, searchParameter, page, sorting }) =>
+      this.filterService.getFilteredProducts(searchParameter, page, sorting).pipe(
+        mergeMap(({ productSKUs, total, sortKeys }) => [
           new SetProductListingPages(
             this.productListingMapper.createPages(productSKUs, id.type, id.value, {
               filters: id.filters,
               itemCount: total,
               startPage: page,
+              sortKeys,
+              sorting,
             })
           ),
         ]),

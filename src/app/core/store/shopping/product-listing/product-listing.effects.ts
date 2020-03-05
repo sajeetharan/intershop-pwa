@@ -23,6 +23,7 @@ import {
 import { LoadProductsForCategory, getProduct } from 'ish-core/store/shopping/products';
 import { SearchProducts } from 'ish-core/store/shopping/search';
 import { mapToPayload, whenFalsy, whenTruthy } from 'ish-core/utils/operators';
+import { stringToFormParams } from 'ish-core/utils/url-form-params';
 
 import * as actions from './product-listing.actions';
 import { getProductListingView, getProductListingViewType } from './product-listing.selectors';
@@ -69,14 +70,14 @@ export class ProductListingEffects {
         select(selectQueryParams),
         debounceTime(0),
         map(params => {
-          const filters = params.get('filters')
+          const filters = params.filters
             ? {
-                ...params.filters,
+                ...stringToFormParams(params.filters),
                 ...(id.type === 'search' ? { searchTerm: [id.value] } : {}),
               }
             : undefined;
 
-          const p = pageFromAction || +params.get('page') || undefined; // determine page
+          const p = pageFromAction || +params.page || undefined; // determine page
 
           pageFromAction = 0; // reset scope variable
 
@@ -99,15 +100,16 @@ export class ProductListingEffects {
     mapToPayload(),
     switchMap(({ id, sorting, page, filters }) =>
       this.store.pipe(
-        select(getProductListingView, { ...id, sorting, filters }),
+        select(getProductListingView, { ...id, sorting, page, filters }),
         map(view => ({ id, sorting, page, filters, viewAvailable: !view.empty() && view.productsOfPage(page).length }))
       )
     ),
     distinctUntilChanged((a, b) => isEqual({ ...a, viewAvailable: undefined }, { ...b, viewAvailable: undefined })),
     map(({ id, sorting, page, filters, viewAvailable }) => {
       if (viewAvailable) {
-        return new actions.SetProductListingPages({ id: { sorting, filters, ...id } });
+        return new actions.SetProductListingPages({ id: { page, sorting, filters, ...id } });
       }
+
       if (
         filters &&
         // TODO: work-around for different products/hits-result without filters
@@ -115,7 +117,7 @@ export class ProductListingEffects {
         // TODO: work-around for client side computation of master variations
         ['search', 'category'].includes(id.type)
       ) {
-        return new LoadProductsForFilter({ id: { ...id }, searchParameter: filters, page });
+        return new LoadProductsForFilter({ id: { ...id }, searchParameter: filters, page, sorting });
       } else {
         switch (id.type) {
           case 'category':

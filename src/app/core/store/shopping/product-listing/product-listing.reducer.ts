@@ -10,7 +10,7 @@ import { formParamsToString } from 'ish-core/utils/url-form-params';
 import { ProductListingAction, ProductListingActionTypes } from './product-listing.actions';
 
 export function serializeProductListingID(id: ProductListingID) {
-  return `${id.type}@${id.value}@${formParamsToString(id.filters) || id.sorting}`;
+  return `${id.type}@${id.value}@${formParamsToString(id.filters)}@${id.sorting}`;
 }
 
 export const adapter = createEntityAdapter<ProductListingType>({

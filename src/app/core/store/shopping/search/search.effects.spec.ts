@@ -232,13 +232,14 @@ describe('Search Effects', () => {
       const searchTerm = '123';
       router.navigate(['search', searchTerm]);
       tick(500);
-
       verify(productsServiceMock.searchProducts(searchTerm, 1, anything())).once();
 
       store$.dispatch(new LoadMoreProducts({ id: { type: 'search', value: searchTerm }, page: 2 }));
+      tick(0);
       verify(productsServiceMock.searchProducts(searchTerm, 2, anything())).once();
 
       store$.dispatch(new LoadMoreProducts({ id: { type: 'search', value: searchTerm }, page: 3 }));
+      tick(0);
       verify(productsServiceMock.searchProducts(searchTerm, 3, anything())).once();
     }));
   });
