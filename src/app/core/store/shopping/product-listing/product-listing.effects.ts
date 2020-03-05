@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { debounceTime, distinctUntilChanged, filter, map, mapTo, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, mapTo, mergeMap, switchMap, take } from 'rxjs/operators';
 
 import {
   DEFAULT_PRODUCT_LISTING_VIEW_TYPE,
@@ -63,8 +63,9 @@ export class ProductListingEffects {
   determineParams$ = this.actions$.pipe(
     ofType<actions.LoadMoreProducts>(actions.ProductListingActionTypes.LoadMoreProducts),
     mapToPayload(),
-    switchMap(({ id, page }) =>
-      this.store.pipe(
+    switchMap(({ id, page }) => {
+      let pageFromAction = page; // scope variable (reset after first usage)
+      return this.store.pipe(
         select(selectQueryParams),
         debounceTime(0),
         map(params => {
@@ -74,17 +75,21 @@ export class ProductListingEffects {
                 ...(id.type === 'search' ? { searchTerm: [id.value] } : {}),
               }
             : undefined;
+
+          const p = pageFromAction || +params.get('page') || undefined; // determine page
+
+          pageFromAction = 0; // reset scope variable
+
           return {
             id: { ...id, filters },
             sorting: params.sorting || undefined,
-            page: +params.page || page || undefined,
+            page: p > 1 ? p : undefined, // same content for 0, 1 & undefined
             filters,
           };
         })
-      )
-    ),
+      );
+    }),
     distinctUntilChanged(isEqual),
-    tap(x => console.log('determineParams', x)),
     map(({ id, filters, sorting, page }) => new actions.LoadMoreProductsForParams({ id, filters, sorting, page }))
   );
 
@@ -99,7 +104,6 @@ export class ProductListingEffects {
       )
     ),
     distinctUntilChanged((a, b) => isEqual({ ...a, viewAvailable: undefined }, { ...b, viewAvailable: undefined })),
-    tap(x => console.log('loadMoreProducts$', x)),
     map(({ id, sorting, page, filters, viewAvailable }) => {
       if (viewAvailable) {
         return new actions.SetProductListingPages({ id: { sorting, filters, ...id } });
@@ -111,7 +115,7 @@ export class ProductListingEffects {
         // TODO: work-around for client side computation of master variations
         ['search', 'category'].includes(id.type)
       ) {
-        return new LoadProductsForFilter({ id: { ...id }, searchParameter: filters });
+        return new LoadProductsForFilter({ id: { ...id }, searchParameter: filters, page });
       } else {
         switch (id.type) {
           case 'category':
