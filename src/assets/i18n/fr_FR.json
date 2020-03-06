@@ -2710,5 +2710,6 @@
   "checkout.sepa.bic.error.countryNotSupported": "Le BIC est associé à un pays qui n’est pas pris en charge.",
   "checkout.sepa.bic.error.length": "La longueur du BIC n’est pas valide.",
   "checkout.sepa.bic.error.invalid": "Le BIC n’est pas valide.",
-  "checkout.sepa.mandate.error.required": "Aucune autorisation n’a été donnée."
+  "checkout.sepa.mandate.error.required": "Aucune autorisation n’a été donnée.",
+  "search.noresult.filtered_products.message": "Nous sommes désolés, nous n’avons pu trouver aucun produit correspondant à votre choix de filtre."
 }

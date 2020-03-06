@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
 
 import { ProductItemComponent } from 'ish-shared/components/product/product-item/product-item.component';
@@ -13,6 +14,7 @@ describe('Product List Component', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [TranslateModule.forRoot()],
       declarations: [MockComponent(ProductItemComponent), ProductListComponent],
     }).compileComponents();
   }));

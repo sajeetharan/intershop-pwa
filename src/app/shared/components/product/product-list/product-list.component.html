@@ -1,4 +1,8 @@
 <div class="product-list row">
+  <div *ngIf="!products.length">
+    {{ 'search.noresult.filtered_products.message' | translate }}
+  </div>
+
   <ng-container *ngFor="let sku of products">
     <div *ngIf="isGrid" class="col-6 col-lg-4 product-list-item grid-view">
       <ish-product-item [configuration]="{ displayType: 'tile' }" [productSku]="sku" [category]="category">

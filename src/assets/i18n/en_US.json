@@ -2711,5 +2711,6 @@
   "checkout.sepa.bic.error.countryNotSupported": "The BIC is associated to a country which is not supported.",
   "checkout.sepa.bic.error.length": "The length of the BIC is invalid.",
   "checkout.sepa.bic.error.invalid": "The BIC is invalid.",
-  "checkout.sepa.mandate.error.required": "No consent has been given for authorisation."
+  "checkout.sepa.mandate.error.required": "No consent has been given for authorisation.",
+  "search.noresult.filtered_products.message": "We are sorry, we could not find any products that match your filter choice."
 }

@@ -2708,5 +2708,6 @@
   "checkout.sepa.bic.error.countryNotSupported": "Der BIC ist einem Land zugeordnet, das nicht unterstützt wird.",
   "checkout.sepa.bic.error.length": "Die Länge des BIC ist ungültig.",
   "checkout.sepa.bic.error.invalid": "Der BIC ist ungültig.",
-  "checkout.sepa.mandate.error.required": "Es wurde keine Zustimmung zur Genehmigung erteilt."
+  "checkout.sepa.mandate.error.required": "Es wurde keine Zustimmung zur Genehmigung erteilt.",
+  "search.noresult.filtered_products.message": "Leider konnten wir keine Produkte finden, die Ihrer Filterauswahl entsprechen."
 }
