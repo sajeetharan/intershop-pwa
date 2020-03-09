@@ -1,6 +1,15 @@
-<div class="product-list row">
+<div class="product-list row" style="position: relative;">
   <div *ngIf="!products.length">
-    {{ 'search.noresult.filtered_products.message' | translate }}
+    <ng-container *ngIf="!(listingLoading$ | async)">
+      {{ 'search.noresult.filtered_products.message' | translate }}
+    </ng-container>
+  </div>
+
+  <div
+    *ngIf="listingLoading$ | async"
+    style="position: absolute; top: 0; left: 50%; z-index: 1; transform: translateX(-50%);"
+  >
+    <ish-loading [standalone]="true"></ish-loading>
   </div>
 
   <ng-container *ngFor="let sku of products">
@@ -14,4 +23,8 @@
       </ish-product-item>
     </div>
   </ng-container>
+
+  <div *ngIf="listingLoading$ | async" class="col-12">
+    <ish-loading [standalone]="true"></ish-loading>
+  </div>
 </div>

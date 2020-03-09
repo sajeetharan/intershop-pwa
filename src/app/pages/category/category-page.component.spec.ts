@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Store, combineReducers } from '@ngrx/store';
@@ -6,7 +6,7 @@ import { MockComponent } from 'ng-mocks';
 
 import { Category } from 'ish-core/models/category/category.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoadCategory, LoadCategorySuccess } from 'ish-core/store/shopping/categories';
+import { LoadCategorySuccess } from 'ish-core/store/shopping/categories';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { findAllIshElements } from 'ish-core/utils/dev/html-query-utils';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
@@ -65,19 +65,6 @@ describe('Category Page Component', () => {
 
     expect(findAllIshElements(element)).toBeEmpty();
   });
-
-  it('should display loading when category is loading', fakeAsync(() => {
-    store$.dispatch(new LoadCategory({ categoryId: 'dummy' }));
-
-    fixture.detectChanges();
-
-    expect(findAllIshElements(element)).toBeEmpty();
-
-    tick(5000);
-    fixture.detectChanges();
-
-    expect(findAllIshElements(element)).toEqual(['ish-loading']);
-  }));
 
   it('should display categories when category has sub categories', done => {
     const category = { uniqueId: 'dummy', categoryPath: ['dummy'] } as Category;

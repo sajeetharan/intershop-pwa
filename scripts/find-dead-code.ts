@@ -1,7 +1,7 @@
 import { parse } from 'path';
 import { Node, Project, ReferenceFindableNode, SyntaxKind } from 'ts-morph';
 
-const classMethodCheckRegex = /.*(Mapper|Helper|Facade|Service|State)$/;
+const classMethodCheckRegex = /.*(Mapper|Helper|Service|State)$/;
 
 const project = new Project({ tsConfigFilePath: 'tsconfig.all.json' });
 
