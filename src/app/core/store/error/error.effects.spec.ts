@@ -9,7 +9,7 @@ import { HttpError } from 'ish-core/models/http-error/http-error.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { CommunicationTimeoutError } from './error.actions';
+import { TimeoutError } from './error.actions';
 import { ErrorEffects } from './error.effects';
 
 describe('Error Effects', () => {
@@ -37,7 +37,7 @@ describe('Error Effects', () => {
 
   describe('gotoErrorPageInCaseOfError$', () => {
     it('should call Router Navigation when Error is handled', fakeAsync(() => {
-      store$.dispatch(new CommunicationTimeoutError({ error: {} as HttpError }));
+      store$.dispatch(new TimeoutError({ error: {} as HttpError }));
 
       effects.gotoErrorPageInCaseOfError$.subscribe(noop, fail, fail);
 

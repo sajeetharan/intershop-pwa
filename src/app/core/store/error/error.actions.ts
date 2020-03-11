@@ -13,7 +13,7 @@ export class GeneralError implements Action {
   constructor(public payload: { error: HttpError }) {}
 }
 
-export class CommunicationTimeoutError implements Action {
+export class TimeoutError implements Action {
   readonly type = ErrorActionTypes.TimeoutError;
   constructor(public payload: { error: HttpError }) {}
 }
@@ -23,4 +23,4 @@ export class ServerError implements Action {
   constructor(public payload: { error: HttpError }) {}
 }
 
-export type HttpErrorAction = GeneralError | CommunicationTimeoutError | ServerError;
+export type HttpErrorAction = GeneralError | TimeoutError | ServerError;
