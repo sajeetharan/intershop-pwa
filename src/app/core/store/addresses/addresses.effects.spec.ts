@@ -10,7 +10,7 @@ import { Customer } from 'ish-core/models/customer/customer.model';
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 import { AddressService } from 'ish-core/services/address/address.service';
 import { checkoutReducers } from 'ish-core/store/checkout/checkout-store.module';
-import { SuccessMessage } from 'ish-core/store/messages';
+import { ToastMessage } from 'ish-core/store/messages';
 import { LoginUserSuccess, LogoutUser } from 'ish-core/store/user';
 import { userReducer } from 'ish-core/store/user/user.reducer';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
@@ -90,8 +90,9 @@ describe('Addresses Effects', () => {
       const address = { urn: '123' } as Address;
       const action = new addressesActions.CreateCustomerAddress({ address });
       const completion = new addressesActions.CreateCustomerAddressSuccess({ address: { urn: 'test' } as Address });
-      const completion2 = new SuccessMessage({
+      const completion2 = new ToastMessage({
         message: 'account.addresses.new_address_created.message',
+        messageType: 'success',
       });
 
       actions$ = hot('-a----a----a----|', { a: action });
@@ -131,8 +132,9 @@ describe('Addresses Effects', () => {
       const addressId = '123';
       const action = new addressesActions.DeleteCustomerAddress({ addressId });
       const completion = new addressesActions.DeleteCustomerAddressSuccess({ addressId });
-      const completion2 = new SuccessMessage({
+      const completion2 = new ToastMessage({
         message: 'account.addresses.new_address_deleted.message',
+        messageType: 'success',
       });
       actions$ = hot('-a----a----a----|', { a: action });
       const expected$ = cold('-(cd)-(cd)-(cd)-|', { c: completion, d: completion2 });

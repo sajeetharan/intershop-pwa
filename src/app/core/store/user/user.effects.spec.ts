@@ -21,7 +21,7 @@ import { PaymentService } from 'ish-core/services/payment/payment.service';
 import { PersonalizationService } from 'ish-core/services/personalization/personalization.service';
 import { UserService } from 'ish-core/services/user/user.service';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { SuccessMessage } from 'ish-core/store/messages';
+import { ToastMessage } from 'ish-core/store/messages';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import * as ua from './user.actions';
@@ -327,7 +327,7 @@ describe('User Effects', () => {
       // tslint:disable-next-line:ban-types
 
       const action = new ua.UpdateUserSuccess({ user: {} as User, successMessage: 'success' });
-      const completion = new SuccessMessage({ message: 'success' });
+      const completion = new ToastMessage({ message: 'success', messageType: 'success' });
 
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-b-b-b', { b: completion });
@@ -605,8 +605,9 @@ describe('User Effects', () => {
       const action = new ua.DeleteUserPaymentInstrument({ id: 'paymentInstrumentId' });
       const completion1 = new ua.DeleteUserPaymentInstrumentSuccess();
       const completion2 = new ua.LoadUserPaymentMethods();
-      const completion3 = new SuccessMessage({
+      const completion3 = new ToastMessage({
         message: 'account.payment.payment_deleted.message',
+        messageType: 'success',
       });
 
       actions$ = hot('-a', { a: action });

@@ -34,7 +34,7 @@ describe('Messages Effects', () => {
   });
 
   it('should call ToastrService when handling messages', done => {
-    actions$ = of(new messagesActions.SuccessMessage({ message: 'test' }));
+    actions$ = of(new messagesActions.ToastMessage({ message: 'test', messageType: 'success' }));
 
     effects.toast$.subscribe(() => {
       verify(toastrServiceMock.success(anything(), anything(), anything())).once();

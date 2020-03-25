@@ -4,11 +4,22 @@ import { Store, select } from '@ngrx/store';
 import { concatMap, filter, map, mapTo, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { AddressService } from 'ish-core/services/address/address.service';
-import { SuccessMessage } from 'ish-core/store/messages';
+import { ToastMessage } from 'ish-core/store/messages';
 import { UserActionTypes, getLoggedInCustomer } from 'ish-core/store/user';
 import { mapErrorToAction, mapToPayloadProperty } from 'ish-core/utils/operators';
 
-import * as addressActions from './addresses.actions';
+import {
+  AddressActionTypes,
+  CreateCustomerAddress,
+  CreateCustomerAddressFail,
+  CreateCustomerAddressSuccess,
+  DeleteCustomerAddress,
+  DeleteCustomerAddressFail,
+  DeleteCustomerAddressSuccess,
+  LoadAddressesFail,
+  LoadAddressesSuccess,
+  ResetAddresses,
+} from './addresses.actions';
 
 @Injectable()
 export class AddressesEffects {
@@ -16,12 +27,12 @@ export class AddressesEffects {
 
   @Effect()
   loadAddresses$ = this.actions$.pipe(
-    ofType(addressActions.AddressActionTypes.LoadAddresses),
+    ofType(AddressActionTypes.LoadAddresses),
     withLatestFrom(this.store.pipe(select(getLoggedInCustomer))),
     switchMap(([, customer]) =>
       this.addressService.getCustomerAddresses(customer.customerNo).pipe(
-        map(addresses => new addressActions.LoadAddressesSuccess({ addresses })),
-        mapErrorToAction(addressActions.LoadAddressesFail)
+        map(addresses => new LoadAddressesSuccess({ addresses })),
+        mapErrorToAction(LoadAddressesFail)
       )
     )
   );
@@ -31,19 +42,20 @@ export class AddressesEffects {
    */
   @Effect()
   createCustomerAddress$ = this.actions$.pipe(
-    ofType<addressActions.CreateCustomerAddress>(addressActions.AddressActionTypes.CreateCustomerAddress),
+    ofType<CreateCustomerAddress>(AddressActionTypes.CreateCustomerAddress),
     mapToPayloadProperty('address'),
     withLatestFrom(this.store.pipe(select(getLoggedInCustomer))),
     filter(([address, customer]) => !!address || !!customer),
     concatMap(([address, customer]) =>
       this.addressService.createCustomerAddress(customer.customerNo, address).pipe(
         mergeMap(newAddress => [
-          new addressActions.CreateCustomerAddressSuccess({ address: newAddress }),
-          new SuccessMessage({
+          new CreateCustomerAddressSuccess({ address: newAddress }),
+          new ToastMessage({
             message: 'account.addresses.new_address_created.message',
+            messageType: 'success',
           }),
         ]),
-        mapErrorToAction(addressActions.CreateCustomerAddressFail)
+        mapErrorToAction(CreateCustomerAddressFail)
       )
     )
   );
@@ -53,17 +65,17 @@ export class AddressesEffects {
    */
   @Effect()
   deleteCustomerAddress$ = this.actions$.pipe(
-    ofType<addressActions.DeleteCustomerAddress>(addressActions.AddressActionTypes.DeleteCustomerAddress),
+    ofType<DeleteCustomerAddress>(AddressActionTypes.DeleteCustomerAddress),
     mapToPayloadProperty('addressId'),
     withLatestFrom(this.store.pipe(select(getLoggedInCustomer))),
     filter(([addressId, customer]) => !!addressId || !!customer),
     mergeMap(([addressId, customer]) =>
       this.addressService.deleteCustomerAddress(customer.customerNo, addressId).pipe(
         mergeMap(id => [
-          new addressActions.DeleteCustomerAddressSuccess({ addressId: id }),
-          new SuccessMessage({ message: 'account.addresses.new_address_deleted.message' }),
+          new DeleteCustomerAddressSuccess({ addressId: id }),
+          new ToastMessage({ message: 'account.addresses.new_address_deleted.message', messageType: 'success' }),
         ]),
-        mapErrorToAction(addressActions.DeleteCustomerAddressFail)
+        mapErrorToAction(DeleteCustomerAddressFail)
       )
     )
   );
@@ -74,6 +86,6 @@ export class AddressesEffects {
   @Effect()
   resetAddressesAfterLogout$ = this.actions$.pipe(
     ofType(UserActionTypes.LogoutUser),
-    mapTo(new addressActions.ResetAddresses())
+    mapTo(new ResetAddresses())
   );
 }

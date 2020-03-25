@@ -25,34 +25,20 @@ export interface MessagesPayloadType {
    * in ms
    */
   duration?: number;
+
+  /**
+   * defines toast type
+   */
+  messageType?: 'info' | 'error' | 'warning' | 'success';
 }
 
 export enum MessagesActionTypes {
   ToastMessage = '[Message] Set Toast',
 }
 
-export class InfoMessage implements Action {
+export class ToastMessage implements Action {
   readonly type = MessagesActionTypes.ToastMessage;
-  readonly messageType = 'info';
   constructor(public payload: MessagesPayloadType) {}
 }
 
-export class ErrorMessage implements Action {
-  readonly type = MessagesActionTypes.ToastMessage;
-  readonly messageType = 'error';
-  constructor(public payload: MessagesPayloadType) {}
-}
-
-export class WarningMessage implements Action {
-  readonly type = MessagesActionTypes.ToastMessage;
-  readonly messageType = 'warning';
-  constructor(public payload: MessagesPayloadType) {}
-}
-
-export class SuccessMessage implements Action {
-  readonly type = MessagesActionTypes.ToastMessage;
-  readonly messageType = 'success';
-  constructor(public payload: MessagesPayloadType) {}
-}
-
-export type MessagesActions = InfoMessage | ErrorMessage | WarningMessage | SuccessMessage;
+export type MessagesActions = ToastMessage;

@@ -14,7 +14,7 @@ import { HttpError } from 'ish-core/models/http-error/http-error.model';
 import { checkoutReducers } from 'ish-core/store/checkout/checkout-store.module';
 import { ApplyConfiguration } from 'ish-core/store/configuration';
 import { configurationReducer } from 'ish-core/store/configuration/configuration.reducer';
-import { SuccessMessage } from 'ish-core/store/messages';
+import { ToastMessage } from 'ish-core/store/messages';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { LoginUserSuccess, LogoutUser } from 'ish-core/store/user';
 import { userReducer } from 'ish-core/store/user/user.reducer';
@@ -182,13 +182,14 @@ describe('Wishlist Effects', () => {
       });
     });
 
-    it('should map to actions of type CreateWishlistSuccess and SuccessMessage', () => {
+    it('should map to actions of type CreateWishlistSuccess and success ToastMessage', () => {
       const action = new CreateWishlist({ wishlist: createWishlistData });
       const completion1 = new CreateWishlistSuccess({
         wishlist: wishlistData[0],
       });
-      const completion2 = new SuccessMessage({
+      const completion2 = new ToastMessage({
         message: 'account.wishlists.new_wishlist.confirmation',
+        messageType: 'success',
         messageParams: { 0: createWishlistData.title },
       });
       actions$ = hot('-a----a----a', { a: action });
@@ -246,8 +247,9 @@ describe('Wishlist Effects', () => {
     it('should map to actions of type DeleteWishlistSuccess', () => {
       const action = new DeleteWishlist({ wishlistId: id });
       const completion1 = new DeleteWishlistSuccess({ wishlistId: id });
-      const completion2 = new SuccessMessage({
+      const completion2 = new ToastMessage({
         message: 'account.wishlists.delete_wishlist.confirmation',
+        messageType: 'success',
         messageParams: { 0: wishlists[0].title },
       });
       actions$ = hot('-a----a----a', { a: action });
@@ -297,8 +299,9 @@ describe('Wishlist Effects', () => {
     it('should map to actions of type UpdateWishlistSuccess', () => {
       const action = new UpdateWishlist({ wishlist: wishlistDetailData[0] });
       const completion1 = new UpdateWishlistSuccess({ wishlist: wishlistDetailData[0] });
-      const completion2 = new SuccessMessage({
+      const completion2 = new ToastMessage({
         message: 'account.wishlists.edit_wishlist.confirmation',
+        messageType: 'success',
         messageParams: { 0: wishlistDetailData[0].title },
       });
       actions$ = hot('-a----a----a', { a: action });
