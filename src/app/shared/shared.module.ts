@@ -20,6 +20,7 @@ import { IconModule } from 'ish-core/icon.module';
 import { PipesModule } from 'ish-core/pipes.module';
 import { ShellModule } from 'ish-shell/shell.module';
 
+import { OrderTemplatesExportsModule } from '../extensions/order-templates/exports/order-templates-exports.module';
 import { QuotingExportsModule } from '../extensions/quoting/exports/quoting-exports.module';
 import { WishlistsExportsModule } from '../extensions/wishlists/exports/wishlists-exports.module';
 
@@ -215,9 +216,9 @@ const exportedComponents = [
 ];
 
 @NgModule({
-  imports: [...importExportModules],
+  imports: [...importExportModules, OrderTemplatesExportsModule],
   declarations: [...declaredComponents, ...exportedComponents],
-  exports: [...exportedComponents, ...importExportModules],
+  exports: [...exportedComponents, ...importExportModules, OrderTemplatesExportsModule],
   entryComponents: [
     CMSCarouselComponent,
     CMSContainerComponent,
