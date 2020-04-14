@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Store, select } from '@ngrx/store';
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -7,13 +8,21 @@ import { ContentPageletEntryPointMapper } from 'ish-core/models/content-pagelet-
 import { ContentPageletEntryPoint } from 'ish-core/models/content-pagelet-entry-point/content-pagelet-entry-point.model';
 import { ContentPagelet } from 'ish-core/models/content-pagelet/content-pagelet.model';
 import { ApiService } from 'ish-core/services/api/api.service';
+import { getPGID } from 'ish-core/store/user';
 
 /**
  * The CMS Service handles the interaction with the CMS API.
  */
 @Injectable({ providedIn: 'root' })
 export class CMSService {
-  constructor(private apiService: ApiService, private contentPageletEntryPointMapper: ContentPageletEntryPointMapper) {}
+  private pgid: string;
+  constructor(
+    private apiService: ApiService,
+    private contentPageletEntryPointMapper: ContentPageletEntryPointMapper,
+    store: Store<{}>
+  ) {
+    store.pipe(select(getPGID)).subscribe(pgid => (this.pgid = pgid));
+  }
 
   /**
    * Get the content for the given Content Include ID.
@@ -24,8 +33,8 @@ export class CMSService {
     if (!includeId) {
       return throwError('getContentInclude() called without an includeId');
     }
-
-    return this.apiService.get<ContentPageletEntryPointData>(`cms/includes/${includeId}`).pipe(
+    const pgidMatrixParam = this.pgid ? `;pgid=${this.pgid}` : '';
+    return this.apiService.get<ContentPageletEntryPointData>(`cms${pgidMatrixParam}/includes/${includeId}`).pipe(
       map(x => this.contentPageletEntryPointMapper.fromData(x)),
       map(({ pageletEntryPoint, pagelets }) => ({ include: pageletEntryPoint, pagelets }))
     );
@@ -40,8 +49,8 @@ export class CMSService {
     if (!pageId) {
       return throwError('getContentPage() called without an pageId');
     }
-
-    return this.apiService.get<ContentPageletEntryPointData>(`cms/pages/${pageId}`).pipe(
+    const pgidMatrixParam = this.pgid ? `;pgid=${this.pgid}` : '';
+    return this.apiService.get<ContentPageletEntryPointData>(`cms${pgidMatrixParam}/pages/${pageId}`).pipe(
       map(x => this.contentPageletEntryPointMapper.fromData(x)),
       map(({ pageletEntryPoint, pagelets }) => ({ page: pageletEntryPoint, pagelets }))
     );

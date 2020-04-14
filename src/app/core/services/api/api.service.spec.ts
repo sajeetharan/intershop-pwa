@@ -157,9 +157,7 @@ describe('Api Service', () => {
 
       it('should throw when asked for an unsupported method', () => {
         // tslint:disable-next-line:no-any
-        expect(() => constructUrlForPath('relative', 'HEAD' as any, BASE_URL, undefined, undefined)).toThrowError(
-          'unhandled'
-        );
+        expect(() => constructUrlForPath('relative', 'HEAD' as any, BASE_URL, undefined)).toThrowError('unhandled');
       });
 
       using(
@@ -198,9 +196,7 @@ describe('Api Service', () => {
           it(`should return '${slice.expected}' when constructing ${slice.method} request from '${slice.path}' ${
             slice.lang ? `with locale '${slice.lang.lang}'` : 'with no locale'
           }`, () => {
-            expect(constructUrlForPath(slice.path, slice.method, BASE_URL, slice.lang, undefined)).toEqual(
-              slice.expected
-            );
+            expect(constructUrlForPath(slice.path, slice.method, BASE_URL, slice.lang)).toEqual(slice.expected);
           });
         }
       );
