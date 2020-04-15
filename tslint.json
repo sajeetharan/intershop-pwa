@@ -156,7 +156,6 @@
     },
     "private-destroy-field": true,
     "ngrx-use-empty-store-type": true,
-    "ngrx-use-oftype-with-type": true,
     "ngrx-use-complex-type-with-action-payload": true,
     "semicolon": [true, "always"],
     "triple-equals": true,
