@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { FeatureToggleGuard } from 'ish-core/feature-toggle.module';
 import { SharedModule } from 'ish-shared/shared.module';
 
 import { AccountOverviewPageModule } from '../account-overview/account-overview-page.module';
@@ -59,10 +58,11 @@ const accountPageRoutes: Routes = [
       },
       {
         path: 'order-templates',
-        canActivate: [FeatureToggleGuard],
         data: { breadcrumbData: [{ key: 'account.ordertemplates.link' }] },
         loadChildren: () =>
-          import('../../extensions/order-templates/order-templates.module').then(m => m.OrderTemplatesModule),
+          import('../../extensions/order-templates/pages/order-templates-routing.module').then(
+            m => m.OrderTemplatesRoutingModule
+          ),
       },
     ],
   },

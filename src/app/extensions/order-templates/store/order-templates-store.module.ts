@@ -4,10 +4,14 @@ import { ActionReducerMap, ReducerManager, Store, combineReducers } from '@ngrx/
 import { take } from 'rxjs/operators';
 
 import { OrderTemplatesState } from './order-templates-store';
+import { OrderTemplateEffects } from './order-templates/order-template.effects';
+import { orderTemplateReducer } from './order-templates/order-template.reducer';
 
-export const orderTemplatesReducers: ActionReducerMap<OrderTemplatesState> = {};
+export const orderTemplatesReducers: ActionReducerMap<OrderTemplatesState> = {
+  orderTemplates: orderTemplateReducer,
+};
 
-export const orderTemplatesEffects = [];
+export const orderTemplatesEffects = [OrderTemplateEffects];
 
 const orderTemplatesFeature = 'orderTemplates';
 
