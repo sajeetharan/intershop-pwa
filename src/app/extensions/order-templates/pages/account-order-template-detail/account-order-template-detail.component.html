@@ -4,7 +4,7 @@
 <ng-container *ngIf="orderTemplate$ | async as orderTemplate">
   <a
     class="btn-tool float-right"
-    [title]="'account.wishlist.header.edit_wishlist.label' | translate"
+    [title]="'account.order_template.edit.heading' | translate"
     data-testing-id="order-template-details-edit"
     ><fa-icon icon="pencil-alt"></fa-icon
   ></a>
@@ -38,12 +38,12 @@
   <ng-template #noItems>
     <p>{{ 'account.wishlist.no_entries' | translate }}</p>
   </ng-template>
-  <!--
+
   <ish-order-template-preferences-dialog
     #editOrderTemplateDialog
     [orderTemplate]="orderTemplate"
     (submit)="editPreferences($event, orderTemplate.id)"
-  ></ish-order-template-preferences-dialog> -->
+  ></ish-order-template-preferences-dialog>
 </ng-container>
 
 <a routerLink="/account/wishlists">{{ 'account.wishlist.searchform.return.link' | translate }}</a>

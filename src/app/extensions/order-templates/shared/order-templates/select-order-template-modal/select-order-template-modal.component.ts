@@ -1,7 +1,26 @@
-import { SelectOption } from './../../../../../shared/forms/components/select/select.component';
-import { OrderTemplate } from './../../../models/order-templates/order-template.model';
-import { ChangeDetectionStrategy, Component, Input, EventEmitter, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+
 import { Product } from 'ish-core/models/product/product.model';
+import { SelectOption } from 'ish-shared/forms/components/select/select.component';
+import { markAsDirtyRecursive } from 'ish-shared/forms/utils/form-utils';
+
+import { OrderTemplatesFacade } from './../../../facades/order-templates.facade';
+import { OrderTemplate } from './../../../models/order-templates/order-template.model';
 
 @Component({
   selector: 'ish-select-order-template-modal',
@@ -40,31 +59,33 @@ export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
     private ngbModal: NgbModal,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private wishlistsFacade: WishlistsFacade
+    private orderTemplatesFacade: OrderTemplatesFacade
   ) {}
 
   ngOnInit() {
-    this.wishlistsFacade.preferredWishlist$.pipe(take(1)).subscribe(wishlist => (this.preferredWishlist = wishlist));
+    this.orderTemplatesFacade.preferredOrderTemplate$
+      .pipe(take(1))
+      .subscribe(orderTemplate => (this.preferredOrderTemplate = orderTemplate));
     this.determineSelectOptions();
     this.formInit();
-    this.wishlistsFacade.currentWishlist$
+    this.orderTemplatesFacade.currentOrderTemplate$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(wishlist => (this.idAfterCreate = wishlist && wishlist.id));
+      .subscribe(orderTemplate => (this.idAfterCreate = orderTemplate && orderTemplate.id));
 
     this.translate
-      .get('account.wishlists.choose_wishlist.new_wishlist_name.initial_value')
+      .get('account.order_template.new_order_template.text')
       .pipe(take(1))
       .subscribe(res => {
-        this.newWishlistInitValue = res;
+        this.newOrderTemplateInitValue = res;
         this.setDefaultFormValues();
       });
-    this.updateWishlistForm.valueChanges.subscribe(changes => {
-      if (changes.wishlist !== 'newList') {
-        this.updateWishlistForm.get('newWishlist').clearValidators();
+    this.updateOrderTemplateForm.valueChanges.subscribe(changes => {
+      if (changes.orderTemplate !== 'newTemplate') {
+        this.updateOrderTemplateForm.get('newOrderTemplate').clearValidators();
       } else {
-        this.updateWishlistForm.get('newWishlist').setValidators(Validators.required);
+        this.updateOrderTemplateForm.get('newOrderTemplate').setValidators(Validators.required);
       }
-      this.updateWishlistForm.get('newWishlist').updateValueAndValidity({ emitEvent: false });
+      this.updateOrderTemplateForm.get('newOrderTemplate').updateValueAndValidity({ emitEvent: false });
     });
   }
 
@@ -73,54 +94,58 @@ export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
   }
 
   private formInit() {
-    this.updateWishlistForm = this.fb.group({
-      wishlist: [
-        this.wishlistOptions && this.wishlistOptions.length > 0 ? this.wishlistOptions[0].value : 'newList',
+    this.updateOrderTemplateForm = this.fb.group({
+      orderTemplate: [
+        this.orderTemplateOptions && this.orderTemplateOptions.length > 0
+          ? this.orderTemplateOptions[0].value
+          : 'newTemplate',
         Validators.required,
       ],
-      newWishlist: [this.newWishlistInitValue, Validators.required],
+      newOrderTemplate: [this.newOrderTemplateInitValue, Validators.required],
     });
   }
 
   private determineSelectOptions() {
-    let currentWishlist: Wishlist;
-    this.wishlistsFacade.currentWishlist$.pipe(take(1)).subscribe(w => (currentWishlist = w));
-    this.wishlistsFacade.wishlists$.pipe(takeUntil(this.destroy$)).subscribe(wishlists => {
-      if (wishlists && wishlists.length > 0) {
-        this.wishlistOptions = wishlists.map(wishlist => ({
-          value: wishlist.id,
-          label: wishlist.title,
+    let currentOrderTemplate: OrderTemplate;
+    this.orderTemplatesFacade.currentOrderTemplate$.pipe(take(1)).subscribe(w => (currentOrderTemplate = w));
+    this.orderTemplatesFacade.orderTemplates$.pipe(takeUntil(this.destroy$)).subscribe(orderTemplates => {
+      if (orderTemplates && orderTemplates.length > 0) {
+        this.orderTemplateOptions = orderTemplates.map(orderTemplate => ({
+          value: orderTemplate.id,
+          label: orderTemplate.title,
         }));
-        if (this.addMoveProduct === 'move' && currentWishlist) {
-          this.wishlistOptions = this.wishlistOptions.filter(option => option.value !== currentWishlist.id);
+        if (this.addMoveProduct === 'move' && currentOrderTemplate) {
+          this.orderTemplateOptions = this.orderTemplateOptions.filter(
+            option => option.value !== currentOrderTemplate.id
+          );
         }
       } else {
-        this.wishlistOptions = [];
+        this.orderTemplateOptions = [];
       }
       this.setDefaultFormValues();
-      this.addProductToPreferredWishlist();
+      this.addProductToPreferredOrderTemplate();
     });
   }
 
   private setDefaultFormValues() {
-    if (this.showForm && !this.addProductToPreferredWishlist()) {
-      if (this.wishlistOptions && this.wishlistOptions.length > 0) {
-        if (this.preferredWishlist) {
-          this.updateWishlistForm.get('wishlist').setValue(this.preferredWishlist.id);
+    if (this.showForm && !this.addProductToPreferredOrderTemplate()) {
+      if (this.orderTemplateOptions && this.orderTemplateOptions.length > 0) {
+        if (this.preferredOrderTemplate) {
+          this.updateOrderTemplateForm.get('orderTemplate').setValue(this.preferredOrderTemplate.id);
         } else {
-          this.updateWishlistForm.get('wishlist').setValue(this.wishlistOptions[0].value);
+          this.updateOrderTemplateForm.get('orderTemplate').setValue(this.orderTemplateOptions[0].value);
         }
       } else {
-        this.updateWishlistForm.get('wishlist').setValue('newList');
+        this.updateOrderTemplateForm.get('orderTemplate').setValue('newTemplate');
       }
-      this.updateWishlistForm.get('newWishlist').setValue(this.newWishlistInitValue);
+      this.updateOrderTemplateForm.get('newOrderTemplate').setValue(this.newOrderTemplateInitValue);
     }
   }
 
-  /* don't show wishlist selection form but add a product immediately if there is a preferred wishlist */
-  private addProductToPreferredWishlist(): boolean {
-    if (this.showForm && this.preferredWishlist && this.addMoveProduct === 'add') {
-      this.updateWishlistForm.get('wishlist').setValue(this.preferredWishlist.id);
+  /* don't show order template selection form but add a product immediately if there is a preferred order template */
+  private addProductToPreferredOrderTemplate(): boolean {
+    if (this.showForm && this.preferredOrderTemplate && this.addMoveProduct === 'add') {
+      this.updateOrderTemplateForm.get('orderTemplate').setValue(this.preferredOrderTemplate.id);
       this.submitForm();
       return true;
     }
@@ -129,18 +154,18 @@ export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
 
   /** emit results when the form is valid */
   submitForm() {
-    if (this.updateWishlistForm.valid) {
-      const wishlistId = this.updateWishlistForm.get('wishlist').value;
+    if (this.updateOrderTemplateForm.valid) {
+      const orderTemplateId = this.updateOrderTemplateForm.get('orderTemplate').value;
       this.submitEmitter.emit({
-        id: wishlistId !== 'newList' ? wishlistId : undefined,
+        id: orderTemplateId !== 'newTemplate' ? orderTemplateId : undefined,
         title:
-          wishlistId !== 'newList'
-            ? this.wishlistOptions.find(option => option.value === wishlistId).label
-            : this.updateWishlistForm.get('newWishlist').value,
+          orderTemplateId !== 'newTemplate'
+            ? this.orderTemplateOptions.find(option => option.value === orderTemplateId).label
+            : this.updateOrderTemplateForm.get('newOrderTemplate').value,
       });
       this.showForm = false;
     } else {
-      markAsDirtyRecursive(this.updateWishlistForm);
+      markAsDirtyRecursive(this.updateOrderTemplateForm);
     }
   }
 
@@ -165,50 +190,50 @@ export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
     };
   }
 
-  /* *  returns the title of the selected wishlist */
-  get selectedWishlistTitle(): string {
-    const selectedValue = this.updateWishlistForm.get('wishlist').value;
-    if (selectedValue === 'newList') {
-      return this.updateWishlistForm.get('newWishlist').value;
+  /* *  returns the title of the selected order template */
+  get selectedOrderTemplateTitle(): string {
+    const selectedValue = this.updateOrderTemplateForm.get('orderTemplate').value;
+    if (selectedValue === 'newTemplate') {
+      return this.updateOrderTemplateForm.get('newOrderTemplate').value;
     } else {
-      return this.wishlistOptions.find(wishlist => wishlist.value === selectedValue).label;
+      return this.orderTemplateOptions.find(orderTemplate => orderTemplate.value === selectedValue).label;
     }
   }
 
-  /** returns the route to the selected wishlist */
-  get selectedWishlistRoute(): string {
-    const selectedValue = this.updateWishlistForm.get('wishlist').value;
-    if (selectedValue === 'newList') {
-      return `route://account/wishlists/${this.idAfterCreate}`;
+  /** returns the route to the selected order template */
+  get selectedOrderTemplateRoute(): string {
+    const selectedValue = this.updateOrderTemplateForm.get('orderTemplate').value;
+    if (selectedValue === 'newTemplate') {
+      return `route://account/order-templates/${this.idAfterCreate}`;
     } else {
-      return `route://account/wishlists/${selectedValue}`;
+      return `route://account/order-templates/${selectedValue}`;
     }
   }
 
-  /** activates the input field to create a new wishlist */
-  get newWishlistDisabled() {
-    const selectedWishlist = this.updateWishlistForm.get('wishlist').value;
-    return selectedWishlist !== 'newList';
+  /** activates the input field to create a new order template */
+  get newOrderTemplateDisabled() {
+    const selectedOrderTemplate = this.updateOrderTemplateForm.get('orderTemplate').value;
+    return selectedOrderTemplate !== 'newTemplate';
   }
 
   /** translation key for the modal header */
   get headerTranslationKey() {
     return this.addMoveProduct === 'add'
-      ? 'product.add_to_wishlist.link'
-      : 'account.wishlist.table.options.move_to_another_wishlist';
+      ? 'account.order_template.add_to_template.button.add_to_template.label'
+      : 'account.order_template.table.options.move_to_template';
   }
 
   /** translation key for the submit button */
   get submitButtonTranslationKey() {
     return this.addMoveProduct === 'add'
-      ? 'account.wishlists.add_to_wishlist.add_button.text'
-      : 'account.wishlists.move_wishlist_item.move_button.text';
+      ? 'account.order_template.add_to_template.button.add_to_template.label'
+      : 'account.order_template.table.options.move_to_template';
   }
 
   /** translation key for the success text */
   get successTranslationKey() {
     return this.addMoveProduct === 'add'
-      ? 'account.wishlists.add_to_wishlist.confirmation'
-      : 'account.wishlists.move_wishlist_item.confirmation';
+      ? 'account.order_template.added.confirmation'
+      : 'account.order_template.move.added.text';
   }
 }

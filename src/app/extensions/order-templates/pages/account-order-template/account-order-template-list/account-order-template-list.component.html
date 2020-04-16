@@ -11,7 +11,7 @@
 </ng-template>
 <ng-template #orderTemplateRow let-orderTemplate="orderTemplate">
   <div *ngIf="orderTemplate" class="list-item-row row mx-0" data-testing-id="order-template-list-item-container">
-    <div class="col-7 list-item" data-testing-id="order-template-list-item">
+    <div class="col-5 list-item" data-testing-id="order-template-list-item">
       <a [routerLink]="'/account/order-templates/' + orderTemplate.id" data-testing-id="order-template-list-title">{{
         orderTemplate.title
       }}</a
@@ -19,13 +19,19 @@
         'account.wishlists.table.preferred' | translate
       }}</span>
     </div>
+    <div class="col-3 list-item">{{ orderTemplate.creationDate | date: 'LLL-dd-yyyy' }}</div>
     <div class="col-2 list-item">
-      {{
-        orderTemplate.itemsCount
-          | i18nPlural: ('account.order_template.widget.link.items' | translate) || { other: '#' }
-      }}
+      {{ orderTemplate.itemsCount | i18nPlural: ('account.wishlists.items' | translate) || { other: '#' } }}
     </div>
-    <div class="col-3 list-item text-right">
+    <div class="col-2 list-item text-right">
+      <a
+        class="btn-tool"
+        [title]="'account.order_template.edit.heading' | translate"
+        data-testing-id="order-template-details-edit"
+        [routerLink]="'/account/order-templates/' + orderTemplate.id"
+        data-testing-id="order-template-list-title"
+        ><fa-icon icon="pencil-alt"></fa-icon
+      ></a>
       <a
         class="btn-tool"
         title="{{ 'account.order_template.list.link.remove' | translate }}"
