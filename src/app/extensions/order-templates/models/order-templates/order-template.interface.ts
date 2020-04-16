@@ -8,4 +8,5 @@ export interface OrderTemplateData extends OrderTemplateHeader {
   public?: boolean;
   name?: string;
   uri?: string;
+  creationDate?: Date;
 }

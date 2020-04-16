@@ -9,7 +9,7 @@ import { OrderTemplatesStoreModule } from './store/order-templates-store.module'
 @NgModule({
   imports: [OrderTemplatesStoreModule, SharedModule],
   declarations: [OrderTemplatePreferencesDialogComponent, SelectOrderTemplateModalComponent],
-  exports: [SharedModule],
+  exports: [OrderTemplatePreferencesDialogComponent, SelectOrderTemplateModalComponent],
   entryComponents: [],
 })
 export class OrderTemplatesModule {}

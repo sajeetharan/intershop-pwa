@@ -6,6 +6,8 @@ import { ModalDialogComponent } from 'ish-shared/components/common/modal-dialog/
 
 import { OrderTemplate } from '../../../models/order-templates/order-template.model';
 
+import { ShoppingFacade } from './../../../../../core/facades/shopping.facade';
+
 @Component({
   selector: 'ish-account-order-template-list',
   templateUrl: './account-order-template-list.component.html',
@@ -25,7 +27,7 @@ export class AccountOrderTemplateListComponent implements OnChanges {
   deleteHeader: string;
   preferredOrderTemplate: OrderTemplate;
 
-  constructor(private translate: TranslateService) {}
+  constructor(private translate: TranslateService, private productFacade: ShoppingFacade) {}
 
   ngOnChanges() {
     // determine preferred order template
@@ -34,6 +36,8 @@ export class AccountOrderTemplateListComponent implements OnChanges {
         ? this.orderTemplates.find(orderTemplates => orderTemplates.preferred)
         : undefined;
   }
+
+  addTemplateToCart() {}
 
   /** Emits the id of the order template to delete. */
   delete(orderTemplateId: string) {

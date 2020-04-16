@@ -27,7 +27,7 @@ export class OrderTemplatesFacade {
 
   orderTemplates$: Observable<OrderTemplate[]> = this.store.pipe(select(getAllOrderTemplates));
   currentOrderTemplate$: Observable<OrderTemplate> = this.store.pipe(select(getSelectedOrderTemplateDetails));
-  preferredOrderTemplatet$: Observable<OrderTemplate> = this.store.pipe(select(getPreferredOrderTemplate));
+  preferredOrderTemplate$: Observable<OrderTemplate> = this.store.pipe(select(getPreferredOrderTemplate));
   orderTemplateLoading$: Observable<boolean> = this.store.pipe(select(getOrderTemplateLoading));
   orderTemplateError$: Observable<HttpError> = this.store.pipe(select(getOrderTemplateError));
 

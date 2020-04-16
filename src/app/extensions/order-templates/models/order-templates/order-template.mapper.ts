@@ -45,6 +45,7 @@ export class OrderTemplateMapper {
         itemsCount: orderTemplateData.itemsCount || 0,
         preferred: orderTemplateData.preferred,
         public: orderTemplateData.public,
+        creationDate: orderTemplateData.creationDate,
         items,
       };
     } else {
@@ -59,6 +60,7 @@ export class OrderTemplateMapper {
         title: orderTemplate.title,
         preferred: orderTemplate.preferred,
         public: orderTemplate.public,
+        creationDate: orderTemplate.creationDate,
       };
     }
   }

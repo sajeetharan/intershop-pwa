@@ -7,6 +7,7 @@ export interface OrderTemplate extends OrderTemplateHeader {
   items?: OrderTemplateItem[];
   itemsCount?: number;
   public?: boolean;
+  creationDate?: Date;
 }
 
 export interface OrderTemplateItem {
