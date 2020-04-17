@@ -142,12 +142,17 @@ export class OrderTemplateEffects {
         .createOrderTemplate({
           title: payload.title,
           preferred: false,
+          type: 'OrderTemplate',
         })
         .pipe(
           // use created order template data to dispatch addProduct action
           mergeMap(orderTemplate => [
             new orderTemplateActions.CreateOrderTemplateSuccess({ orderTemplate }),
-            new orderTemplateActions.AddProductToOrderTemplate({ orderTemplateId: orderTemplate.id, sku: payload.sku }),
+            new orderTemplateActions.AddProductToOrderTemplate({
+              orderTemplateId: orderTemplate.id,
+              sku: payload.sku,
+              quantity: payload.quantity,
+            }),
             new orderTemplateActions.SelectOrderTemplate({ id: orderTemplate.id }),
           ]),
           mapErrorToAction(orderTemplateActions.CreateOrderTemplateFail)

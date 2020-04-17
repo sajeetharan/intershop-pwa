@@ -22,28 +22,6 @@
           }"
           data-testing-id="order-template-dialog-name"
         ></ish-input>
-        <div class="offset-md-4 col row">
-          <div class="d-flex align-items-center">
-            <ish-checkbox
-              [form]="orderTemplateForm"
-              controlName="preferred"
-              label="account.wishlists.wishlist_form.preferred.label"
-              data-testing-id="order-template-dialog-preferred"
-            ></ish-checkbox>
-            <ng-template #preferredDetails>
-              <span innerHTML="{{ 'account.wishlists.wishlist_form.preferred.tooltip.content' | translate }}"></span>
-            </ng-template>
-
-            <a
-              [ngbPopover]="preferredDetails"
-              class="details-tooltip"
-              placement="top"
-              popoverTitle="{{ 'account.wishlists.wishlist_form.preferred.tooltip.headline' | translate }}"
-              >{{ 'account.wishlists.wishlist_form.preferred.tooltip.linktext' | translate }}
-              <fa-icon [icon]="['fas', 'info-circle']"></fa-icon
-            ></a>
-          </div>
-        </div>
       </div>
     </form>
     <div class="modal-footer">

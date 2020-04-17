@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -26,6 +27,7 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
 
   ngOnInit() {
     this.initForm();
+    this.updateQuantities();
   }
 
   ngOnChanges(s: SimpleChanges) {
@@ -34,10 +36,16 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
     }
   }
 
+  updateQuantities() {
+    this.addToCartForm.valueChanges.subscribe(val =>
+      this.updateProductQuantity(this.orderTemplateItemData.sku, val.quantity)
+    );
+  }
+
   /** init form in the beginning */
   private initForm() {
     this.addToCartForm = new FormGroup({
-      quantity: new FormControl(1),
+      quantity: new FormControl(this.orderTemplateItemData.desiredQuantity.value),
     });
   }
 
@@ -55,6 +63,10 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
         sku
       );
     }
+  }
+
+  updateProductQuantity(sku: string, quantity: number) {
+    this.orderTemplatesFacade.updateOrderTemplate({ update });
   }
 
   removeProductFromOrderTemplate(sku: string) {

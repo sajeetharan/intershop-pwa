@@ -114,7 +114,7 @@ export class AddProductToOrderTemplateFail implements Action {
 
 export class AddProductToNewOrderTemplate implements Action {
   readonly type = OrderTemplatesActionTypes.AddProductToNewOrderTemplate;
-  constructor(public payload: { title: string; sku: string }) {}
+  constructor(public payload: { title: string; sku: string; quantity?: number }) {}
 }
 
 export class MoveItemToOrderTemplate implements Action {
