@@ -13,7 +13,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { markAsDirtyRecursive } from 'ish-shared/forms/utils/form-utils';
 
-import { OrderTemplate } from './../../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../../models/order-templates/order-template.model';
 
 @Component({
   selector: 'ish-order-template-preferences-dialog',
@@ -84,6 +84,7 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges {
         preferred: this.orderTemplateForm.get('preferred').value,
         title: this.orderTemplateForm.get('title').value,
         public: false,
+        type: 'OrderTemplate',
       });
 
       this.hide();

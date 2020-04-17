@@ -43,8 +43,8 @@ export class OrderTemplatesFacade {
     this.store.dispatch(new UpdateOrderTemplate({ orderTemplate }));
   }
 
-  addProductToNewOrderTemplate(title: string, sku: string): void {
-    this.store.dispatch(new AddProductToNewOrderTemplate({ title, sku }));
+  addProductToNewOrderTemplate(title: string, sku: string, quantity?: number): void {
+    this.store.dispatch(new AddProductToNewOrderTemplate({ title, sku, quantity }));
   }
 
   addProductToOrderTemplate(orderTemplateId: string, sku: string, quantity?: number): void {

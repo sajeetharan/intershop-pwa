@@ -35,12 +35,14 @@ describe('Order Template Service', () => {
       expect(data).toMatchInlineSnapshot(`
         Array [
           Object {
+            "creationDate": undefined,
             "id": "1234",
             "items": Array [],
             "itemsCount": 0,
             "preferred": true,
             "public": undefined,
             "title": undefined,
+            "type": undefined,
           },
         ]
       `);

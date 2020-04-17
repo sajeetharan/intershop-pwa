@@ -3,6 +3,8 @@ import { ReactiveComponentLoaderModule } from '@wishtack/reactive-component-load
 
 import { FeatureToggleModule } from 'ish-core/feature-toggle.module';
 
+import { LazyProductAddToOrderTemplateComponent } from './products/lazy-product-add-to-order-template/lazy-product-add-to-order-template.component';
+
 @NgModule({
   imports: [
     FeatureToggleModule,
@@ -11,7 +13,7 @@ import { FeatureToggleModule } from 'ish-core/feature-toggle.module';
       loadChildren: '../order-templates.module#OrderTemplatesModule',
     }),
   ],
-  declarations: [],
-  exports: [],
+  declarations: [LazyProductAddToOrderTemplateComponent],
+  exports: [LazyProductAddToOrderTemplateComponent],
 })
 export class OrderTemplatesExportsModule {}

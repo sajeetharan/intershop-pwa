@@ -82,7 +82,7 @@
         <span
           [ishServerHtml]="
             successTranslationKey
-              | translate: { '0': product.name, '1': selectedOrderTemplateRoute, '2': selectedOrderTemplateTitle }
+              | translate: { '0': product.name, '1': selectedOrderTemplateTitle, '2': selectedOrderTemplateRoute }
           "
           [callbacks]="{ callbackHideDialogModal: callbackHideDialogModal }"
           data-testing-id="order-template-success-link"

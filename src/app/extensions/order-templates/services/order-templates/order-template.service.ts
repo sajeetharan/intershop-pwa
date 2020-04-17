@@ -6,7 +6,6 @@ import { ApiService, unpackEnvelope } from 'ish-core/services/api/api.service';
 
 import { OrderTemplateData } from '../../models/order-templates/order-template.interface';
 import { OrderTemplateMapper } from '../../models/order-templates/order-template.mapper';
-
 import { OrderTemplate, OrderTemplateHeader } from '../../models/order-templates/order-template.model';
 
 @Injectable({ providedIn: 'root' })
@@ -85,7 +84,7 @@ export class OrderTemplateService {
    * @param quantity      The product quantity (default = 1).
    * @returns             The changed order template.
    */
-  addProductToOrderTemplate(orderTemplateId: string, sku: string, quantity = 1): Observable<OrderTemplate> {
+  addProductToOrderTemplate(orderTemplateId: string, sku: string, quantity: number): Observable<OrderTemplate> {
     if (!orderTemplateId) {
       return throwError('addProductToOrderTemplate() called without orderTemplateId');
     }
@@ -93,7 +92,7 @@ export class OrderTemplateService {
       return throwError('addProductToOrderTemplate() called without sku');
     }
     return this.apiService
-      .post(`customers/-/wishlists/${orderTemplateId}/products/${sku}`, { quantity })
+      .post(`customers/-/wishlists/${orderTemplateId}/products/${sku}?quantity=${quantity}`)
       .pipe(concatMap(() => this.getOrderTemplate(orderTemplateId)));
   }
 

@@ -19,11 +19,19 @@
         'account.wishlists.table.preferred' | translate
       }}</span>
     </div>
-    <div class="col-3 list-item">{{ orderTemplate.creationDate | date: 'LLL-dd-yyyy' }}</div>
+    <div class="col-3 list-item d-none d-md-block">{{ orderTemplate.creationDate | date: 'LLL-dd-yyyy' }}</div>
     <div class="col-2 list-item">
       {{ orderTemplate.itemsCount | i18nPlural: ('account.wishlists.items' | translate) || { other: '#' } }}
     </div>
-    <div class="col-2 list-item text-right">
+    <div class="col-5 col-md-2 list-item text-right">
+      <a class="btn-tool d-inline-flex align-top">
+        <ish-product-add-to-basket
+          displayType="icon"
+          [products]="orderTemplate.items"
+          class="text-primary p-0"
+          (productToBasket)="addTemplateToCart(orderTemplate.id)"
+        ></ish-product-add-to-basket>
+      </a>
       <a
         class="btn-tool"
         [title]="'account.order_template.edit.heading' | translate"
