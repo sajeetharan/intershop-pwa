@@ -46,7 +46,6 @@ export class OrderTemplateMapper {
         preferred: orderTemplateData.preferred,
         public: orderTemplateData.public,
         creationDate: orderTemplateData.creationDate,
-        type: orderTemplateData.type,
         items,
       };
     } else {
@@ -62,7 +61,6 @@ export class OrderTemplateMapper {
         preferred: orderTemplate.preferred,
         public: orderTemplate.public,
         creationDate: orderTemplate.creationDate,
-        type: orderTemplate.type,
       };
     }
   }
@@ -74,7 +72,6 @@ export class OrderTemplateMapper {
         id: OrderTemplateMapper.parseIDfromURI(orderTemplateData.uri),
         title: orderTemplateData.title,
         preferred: orderTemplateData.preferred,
-        type: orderTemplateData.type,
       };
     }
   }

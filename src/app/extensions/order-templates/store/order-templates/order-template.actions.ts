@@ -119,7 +119,9 @@ export class AddProductToNewOrderTemplate implements Action {
 
 export class MoveItemToOrderTemplate implements Action {
   readonly type = OrderTemplatesActionTypes.MoveItemToOrderTemplate;
-  constructor(public payload: { source: { id: string }; target: { id?: string; title?: string; sku: string } }) {}
+  constructor(
+    public payload: { source: { id: string }; target: { id?: string; title?: string; sku: string; quantity: number } }
+  ) {}
 }
 
 export class RemoveItemFromOrderTemplate implements Action {

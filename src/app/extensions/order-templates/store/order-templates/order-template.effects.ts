@@ -142,7 +142,6 @@ export class OrderTemplateEffects {
         .createOrderTemplate({
           title: payload.title,
           preferred: false,
-          type: 'OrderTemplate',
         })
         .pipe(
           // use created order template data to dispatch addProduct action
@@ -172,6 +171,7 @@ export class OrderTemplateEffects {
           new orderTemplateActions.AddProductToNewOrderTemplate({
             title: payload.target.title,
             sku: payload.target.sku,
+            quantity: payload.target.quantity,
           }),
           new orderTemplateActions.RemoveItemFromOrderTemplate({
             orderTemplateId: payload.source.id,
@@ -183,6 +183,7 @@ export class OrderTemplateEffects {
           new orderTemplateActions.AddProductToOrderTemplate({
             orderTemplateId: payload.target.id,
             sku: payload.target.sku,
+            quantity: payload.target.quantity,
           }),
           new orderTemplateActions.RemoveItemFromOrderTemplate({
             orderTemplateId: payload.source.id,
@@ -237,7 +238,7 @@ export class OrderTemplateEffects {
   );
 
   @Effect()
-  setOrderTemplatetBreadcrumb$ = this.actions$.pipe(
+  setOrderTemplateBreadcrumb$ = this.actions$.pipe(
     ofRoute(),
     mapToParam('orderTemplateName'),
     whenTruthy(),

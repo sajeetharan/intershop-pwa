@@ -1,4 +1,24 @@
+import { DatePipe } from '@angular/common';
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { TranslateModule } from '@ngx-translate/core';
+import { MockComponent, MockPipe } from 'ng-mocks';
+
+import { ProductRoutePipe } from 'ish-core/routing/product/product-route.pipe';
+import { coreReducers } from 'ish-core/store/core-store.module';
+import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
+import { ProductAddToBasketComponent } from 'ish-shared/components/product/product-add-to-basket/product-add-to-basket.component';
+import { ProductBundleDisplayComponent } from 'ish-shared/components/product/product-bundle-display/product-bundle-display.component';
+import { ProductIdComponent } from 'ish-shared/components/product/product-id/product-id.component';
+import { ProductPriceComponent } from 'ish-shared/components/product/product-price/product-price.component';
+import { ProductQuantityComponent } from 'ish-shared/components/product/product-quantity/product-quantity.component';
+import { ProductVariationDisplayComponent } from 'ish-shared/components/product/product-variation-display/product-variation-display.component';
+import { InputComponent } from 'ish-shared/forms/components/input/input.component';
+import { ProductImageComponent } from 'ish-shell/header/product-image/product-image.component';
+
+import { SelectOrderTemplateModalComponent } from '../../../shared/order-templates/select-order-template-modal/select-order-template-modal.component';
 
 import { AccountOrderTemplateDetailLineItemComponent } from './account-order-template-detail-line-item.component';
 
@@ -9,7 +29,29 @@ describe('Account Order Template Detail Line Item Component', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [AccountOrderTemplateDetailLineItemComponent],
+      declarations: [
+        AccountOrderTemplateDetailLineItemComponent,
+        MockComponent(FaIconComponent),
+        MockComponent(InputComponent),
+        MockComponent(ProductAddToBasketComponent),
+        MockComponent(ProductBundleDisplayComponent),
+        MockComponent(ProductIdComponent),
+        MockComponent(ProductImageComponent),
+        MockComponent(ProductPriceComponent),
+        MockComponent(ProductQuantityComponent),
+        MockComponent(ProductVariationDisplayComponent),
+        MockComponent(SelectOrderTemplateModalComponent),
+        MockPipe(DatePipe),
+        MockPipe(ProductRoutePipe),
+      ],
+      imports: [
+        ReactiveFormsModule,
+        RouterTestingModule,
+        TranslateModule.forRoot(),
+        ngrxTesting({
+          reducers: coreReducers,
+        }),
+      ],
     }).compileComponents();
   }));
 

@@ -46,7 +46,6 @@ describe('Order Template Mapper', () => {
       expect(mapped).toHaveProperty('items', [
         { sku: '123456', id: 'orderTemplateItemId', creationDate: 12345818123, desiredQuantity: { value: 2 } },
       ]);
-      expect(mapped).not.toHaveProperty('creationDate');
     });
   });
 
