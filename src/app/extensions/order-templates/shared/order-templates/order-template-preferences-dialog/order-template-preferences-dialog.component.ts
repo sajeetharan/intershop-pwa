@@ -84,7 +84,6 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges {
         preferred: this.orderTemplateForm.get('preferred').value,
         title: this.orderTemplateForm.get('title').value,
         public: false,
-        type: 'OrderTemplate',
       });
 
       this.hide();

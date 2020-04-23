@@ -1,336 +1,336 @@
-// import { TestBed } from '@angular/core/testing';
-// import { combineReducers } from '@ngrx/store';
-
-// import { HttpError } from 'ish-core/models/http-error/http-error.model';
-// import { coreReducers } from 'ish-core/store/core-store.module';
-// import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
-
-// import { wishlistsReducers } from '../wishlists-store.module';
-
-// import {
-//   CreateWishlist,
-//   CreateWishlistFail,
-//   CreateWishlistSuccess,
-//   DeleteWishlist,
-//   DeleteWishlistFail,
-//   DeleteWishlistSuccess,
-//   LoadWishlists,
-//   LoadWishlistsFail,
-//   LoadWishlistsSuccess,
-//   SelectWishlist,
-//   UpdateWishlist,
-//   UpdateWishlistFail,
-//   UpdateWishlistSuccess,
-// } from './wishlist.actions';
-// import {
-//   getAllWishlists,
-//   getPreferredWishlist,
-//   getSelectedWishlistDetails,
-//   getSelectedWishlistId,
-//   getWishlistDetails,
-//   getWishlistsError,
-//   getWishlistsLoading,
-// } from './wishlist.selectors';
-
-// describe('Wishlist Selectors', () => {
-//   let store$: TestStore;
-
-//   beforeEach(() => {
-//     TestBed.configureTestingModule({
-//       imports: ngrxTesting({
-//         reducers: {
-//           ...coreReducers,
-//           wishlists: combineReducers(wishlistsReducers),
-//         },
-//       }),
-//     });
-
-//     store$ = TestBed.get(TestStore);
-//   });
-
-//   const wishlists = [
-//     {
-//       title: 'testing wishlist',
-//       type: 'WishList',
-//       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
-//       itemsCount: 0,
-//       preferred: true,
-//       public: false,
-//     },
-//     {
-//       title: 'testing wishlist 2',
-//       type: 'WishList',
-//       id: '.AsdHS18FIAAAFuNiUBWx0d',
-//       itemsCount: 0,
-//       preferred: false,
-//       public: false,
-//     },
-//   ];
-
-//   describe('initial state', () => {
-//     it('should not be loading when in initial state', () => {
-//       expect(getWishlistsLoading(store$.state)).toBeFalse();
-//     });
-//     it('should not have a selected wishlist when in initial state', () => {
-//       expect(getSelectedWishlistId(store$.state)).toBeUndefined();
-//     });
-//     it('should not have an error when in initial state', () => {
-//       expect(getWishlistsError(store$.state)).toBeUndefined();
-//     });
-//   });
-
-//   describe('loading wishlists', () => {
-//     describe('LoadWishlists', () => {
-//       const loadWishlistAction = new LoadWishlists();
-
-//       beforeEach(() => {
-//         store$.dispatch(loadWishlistAction);
-//       });
-
-//       it('should set loading to true', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeTrue();
-//       });
-//     });
-
-//     describe('LoadWishlistsSuccess', () => {
-//       const loadWishlistSuccessAction = new LoadWishlistsSuccess({ wishlists });
-
-//       beforeEach(() => {
-//         store$ = TestBed.get(TestStore);
-//         store$.dispatch(loadWishlistSuccessAction);
-//       });
-
-//       it('should set loading to false', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeFalse();
-//       });
-
-//       it('should add wishlists to state', () => {
-//         expect(getAllWishlists(store$.state)).toEqual(wishlists);
-//       });
-//     });
-
-//     describe('LoadWishlistsFail', () => {
-//       const loadWishlistFailAction = new LoadWishlistsFail({ error: { message: 'invalid' } as HttpError });
-
-//       beforeEach(() => {
-//         store$ = TestBed.get(TestStore);
-//         store$.dispatch(loadWishlistFailAction);
-//       });
-
-//       it('should set loading to false', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeFalse();
-//       });
-
-//       it('should add the error to state', () => {
-//         expect(getWishlistsError(store$.state)).toEqual({ message: 'invalid' });
-//       });
-//     });
-//   });
-
-//   describe('create a wishlist', () => {
-//     describe('CreateWishlist', () => {
-//       const createWishlistAction = new CreateWishlist({
-//         wishlist: {
-//           title: 'create title',
-//           preferred: true,
-//         },
-//       });
-
-//       beforeEach(() => {
-//         store$.dispatch(createWishlistAction);
-//       });
-
-//       it('should set loading to true', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeTrue();
-//       });
-//     });
-
-//     describe('CreateWishlistSuccess', () => {
-//       const createWishistSuccessAction = new CreateWishlistSuccess({ wishlist: wishlists[0] });
-
-//       beforeEach(() => {
-//         store$ = TestBed.get(TestStore);
-//         store$.dispatch(createWishistSuccessAction);
-//       });
-
-//       it('should set loading to false', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeFalse();
-//       });
-
-//       it('should add new wishlist to state', () => {
-//         expect(getAllWishlists(store$.state)).toContainEqual(wishlists[0]);
-//       });
-//     });
-
-//     describe('CreateWishlistFail', () => {
-//       const createWishlistFailAction = new CreateWishlistFail({ error: { message: 'invalid' } as HttpError });
-
-//       beforeEach(() => {
-//         store$ = TestBed.get(TestStore);
-//         store$.dispatch(createWishlistFailAction);
-//       });
-
-//       it('should set loading to false', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeFalse();
-//       });
-
-//       it('should add the error to state', () => {
-//         expect(getWishlistsError(store$.state)).toEqual({ message: 'invalid' });
-//       });
-//     });
-//   });
-
-//   describe('delete a wishlist', () => {
-//     describe('DeleteWishlist', () => {
-//       const deleteWishlistAction = new DeleteWishlist({ wishlistId: 'id' });
-
-//       beforeEach(() => {
-//         store$.dispatch(deleteWishlistAction);
-//       });
-
-//       it('should set loading to true', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeTrue();
-//       });
-//     });
-
-//     describe('DeleteWishlistSuccess', () => {
-//       const loadWishlistSuccessAction = new LoadWishlistsSuccess({ wishlists });
-//       const deleteWishlistSuccessAction = new DeleteWishlistSuccess({ wishlistId: wishlists[0].id });
-
-//       beforeEach(() => {
-//         store$ = TestBed.get(TestStore);
-//       });
-
-//       it('should set loading to false', () => {
-//         store$.dispatch(deleteWishlistSuccessAction);
-
-//         expect(getWishlistsLoading(store$.state)).toBeFalse();
-//       });
-
-//       it('should remove wishlist from state, when wishlist delete action was called', () => {
-//         store$.dispatch(loadWishlistSuccessAction);
-//         store$.dispatch(deleteWishlistSuccessAction);
-
-//         expect(getAllWishlists(store$.state)).not.toContain(wishlists[0]);
-//       });
-//     });
-
-//     describe('DeleteWishlistFail', () => {
-//       const deleteWishlistFailAction = new DeleteWishlistFail({ error: { message: 'invalid' } as HttpError });
-
-//       beforeEach(() => {
-//         store$ = TestBed.get(TestStore);
-//         store$.dispatch(deleteWishlistFailAction);
-//       });
-
-//       it('should set loading to false', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeFalse();
-//       });
-
-//       it('should add the error to state', () => {
-//         expect(getWishlistsError(store$.state)).toEqual({ message: 'invalid' });
-//       });
-//     });
-//   });
-
-//   describe('updating a wishlist', () => {
-//     describe('UpdateWishlist', () => {
-//       const updateWishlistAction = new UpdateWishlist({ wishlist: wishlists[0] });
-
-//       beforeEach(() => {
-//         store$.dispatch(updateWishlistAction);
-//       });
-
-//       it('should set loading to true', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeTrue();
-//       });
-//     });
-
-//     describe('UpdateWishlistSuccess', () => {
-//       const updated = {
-//         ...wishlists[0],
-//         title: 'new title',
-//       };
-//       const updateWishlistSuccessAction = new UpdateWishlistSuccess({
-//         wishlist: updated,
-//       });
-//       const loadWishlistSuccess = new LoadWishlistsSuccess({ wishlists });
-
-//       beforeEach(() => {
-//         store$ = TestBed.get(TestStore);
-//       });
-
-//       it('should set loading to false', () => {
-//         store$.dispatch(updateWishlistSuccessAction);
-
-//         expect(getWishlistsLoading(store$.state)).toBeFalse();
-//       });
-
-//       it('should update wishlist title to new title', () => {
-//         store$.dispatch(loadWishlistSuccess);
-//         store$.dispatch(updateWishlistSuccessAction);
-
-//         expect(getAllWishlists(store$.state)).toContainEqual(updated);
-//       });
-//     });
-
-//     describe('UpdateWishlistFail', () => {
-//       const updateWishlistFailAction = new UpdateWishlistFail({ error: { message: 'invalid' } as HttpError });
-
-//       beforeEach(() => {
-//         store$ = TestBed.get(TestStore);
-//         store$.dispatch(updateWishlistFailAction);
-//       });
-
-//       it('should set loading to false', () => {
-//         expect(getWishlistsLoading(store$.state)).toBeFalse();
-//       });
-
-//       it('should add the error to state', () => {
-//         expect(getWishlistsError(store$.state)).toEqual({ message: 'invalid' });
-//       });
-//     });
-//   });
-
-//   describe('Get Selected Wishlist', () => {
-//     const loadWishlistsSuccessActions = new LoadWishlistsSuccess({ wishlists });
-//     const selectWishlistAction = new SelectWishlist({ id: wishlists[1].id });
-
-//     beforeEach(() => {
-//       store$.dispatch(loadWishlistsSuccessActions);
-//       store$.dispatch(selectWishlistAction);
-//     });
-
-//     it('should return correct wishlist id for given id', () => {
-//       expect(getSelectedWishlistId(store$.state)).toEqual(wishlists[1].id);
-//     });
-
-//     it('should return correct wishlist details for given id', () => {
-//       expect(getSelectedWishlistDetails(store$.state)).toEqual(wishlists[1]);
-//     });
-//   });
-
-//   describe('Get Wishlist Details', () => {
-//     const loadWishlistsSuccessActions = new LoadWishlistsSuccess({ wishlists });
-
-//     beforeEach(() => {
-//       store$.dispatch(loadWishlistsSuccessActions);
-//     });
-
-//     it('should return correct wishlist for given id', () => {
-//       expect(getWishlistDetails(store$.state, { id: wishlists[1].id })).toEqual(wishlists[1]);
-//     });
-//   });
-
-//   describe('Get Preferred Wishlist', () => {
-//     const loadWishlistsSuccessActions = new LoadWishlistsSuccess({ wishlists });
-
-//     beforeEach(() => {
-//       store$.dispatch(loadWishlistsSuccessActions);
-//     });
-
-//     it('should return correct wishlist for given title', () => {
-//       expect(getPreferredWishlist(store$.state)).toEqual(wishlists[0]);
-//     });
-//   });
-// });
+import { TestBed } from '@angular/core/testing';
+import { combineReducers } from '@ngrx/store';
+
+import { HttpError } from 'ish-core/models/http-error/http-error.model';
+import { coreReducers } from 'ish-core/store/core-store.module';
+import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
+
+import { orderTemplatesReducers } from '../order-templates-store.module';
+
+import {
+  CreateOrderTemplate,
+  CreateOrderTemplateFail,
+  CreateOrderTemplateSuccess,
+  DeleteOrderTemplate,
+  DeleteOrderTemplateFail,
+  DeleteOrderTemplateSuccess,
+  LoadOrderTemplates,
+  LoadOrderTemplatesFail,
+  LoadOrderTemplatesSuccess,
+  SelectOrderTemplate,
+  UpdateOrderTemplate,
+  UpdateOrderTemplateFail,
+  UpdateOrderTemplateSuccess,
+} from './order-template.actions';
+import {
+  getAllOrderTemplates,
+  getOrderTemplateDetails,
+  getOrderTemplateError,
+  getOrderTemplateLoading,
+  getPreferredOrderTemplate,
+  getSelectedOrderTemplateDetails,
+  getSelectedOrderTemplateId,
+} from './order-template.selectors';
+
+describe('Order Template Selectors', () => {
+  let store$: TestStore;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: ngrxTesting({
+        reducers: {
+          ...coreReducers,
+          orderTemplates: combineReducers(orderTemplatesReducers),
+        },
+      }),
+    });
+
+    store$ = TestBed.get(TestStore);
+  });
+
+  const orderTemplates = [
+    {
+      title: 'testing order template',
+      id: '.SKsEQAE4FIAAAFuNiUBWx0d',
+      itemsCount: 0,
+      preferred: true,
+      public: false,
+    },
+    {
+      title: 'testing order template 2',
+      id: '.AsdHS18FIAAAFuNiUBWx0d',
+      itemsCount: 0,
+      preferred: false,
+      public: false,
+    },
+  ];
+
+  describe('initial state', () => {
+    it('should not be loading when in initial state', () => {
+      expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+    });
+    it('should not have a selected order template when in initial state', () => {
+      expect(getSelectedOrderTemplateId(store$.state)).toBeUndefined();
+    });
+    it('should not have an error when in initial state', () => {
+      expect(getOrderTemplateError(store$.state)).toBeUndefined();
+    });
+  });
+
+  describe('loading order templates', () => {
+    describe('LoadOrderTemplates', () => {
+      const loadOrderTemplateAction = new LoadOrderTemplates();
+
+      beforeEach(() => {
+        store$.dispatch(loadOrderTemplateAction);
+      });
+
+      it('should set loading to true', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeTrue();
+      });
+    });
+
+    describe('LoadOrderTemplatesSuccess', () => {
+      const loadOrderTemplateSuccessAction = new LoadOrderTemplatesSuccess({ orderTemplates });
+
+      beforeEach(() => {
+        store$ = TestBed.get(TestStore);
+        store$.dispatch(loadOrderTemplateSuccessAction);
+      });
+
+      it('should set loading to false', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+      });
+
+      it('should add order templates to state', () => {
+        expect(getAllOrderTemplates(store$.state)).toEqual(orderTemplates);
+      });
+    });
+
+    describe('LoadOrderTemplatesFail', () => {
+      const loadOrderTemplatesFailAction = new LoadOrderTemplatesFail({ error: { message: 'invalid' } as HttpError });
+
+      beforeEach(() => {
+        store$ = TestBed.get(TestStore);
+        store$.dispatch(loadOrderTemplatesFailAction);
+      });
+
+      it('should set loading to false', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+      });
+
+      it('should add the error to state', () => {
+        expect(getOrderTemplateError(store$.state)).toEqual({ message: 'invalid' });
+      });
+    });
+  });
+
+  describe('create a order template', () => {
+    describe('CreateOrderTemplate', () => {
+      const createOrderTemplateAction = new CreateOrderTemplate({
+        orderTemplate: {
+          title: 'create title',
+          preferred: true,
+        },
+      });
+
+      beforeEach(() => {
+        store$.dispatch(createOrderTemplateAction);
+      });
+
+      it('should set loading to true', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeTrue();
+      });
+    });
+
+    describe('CreateOrderTemplateSuccess', () => {
+      const createOrderTemplateSuccessAction = new CreateOrderTemplateSuccess({ orderTemplate: orderTemplates[0] });
+
+      beforeEach(() => {
+        store$ = TestBed.get(TestStore);
+        store$.dispatch(createOrderTemplateSuccessAction);
+      });
+
+      it('should set loading to false', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+      });
+
+      it('should add new order template to state', () => {
+        expect(getAllOrderTemplates(store$.state)).toContainEqual(orderTemplates[0]);
+      });
+    });
+
+    describe('CreateOrderTemplatetFail', () => {
+      const createOrderTemplateFailAction = new CreateOrderTemplateFail({ error: { message: 'invalid' } as HttpError });
+
+      beforeEach(() => {
+        store$ = TestBed.get(TestStore);
+        store$.dispatch(createOrderTemplateFailAction);
+      });
+
+      it('should set loading to false', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+      });
+
+      it('should add the error to state', () => {
+        expect(getOrderTemplateError(store$.state)).toEqual({ message: 'invalid' });
+      });
+    });
+  });
+
+  describe('delete a order template', () => {
+    describe('DeleteOrderTemplate', () => {
+      const deleteOrderTemplateAction = new DeleteOrderTemplate({ orderTemplateId: 'id' });
+
+      beforeEach(() => {
+        store$.dispatch(deleteOrderTemplateAction);
+      });
+
+      it('should set loading to true', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeTrue();
+      });
+    });
+
+    describe('DeleteOrderTemplateSuccess', () => {
+      const loadOrderTemplateSuccessAction = new LoadOrderTemplatesSuccess({ orderTemplates });
+      const deleteOrderTemplateSuccessAction = new DeleteOrderTemplateSuccess({
+        orderTemplateId: orderTemplates[0].id,
+      });
+
+      beforeEach(() => {
+        store$ = TestBed.get(TestStore);
+      });
+
+      it('should set loading to false', () => {
+        store$.dispatch(deleteOrderTemplateSuccessAction);
+
+        expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+      });
+
+      it('should remove order template from state, when order template delete action was called', () => {
+        store$.dispatch(loadOrderTemplateSuccessAction);
+        store$.dispatch(deleteOrderTemplateSuccessAction);
+
+        expect(getAllOrderTemplates(store$.state)).not.toContain(orderTemplates[0]);
+      });
+    });
+
+    describe('DeleteOrderTemplateFail', () => {
+      const deleteOrderTemplateFailAction = new DeleteOrderTemplateFail({ error: { message: 'invalid' } as HttpError });
+
+      beforeEach(() => {
+        store$ = TestBed.get(TestStore);
+        store$.dispatch(deleteOrderTemplateFailAction);
+      });
+
+      it('should set loading to false', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+      });
+
+      it('should add the error to state', () => {
+        expect(getOrderTemplateError(store$.state)).toEqual({ message: 'invalid' });
+      });
+    });
+  });
+
+  describe('updating a order template', () => {
+    describe('UpdateOrderTemplate', () => {
+      const updateOrderTemplateAction = new UpdateOrderTemplate({ orderTemplate: orderTemplates[0] });
+
+      beforeEach(() => {
+        store$.dispatch(updateOrderTemplateAction);
+      });
+
+      it('should set loading to true', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeTrue();
+      });
+    });
+
+    describe('UpdatOrderTemplateSuccess', () => {
+      const updated = {
+        ...orderTemplates[0],
+        title: 'new title',
+      };
+      const updateOrderTemplateSuccessAction = new UpdateOrderTemplateSuccess({
+        orderTemplate: updated,
+      });
+      const loadOrderTemplateSuccess = new LoadOrderTemplatesSuccess({ orderTemplates });
+
+      beforeEach(() => {
+        store$ = TestBed.get(TestStore);
+      });
+
+      it('should set loading to false', () => {
+        store$.dispatch(updateOrderTemplateSuccessAction);
+
+        expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+      });
+
+      it('should update order template title to new title', () => {
+        store$.dispatch(loadOrderTemplateSuccess);
+        store$.dispatch(updateOrderTemplateSuccessAction);
+
+        expect(getAllOrderTemplates(store$.state)).toContainEqual(updated);
+      });
+    });
+
+    describe('UpdateOrderTemplateFail', () => {
+      const updateOrderTemplateFailAction = new UpdateOrderTemplateFail({ error: { message: 'invalid' } as HttpError });
+
+      beforeEach(() => {
+        store$ = TestBed.get(TestStore);
+        store$.dispatch(updateOrderTemplateFailAction);
+      });
+
+      it('should set loading to false', () => {
+        expect(getOrderTemplateLoading(store$.state)).toBeFalse();
+      });
+
+      it('should add the error to state', () => {
+        expect(getOrderTemplateError(store$.state)).toEqual({ message: 'invalid' });
+      });
+    });
+  });
+
+  describe('Get Selected Order Template', () => {
+    const loadOrderTemplatesSuccessActions = new LoadOrderTemplatesSuccess({ orderTemplates });
+    const selectOrderTemplateAction = new SelectOrderTemplate({ id: orderTemplates[1].id });
+
+    beforeEach(() => {
+      store$.dispatch(loadOrderTemplatesSuccessActions);
+      store$.dispatch(selectOrderTemplateAction);
+    });
+
+    it('should return correct order template id for given id', () => {
+      expect(getSelectedOrderTemplateId(store$.state)).toEqual(orderTemplates[1].id);
+    });
+
+    it('should return correct order template details for given id', () => {
+      expect(getSelectedOrderTemplateDetails(store$.state)).toEqual(orderTemplates[1]);
+    });
+  });
+
+  describe('Get Order Template Details', () => {
+    const loadOrderTemplateSuccessActions = new LoadOrderTemplatesSuccess({ orderTemplates });
+
+    beforeEach(() => {
+      store$.dispatch(loadOrderTemplateSuccessActions);
+    });
+
+    it('should return correct order template for given id', () => {
+      expect(getOrderTemplateDetails(store$.state, { id: orderTemplates[1].id })).toEqual(orderTemplates[1]);
+    });
+  });
+
+  describe('Get Preferred Order Template', () => {
+    const loadOrderTemplateSuccessActions = new LoadOrderTemplatesSuccess({ orderTemplates });
+
+    beforeEach(() => {
+      store$.dispatch(loadOrderTemplateSuccessActions);
+    });
+
+    it('should return correct order template for given title', () => {
+      expect(getPreferredOrderTemplate(store$.state)).toEqual(orderTemplates[0]);
+    });
+  });
+});

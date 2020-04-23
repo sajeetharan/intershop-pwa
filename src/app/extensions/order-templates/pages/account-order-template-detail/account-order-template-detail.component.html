@@ -3,11 +3,12 @@
 
 <ng-container *ngIf="orderTemplate$ | async as orderTemplate">
   <a
-    class="btn-tool float-right"
+    (click)="editOrderTemplateDialog.show()"
+    class="btn btn-default btn-tool float-right"
     [title]="'account.order_template.edit.heading' | translate"
     data-testing-id="order-template-details-edit"
-    ><fa-icon icon="pencil-alt"></fa-icon
-  ></a>
+    >{{ 'account.order_template.order_template.edit.rename' | translate }}</a
+  >
   <h1>{{ orderTemplate?.title }}</h1>
 
   <p *ngIf="orderTemplate?.preferred" data-testing-id="preferred-order-template-text">

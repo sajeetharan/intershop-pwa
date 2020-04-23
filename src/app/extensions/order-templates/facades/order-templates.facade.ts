@@ -51,14 +51,24 @@ export class OrderTemplatesFacade {
     this.store.dispatch(new AddProductToOrderTemplate({ orderTemplateId, sku, quantity }));
   }
 
-  moveItemToOrderTemplate(sourceorderTemplateId: string, targetorderTemplateId: string, sku: string): void {
+  moveItemToOrderTemplate(
+    sourceorderTemplateId: string,
+    targetorderTemplateId: string,
+    sku: string,
+    quantity: number
+  ): void {
     this.store.dispatch(
-      new MoveItemToOrderTemplate({ source: { id: sourceorderTemplateId }, target: { id: targetorderTemplateId, sku } })
+      new MoveItemToOrderTemplate({
+        source: { id: sourceorderTemplateId },
+        target: { id: targetorderTemplateId, sku, quantity },
+      })
     );
   }
 
-  moveItemToNewOrderTemplate(sourceOrderTemplateId: string, title: string, sku: string): void {
-    this.store.dispatch(new MoveItemToOrderTemplate({ source: { id: sourceOrderTemplateId }, target: { title, sku } }));
+  moveItemToNewOrderTemplate(sourceOrderTemplateId: string, title: string, sku: string, quantity: number): void {
+    this.store.dispatch(
+      new MoveItemToOrderTemplate({ source: { id: sourceOrderTemplateId }, target: { title, sku, quantity } })
+    );
   }
 
   removeProductFromOrderTemplate(orderTemplateId: string, sku: string): void {

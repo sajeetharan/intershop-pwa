@@ -42,7 +42,6 @@ describe('Order Template Service', () => {
             "preferred": true,
             "public": undefined,
             "title": undefined,
-            "type": undefined,
           },
         ]
       `);
@@ -90,16 +89,22 @@ describe('Order Template Service', () => {
   it("should add a product to a order template when 'addProductToOrderTemplate' is called", done => {
     const orderTemplateId = '1234';
     const sku = 'abcd';
+    const quantity = 1;
 
-    when(apiServiceMock.post(`customers/-/wishlists/${orderTemplateId}/products/${sku}`, anything())).thenReturn(
-      of({})
-    );
+    when(
+      apiServiceMock.post(`customers/-/wishlists/${orderTemplateId}/products/${sku}?quantity)=${quantity}`, anything())
+    ).thenReturn(of({}));
     when(apiServiceMock.get(`customers/-/wishlists/${orderTemplateId}`)).thenReturn(
       of({ title: 'order template title' } as OrderTemplateData)
     );
 
-    orderTemplateService.addProductToOrderTemplate(orderTemplateId, sku).subscribe(() => {
-      verify(apiServiceMock.post(`customers/-/wishlists/${orderTemplateId}/products/${sku}`, anything())).once();
+    orderTemplateService.addProductToOrderTemplate(orderTemplateId, sku, quantity).subscribe(() => {
+      verify(
+        apiServiceMock.post(
+          `customers/-/wishlists/${orderTemplateId}/products/${sku}?quantity)=${quantity}`,
+          anything()
+        )
+      ).once();
       verify(apiServiceMock.get(`customers/-/wishlists/${orderTemplateId}`)).once();
       done();
     });

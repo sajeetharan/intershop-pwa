@@ -10,6 +10,7 @@ export class LazyProductAddToOrderTemplateComponent {
   @Input() product: Product;
   @Input() displayType?: string;
   @Input() quantity: number;
+  @Input() class?: string;
   componentLocation = {
     moduleId: 'ish-extensions-order-templates',
     selector: 'ish-product-add-to-order-template',

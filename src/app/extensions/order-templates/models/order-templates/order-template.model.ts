@@ -1,7 +1,6 @@
 export interface OrderTemplateHeader {
   preferred: boolean;
   title: string;
-  type: string;
 }
 export interface OrderTemplate extends OrderTemplateHeader {
   id: string;

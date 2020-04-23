@@ -19,17 +19,34 @@ import { LoginUserSuccess, LogoutUser } from 'ish-core/store/user';
 import { userReducer } from 'ish-core/store/user/user.reducer';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { OrderTemplate } from './../../models/order-templates/order-template.model';
-import { OrderTemplateService } from './../../services/order-templates/order-template.service';
-import { orderTemplatesReducers } from './../order-templates-store.module';
+import { OrderTemplate } from '../../models/order-templates/order-template.model';
+import { OrderTemplateService } from '../../services/order-templates/order-template.service';
+import { orderTemplatesReducers } from '../order-templates-store.module';
+
 import {
+  AddProductToNewOrderTemplate,
+  AddProductToOrderTemplate,
+  AddProductToOrderTemplateFail,
+  AddProductToOrderTemplateSuccess,
   CreateOrderTemplate,
   CreateOrderTemplateFail,
   CreateOrderTemplateSuccess,
   DeleteOrderTemplate,
+  DeleteOrderTemplateFail,
+  DeleteOrderTemplateSuccess,
   LoadOrderTemplates,
   LoadOrderTemplatesFail,
   LoadOrderTemplatesSuccess,
+  MoveItemToOrderTemplate,
+  OrderTemplatesActionTypes,
+  RemoveItemFromOrderTemplate,
+  RemoveItemFromOrderTemplateFail,
+  RemoveItemFromOrderTemplateSuccess,
+  ResetOrderTemplateState,
+  SelectOrderTemplate,
+  UpdateOrderTemplate,
+  UpdateOrderTemplateFail,
+  UpdateOrderTemplateSuccess,
 } from './order-template.actions';
 import { OrderTemplateEffects } from './order-template.effects';
 
@@ -43,16 +60,14 @@ describe('Order Template Effects', () => {
 
   const orderTemplates = [
     {
-      title: 'testing Order Template',
-      type: 'OrderTemplate',
+      title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemsCount: 0,
       preferred: true,
       public: false,
     },
     {
-      title: 'testing Order Template 2',
-      type: 'OrderTemplate',
+      title: 'testing order template 2',
       id: '.AsdHS18FIAAAFuNiUBWx0d',
       itemsCount: 0,
       preferred: false,
@@ -89,7 +104,7 @@ describe('Order Template Effects', () => {
     effects = TestBed.get(OrderTemplateEffects);
     store$ = TestBed.get(Store);
 
-    store$.dispatch(new ApplyConfiguration({ features: ['wishlists'] }));
+    store$.dispatch(new ApplyConfiguration({ features: ['orderTemplates'] }));
   });
 
   describe('loadOrderTemplate$', () => {
@@ -141,7 +156,7 @@ describe('Order Template Effects', () => {
       } as OrderTemplate,
     ];
     const createOrderTemplateData = {
-      title: 'testing orderTemplate',
+      title: 'testing order template',
       preferred: true,
       public: false,
     };
@@ -166,7 +181,7 @@ describe('Order Template Effects', () => {
         orderTemplate: orderTemplateData[0],
       });
       const completion2 = new SuccessMessage({
-        message: 'account.wishlists.new_wishlist.confirmation',
+        message: 'account.order_template.new_order_template.confirmation',
         messageParams: { 0: createOrderTemplateData.title },
       });
       actions$ = hot('-a----a----a', { a: action });
@@ -212,7 +227,7 @@ describe('Order Template Effects', () => {
     });
 
     it('should call the OrderTemplateService for deleteOrderTemplate', done => {
-      const action = new DeleteOrderTemplate({ wishlistId: id });
+      const action = new DeleteOrderTemplate({ orderTemplateId: id });
       actions$ = of(action);
 
       effects.deleteOrderTemplate$.subscribe(() => {
@@ -221,36 +236,36 @@ describe('Order Template Effects', () => {
       });
     });
 
-    it('should map to actions of type DeleteWishlistSuccess', () => {
-      const action = new DeleteWishlist({ wishlistId: id });
-      const completion1 = new DeleteWishlistSuccess({ wishlistId: id });
+    it('should map to actions of type DeleteOrderTemplateSuccess', () => {
+      const action = new DeleteOrderTemplate({ orderTemplateId: id });
+      const completion1 = new DeleteOrderTemplateSuccess({ orderTemplateId: id });
       const completion2 = new SuccessMessage({
-        message: 'account.wishlists.delete_wishlist.confirmation',
-        messageParams: { 0: wishlists[0].title },
+        message: 'account.order_template.delete_order_template.confirmation',
+        messageParams: { 0: orderTemplates[0].title },
       });
       actions$ = hot('-a----a----a', { a: action });
       const expected$ = cold('-(cd)-(cd)-(cd)', { c: completion1, d: completion2 });
 
-      expect(effects.deleteWishlist$).toBeObservable(expected$);
+      expect(effects.deleteOrderTemplate$).toBeObservable(expected$);
     });
-    it('should map failed calls to actions of type DeleteWishlistFail', () => {
+    it('should map failed calls to actions of type DeleteOrderTemplateFail', () => {
       const error = { message: 'invalid' } as HttpError;
-      when(orderTemplateServiceMock.deleteWishlist(anyString())).thenReturn(throwError(error));
-      const action = new DeleteWishlist({ wishlistId: id });
-      const completion = new DeleteWishlistFail({
+      when(orderTemplateServiceMock.deleteOrderTemplate(anyString())).thenReturn(throwError(error));
+      const action = new DeleteOrderTemplate({ orderTemplateId: id });
+      const completion = new DeleteOrderTemplateFail({
         error,
       });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
-      expect(effects.deleteWishlist$).toBeObservable(expected$);
+      expect(effects.deleteOrderTemplate$).toBeObservable(expected$);
     });
   });
 
-  describe('updateWishlist$', () => {
-    const wishlistDetailData = [
+  describe('updateOrderTemplate$', () => {
+    const orderTemplateDetailData = [
       {
-        title: 'testing wishlist',
+        title: 'testing order template',
         id: '.SKsEQAE4FIAAAFuNiUBWx0d',
         itemCount: 0,
         preferred: true,
@@ -259,115 +274,117 @@ describe('Order Template Effects', () => {
     ];
     beforeEach(() => {
       store$.dispatch(new LoginUserSuccess({ customer }));
-      when(orderTemplateServiceMock.updateWishlist(anything())).thenReturn(of(wishlistDetailData[0]));
+      when(orderTemplateServiceMock.updateOrderTemplate(anything())).thenReturn(of(orderTemplateDetailData[0]));
     });
 
-    it('should call the OrderTemplateService for updateWishlist', done => {
-      const action = new UpdateWishlist({ wishlist: wishlistDetailData[0] });
+    it('should call the OrderTemplateService for updateOrderTemplate', done => {
+      const action = new UpdateOrderTemplate({ orderTemplate: orderTemplateDetailData[0] });
       actions$ = of(action);
 
-      effects.updateWishlist$.subscribe(() => {
-        verify(orderTemplateServiceMock.updateWishlist(anything())).once();
+      effects.updateOrderTemplate$.subscribe(() => {
+        verify(orderTemplateServiceMock.updateOrderTemplate(anything())).once();
         done();
       });
     });
 
-    it('should map to actions of type UpdateWishlistSuccess', () => {
-      const action = new UpdateWishlist({ wishlist: wishlistDetailData[0] });
-      const completion1 = new UpdateWishlistSuccess({ wishlist: wishlistDetailData[0] });
+    it('should map to actions of type UpdateOrderTemplateSuccess', () => {
+      const action = new UpdateOrderTemplate({ orderTemplate: orderTemplateDetailData[0] });
+      const completion1 = new UpdateOrderTemplateSuccess({ orderTemplate: orderTemplateDetailData[0] });
       const completion2 = new SuccessMessage({
         message: 'account.wishlists.edit_wishlist.confirmation',
-        messageParams: { 0: wishlistDetailData[0].title },
+        messageParams: { 0: orderTemplateDetailData[0].title },
       });
       actions$ = hot('-a----a----a', { a: action });
       const expected$ = cold('-(cd)-(cd)-(cd)', { c: completion1, d: completion2 });
 
-      expect(effects.updateWishlist$).toBeObservable(expected$);
+      expect(effects.updateOrderTemplate$).toBeObservable(expected$);
     });
-    it('should map failed calls to actions of type UpdateWishlistFail', () => {
+    it('should map failed calls to actions of type UpdateOrderTemplateFail', () => {
       const error = { message: 'invalid' } as HttpError;
-      when(orderTemplateServiceMock.updateWishlist(anything())).thenReturn(throwError(error));
-      const action = new UpdateWishlist({ wishlist: wishlistDetailData[0] });
-      const completion = new UpdateWishlistFail({
+      when(orderTemplateServiceMock.updateOrderTemplate(anything())).thenReturn(throwError(error));
+      const action = new UpdateOrderTemplate({ orderTemplate: orderTemplateDetailData[0] });
+      const completion = new UpdateOrderTemplateFail({
         error,
       });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
-      expect(effects.updateWishlist$).toBeObservable(expected$);
+      expect(effects.updateOrderTemplate$).toBeObservable(expected$);
     });
 
-    it('should map to action of type LoadWishlists if the wishlist is updated as preferred', () => {
-      const updatedWishlist: Wishlist = {
+    it('should map to action of type LoadOrderTemplates if the order template is updated as preferred', () => {
+      const updatedOrderTemplate: OrderTemplate = {
         id: '1234',
         title: 'title',
         preferred: true,
         public: false,
       };
-      const action = new UpdateWishlistSuccess({ wishlist: updatedWishlist });
-      const completion = new LoadWishlists();
+      const action = new UpdateOrderTemplateSuccess({ orderTemplate: updatedOrderTemplate });
+      const completion = new LoadOrderTemplates();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
-      expect(effects.reloadWishlists$).toBeObservable(expected$);
+      expect(effects.reloadOrderTemplate$).toBeObservable(expected$);
     });
   });
 
-  describe('addProductToWishlist$', () => {
+  describe('addProductToOrderTemplate$', () => {
     const payload = {
-      wishlistId: '.SKsEQAE4FIAAAFuNiUBWx0d',
+      orderTemplateId: '.SKsEQAE4FIAAAFuNiUBWx0d',
       sku: 'sku',
       quantity: 2,
     };
 
     beforeEach(() => {
       store$.dispatch(new LoginUserSuccess({ customer }));
-      when(orderTemplateServiceMock.addProductToWishlist(anyString(), anyString(), anyNumber())).thenReturn(
-        of(wishlists[0])
+      when(orderTemplateServiceMock.addProductToOrderTemplate(anyString(), anyString(), anyNumber())).thenReturn(
+        of(orderTemplates[0])
       );
     });
 
-    it('should call the OrderTemplateService for addProductToWishlist', done => {
-      const action = new AddProductToWishlist(payload);
+    it('should call the OrderTemplateService for addProductToOrderTemplate', done => {
+      const action = new AddProductToOrderTemplate(payload);
       actions$ = of(action);
 
-      effects.addProductToWishlist$.subscribe(() => {
-        verify(orderTemplateServiceMock.addProductToWishlist(payload.wishlistId, payload.sku, payload.quantity)).once();
+      effects.addProductToOrderTemplate$.subscribe(() => {
+        verify(
+          orderTemplateServiceMock.addProductToOrderTemplate(payload.orderTemplateId, payload.sku, payload.quantity)
+        ).once();
         done();
       });
     });
 
-    it('should map to actions of type AddProductToWishlistSuccess', () => {
-      const action = new AddProductToWishlist(payload);
-      const completion = new AddProductToWishlistSuccess({ wishlist: wishlists[0] });
+    it('should map to actions of type AddProductToOrderTemplateSuccess', () => {
+      const action = new AddProductToOrderTemplate(payload);
+      const completion = new AddProductToOrderTemplateSuccess({ orderTemplate: orderTemplates[0] });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
-      expect(effects.addProductToWishlist$).toBeObservable(expected$);
+      expect(effects.addProductToOrderTemplate$).toBeObservable(expected$);
     });
 
-    it('should map failed calls to actions of type AddProductToWishlistFail', () => {
+    it('should map failed calls to actions of type AddProductToOrderTemplateFail', () => {
       const error = { message: 'invalid' } as HttpError;
-      when(orderTemplateServiceMock.addProductToWishlist(anyString(), anyString(), anything())).thenReturn(
+      when(orderTemplateServiceMock.addProductToOrderTemplate(anyString(), anyString(), anything())).thenReturn(
         throwError(error)
       );
-      const action = new AddProductToWishlist(payload);
-      const completion = new AddProductToWishlistFail({
+      const action = new AddProductToOrderTemplate(payload);
+      const completion = new AddProductToOrderTemplateFail({
         error,
       });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
-      expect(effects.addProductToWishlist$).toBeObservable(expected$);
+      expect(effects.addProductToOrderTemplate$).toBeObservable(expected$);
     });
   });
 
-  describe('addProductToNewWishlist$', () => {
+  describe('addProductToNewOrderTemplate$', () => {
     const payload = {
-      title: 'new wishlist',
+      title: 'new Order Template',
       sku: 'sku',
     };
-    const wishlist = {
-      title: 'testing wishlist',
+    const orderTemplate = {
+      title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemCount: 0,
       preferred: true,
@@ -375,42 +392,42 @@ describe('Order Template Effects', () => {
     };
     beforeEach(() => {
       store$.dispatch(new LoginUserSuccess({ customer }));
-      when(orderTemplateServiceMock.createWishlist(anything())).thenReturn(of(wishlist));
+      when(orderTemplateServiceMock.createOrderTemplate(anything())).thenReturn(of(orderTemplate));
     });
-    it('should map to actions of types CreateWishlistSuccess and AddProductToWishlist', () => {
-      const action = new AddProductToNewWishlist(payload);
-      const completion1 = new CreateWishlistSuccess({ wishlist });
-      const completion2 = new AddProductToWishlist({ wishlistId: wishlist.id, sku: payload.sku });
-      const completion3 = new SelectWishlist({ id: wishlist.id });
+    it('should map to actions of types CreateOrderTemplateSuccess and AddProductToOrderTemplate', () => {
+      const action = new AddProductToNewOrderTemplate(payload);
+      const completion1 = new CreateOrderTemplateSuccess({ orderTemplate });
+      const completion2 = new AddProductToOrderTemplate({ orderTemplateId: orderTemplate.id, sku: payload.sku });
+      const completion3 = new SelectOrderTemplate({ id: orderTemplate.id });
       actions$ = hot('-a-----a-----a', { a: action });
       const expected$ = cold('-(bcd)-(bcd)-(bcd)', { b: completion1, c: completion2, d: completion3 });
-      expect(effects.addProductToNewWishlist$).toBeObservable(expected$);
+      expect(effects.addProductToNewOrderTemplate$).toBeObservable(expected$);
     });
-    it('should map failed calls to actions of type CreateWishlistFail', () => {
+    it('should map failed calls to actions of type CreateOrderTemplateFail', () => {
       const error = { message: 'invalid' } as HttpError;
-      when(orderTemplateServiceMock.createWishlist(anything())).thenReturn(throwError(error));
-      const action = new AddProductToNewWishlist(payload);
-      const completion = new CreateWishlistFail({
+      when(orderTemplateServiceMock.createOrderTemplate(anything())).thenReturn(throwError(error));
+      const action = new AddProductToNewOrderTemplate(payload);
+      const completion = new CreateOrderTemplateFail({
         error,
       });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
-      expect(effects.addProductToNewWishlist$).toBeObservable(expected$);
+      expect(effects.addProductToNewOrderTemplate$).toBeObservable(expected$);
     });
   });
 
-  describe('moveProductToWishlist$', () => {
+  describe('moveProductToOrderTemplate$', () => {
     const payload1 = {
       source: { id: '1234' },
-      target: { title: 'new wishlist', sku: 'sku' },
+      target: { title: 'new Order Template', sku: 'sku', quantity: 1 },
     };
     const payload2 = {
       source: { id: '1234' },
-      target: { id: '.SKsEQAE4FIAAAFuNiUBWx0d', sku: 'sku' },
+      target: { id: '.SKsEQAE4FIAAAFuNiUBWx0d', sku: 'sku', quantity: 1 },
     };
-    const wishlist = {
-      title: 'testing wishlist',
+    const orderTemplate = {
+      title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemCount: 0,
       preferred: true,
@@ -418,33 +435,47 @@ describe('Order Template Effects', () => {
     };
     beforeEach(() => {
       store$.dispatch(new LoginUserSuccess({ customer }));
-      when(orderTemplateServiceMock.createWishlist(anything())).thenReturn(of(wishlist));
+      when(orderTemplateServiceMock.createOrderTemplate(anything())).thenReturn(of(orderTemplate));
     });
-    it('should map to actions of types AddProductToNewWishlist and RemoveItemFromWishlist if there is no target id given', () => {
-      const action = new MoveItemToWishlist(payload1);
-      const completion1 = new AddProductToNewWishlist({ title: payload1.target.title, sku: payload1.target.sku });
-      const completion2 = new RemoveItemFromWishlist({ wishlistId: payload1.source.id, sku: payload1.target.sku });
+    it('should map to actions of types AddProductToNewOrderTemplate and RemoveItemFromOrderTemplate if there is no target id given', () => {
+      const action = new MoveItemToOrderTemplate(payload1);
+      const completion1 = new AddProductToNewOrderTemplate({
+        title: payload1.target.title,
+        sku: payload1.target.sku,
+        quantity: payload1.target.quantity,
+      });
+      const completion2 = new RemoveItemFromOrderTemplate({
+        orderTemplateId: payload1.source.id,
+        sku: payload1.target.sku,
+      });
       actions$ = hot('-a----a----a', { a: action });
       const expected$ = cold('-(bc)-(bc)-(bc)', { b: completion1, c: completion2 });
-      expect(effects.moveItemToWishlist$).toBeObservable(expected$);
+      expect(effects.moveItemToOrderTemplate$).toBeObservable(expected$);
     });
-    it('should map to actions of types AddProductToWishlist and RemoveItemFromWishlist if there is a target id given', () => {
-      const action = new MoveItemToWishlist(payload2);
-      const completion1 = new AddProductToWishlist({ wishlistId: wishlist.id, sku: payload1.target.sku });
-      const completion2 = new RemoveItemFromWishlist({ wishlistId: payload1.source.id, sku: payload1.target.sku });
+    it('should map to actions of types AddProductToOrderTemplate and RemoveItemFromOrderTemplate if there is a target id given', () => {
+      const action = new MoveItemToOrderTemplate(payload2);
+      const completion1 = new AddProductToOrderTemplate({
+        orderTemplateId: orderTemplate.id,
+        sku: payload1.target.sku,
+        quantity: payload1.target.quantity,
+      });
+      const completion2 = new RemoveItemFromOrderTemplate({
+        orderTemplateId: payload1.source.id,
+        sku: payload1.target.sku,
+      });
       actions$ = hot('-a----a----a', { a: action });
       const expected$ = cold('-(bc)-(bc)-(bc)', { b: completion1, c: completion2 });
-      expect(effects.moveItemToWishlist$).toBeObservable(expected$);
+      expect(effects.moveItemToOrderTemplate$).toBeObservable(expected$);
     });
   });
 
-  describe('removeProductFromWishlist$', () => {
+  describe('removeProductFromOrderTemplate$', () => {
     const payload = {
-      wishlistId: '.SKsEQAE4FIAAAFuNiUBWx0d',
+      orderTemplateId: '.SKsEQAE4FIAAAFuNiUBWx0d',
       sku: 'sku',
     };
-    const wishlist = {
-      title: 'testing wishlist',
+    const orderTemplate = {
+      title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemCount: 0,
       preferred: true,
@@ -452,61 +483,65 @@ describe('Order Template Effects', () => {
     };
     beforeEach(() => {
       store$.dispatch(new LoginUserSuccess({ customer }));
-      when(orderTemplateServiceMock.removeProductFromWishlist(anyString(), anyString())).thenReturn(of(wishlist));
+      when(orderTemplateServiceMock.removeProductFromOrderTemplate(anyString(), anyString())).thenReturn(
+        of(orderTemplate)
+      );
     });
 
-    it('should call the OrderTemplateService for removeProductFromWishlist', done => {
-      const action = new RemoveItemFromWishlist(payload);
+    it('should call the OrderTemplateService for removeProductFromOrderTemplate', done => {
+      const action = new RemoveItemFromOrderTemplate(payload);
       actions$ = of(action);
 
-      effects.removeProductFromWishlist$.subscribe(() => {
-        verify(orderTemplateServiceMock.removeProductFromWishlist(payload.wishlistId, payload.sku)).once();
+      effects.removeProductFromOrderTemplate$.subscribe(() => {
+        verify(orderTemplateServiceMock.removeProductFromOrderTemplate(payload.orderTemplateId, payload.sku)).once();
         done();
       });
     });
-    it('should map to actions of type RemoveItemFromWishlistSuccess', () => {
-      const action = new RemoveItemFromWishlist(payload);
-      const completion = new RemoveItemFromWishlistSuccess({ wishlist });
+    it('should map to actions of type RemoveItemFromOrderTemplateSuccess', () => {
+      const action = new RemoveItemFromOrderTemplate(payload);
+      const completion = new RemoveItemFromOrderTemplateSuccess({ orderTemplate });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
-      expect(effects.removeProductFromWishlist$).toBeObservable(expected$);
+      expect(effects.removeProductFromOrderTemplate$).toBeObservable(expected$);
     });
-    it('should map failed calls to actions of type RemoveItemFromWishlistFail', () => {
+    it('should map failed calls to actions of type RemoveItemFromOrderTemplateFail', () => {
       const error = { message: 'invalid' } as HttpError;
-      when(orderTemplateServiceMock.removeProductFromWishlist(anyString(), anyString())).thenReturn(throwError(error));
-      const action = new RemoveItemFromWishlist(payload);
-      const completion = new RemoveItemFromWishlistFail({
+      when(orderTemplateServiceMock.removeProductFromOrderTemplate(anyString(), anyString())).thenReturn(
+        throwError(error)
+      );
+      const action = new RemoveItemFromOrderTemplate(payload);
+      const completion = new RemoveItemFromOrderTemplateFail({
         error,
       });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
-      expect(effects.removeProductFromWishlist$).toBeObservable(expected$);
+      expect(effects.removeProductFromOrderTemplate$).toBeObservable(expected$);
     });
   });
 
-  describe('routeListenerForSelectedWishlist$', () => {
-    it('should map to action of type SelectWishlist', () => {
-      const wishlistName = '.SKsEQAE4FIAAAFuNiUBWx0d';
+  describe('routeListenerForSelectedOrderTemplate$', () => {
+    it('should map to action of type SelectOrderTemplate', () => {
+      const orderTemplateName = '.SKsEQAE4FIAAAFuNiUBWx0d';
       const action = new RouteNavigation({
-        path: 'account/wishlist/:wishlistName',
-        params: { wishlistName },
+        path: 'account/wishlist/:orderTemplateName',
+        params: { orderTemplateName },
         queryParams: {},
       });
-      const completion = new SelectWishlist({ id: wishlistName });
+      const completion = new SelectOrderTemplate({ id: orderTemplateName });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
-      expect(effects.routeListenerForSelectedWishlist$).toBeObservable(expected$);
+      expect(effects.routeListenerForSelectedOrderTemplate$).toBeObservable(expected$);
     });
   });
 
-  describe('loadWishlistsAfterLogin$', () => {
+  describe('loadOrderTemplatesAfterLogin$', () => {
     beforeEach(() => {
-      when(orderTemplateServiceMock.getWishlists()).thenReturn(of(wishlists));
+      when(orderTemplateServiceMock.getOrderTemplates()).thenReturn(of(orderTemplates));
     });
-    it('should call WishlistsService after login action was dispatched', done => {
-      effects.loadWishlistsAfterLogin$.subscribe(action => {
-        expect(action.type).toEqual(WishlistsActionTypes.LoadWishlists);
+    it('should call OrderTemplatesService after login action was dispatched', done => {
+      effects.loadOrderTemplatesAfterLogin$.subscribe(action => {
+        expect(action.type).toEqual(OrderTemplatesActionTypes.LoadOrderTemplates);
         done();
       });
 
@@ -514,35 +549,35 @@ describe('Order Template Effects', () => {
     });
   });
 
-  describe('resetWishlistStateAfterLogout$', () => {
-    it('should map to action of type ResetWishlistState if LogoutUser action triggered', () => {
+  describe('resetOrderTemplateStateAfterLogout$', () => {
+    it('should map to action of type ResetOrderTemplateState if LogoutUser action triggered', () => {
       const action = new LogoutUser();
-      const completion = new ResetWishlistState();
+      const completion = new ResetOrderTemplateState();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
-      expect(effects.resetWishlistStateAfterLogout$).toBeObservable(expected$);
+      expect(effects.resetOrderTemplateStateAfterLogout$).toBeObservable(expected$);
     });
   });
 
-  describe('setWishlistBreadcrumb$', () => {
+  describe('setOrderTemplateBreadcrumb$', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadWishlistsSuccess({ wishlists }));
-      store$.dispatch(new SelectWishlist({ id: wishlists[0].id }));
+      store$.dispatch(new LoadOrderTemplatesSuccess({ orderTemplates }));
+      store$.dispatch(new SelectOrderTemplate({ id: orderTemplates[0].id }));
     });
 
-    it('should set the breadcrumb of the selected wishlist', done => {
-      actions$ = of(new RouteNavigation({ path: 'any', params: { wishlistName: wishlists[0].id } }));
-      effects.setWishlistBreadcrumb$.subscribe(action => {
+    it('should set the breadcrumb of the selected Order Template', done => {
+      actions$ = of(new RouteNavigation({ path: 'any', params: { orderTemplateName: orderTemplates[0].id } }));
+      effects.setOrderTemplateBreadcrumb$.subscribe(action => {
         expect(action.payload).toMatchInlineSnapshot(`
           Object {
             "breadcrumbData": Array [
               Object {
-                "key": "account.wishlists.breadcrumb_link",
+                "key": "account.ordertemplates.link",
                 "link": "/account/wishlists",
               },
               Object {
-                "text": "testing wishlist",
+                "text": "testing order template",
               },
             ],
           }

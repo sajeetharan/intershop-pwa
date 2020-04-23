@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 
+import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
 import { ModalDialogComponent } from 'ish-shared/components/common/modal-dialog/modal-dialog.component';
 
-import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
 import { OrderTemplate } from '../../../models/order-templates/order-template.model';
 
 @Component({

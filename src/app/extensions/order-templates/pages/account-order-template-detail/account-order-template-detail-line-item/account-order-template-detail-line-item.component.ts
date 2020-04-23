@@ -1,4 +1,3 @@
-import { map } from 'rxjs/operators';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -45,7 +44,9 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
   /** init form in the beginning */
   private initForm() {
     this.addToCartForm = new FormGroup({
-      quantity: new FormControl(this.orderTemplateItemData.desiredQuantity.value),
+      quantity: new FormControl(
+        this.orderTemplateItemData.desiredQuantity.value ? this.orderTemplateItemData.desiredQuantity.value : 1
+      ),
     });
   }
 
@@ -55,18 +56,33 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
 
   moveItemToOtherOrderTemplate(sku: string, orderTemplateMoveData: { id: string; title: string }) {
     if (orderTemplateMoveData.id) {
-      this.orderTemplatesFacade.moveItemToOrderTemplate(this.currentOrderTemplate.id, orderTemplateMoveData.id, sku);
+      this.orderTemplatesFacade.moveItemToOrderTemplate(
+        this.currentOrderTemplate.id,
+        orderTemplateMoveData.id,
+        sku,
+        Number(this.addToCartForm.get('quantity').value)
+      );
     } else {
       this.orderTemplatesFacade.moveItemToNewOrderTemplate(
         this.currentOrderTemplate.id,
         orderTemplateMoveData.title,
-        sku
+        sku,
+        Number(this.addToCartForm.get('quantity').value)
       );
     }
   }
 
   updateProductQuantity(sku: string, quantity: number) {
-    this.orderTemplatesFacade.updateOrderTemplate({ update });
+    const updateItems = this.currentOrderTemplate.items.map(item => {
+      if (item.sku === sku) {
+        return { ...item, desiredQuantity: { value: quantity } };
+      }
+      return item;
+    });
+
+    const updatedOrderTemplate = { ...this.currentOrderTemplate, items: updateItems };
+
+    this.orderTemplatesFacade.updateOrderTemplate(updatedOrderTemplate);
   }
 
   removeProductFromOrderTemplate(sku: string) {
