@@ -38,7 +38,7 @@ import { categoryTree } from 'ish-core/utils/dev/test-data-utils';
 import { getCategoryIds, getSelectedCategory } from './categories';
 import { getProductIds, getSelectedProduct } from './products';
 import { getRecentlyViewedProducts } from './recently';
-import { SuggestSearch } from './search';
+import { suggestSearch } from './search';
 import { shoppingEffects, shoppingReducers } from './shopping-store.module';
 
 describe('Shopping Store', () => {
@@ -285,7 +285,7 @@ describe('Shopping Store', () => {
     describe('and looking for suggestions', () => {
       beforeEach(fakeAsync(() => {
         store.reset();
-        store.dispatch(new SuggestSearch({ searchTerm: 'some' }));
+        store.dispatch(suggestSearch({ payload: { searchTerm: 'some' } }));
         tick(5000);
       }));
 

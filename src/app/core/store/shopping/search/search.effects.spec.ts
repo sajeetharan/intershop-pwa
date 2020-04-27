@@ -16,12 +16,12 @@ import { SuggestTerm } from 'ish-core/models/suggest-term/suggest-term.model';
 import { ApiService } from 'ish-core/services/api/api.service';
 import { ProductsService } from 'ish-core/services/products/products.service';
 import { SuggestService } from 'ish-core/services/suggest/suggest.service';
-import { LoadMoreProducts, SetProductListingPageSize } from 'ish-core/store/shopping/product-listing';
+import { loadMoreProducts, setProductListingPageSize } from 'ish-core/store/shopping/product-listing';
 import { ProductListingEffects } from 'ish-core/store/shopping/product-listing/product-listing.effects';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { SearchProductsFail, SuggestSearch } from './search.actions';
+import { searchProductsFail, suggestSearch } from './search.actions';
 import { SearchEffects } from './search.effects';
 
 describe('Search Effects', () => {
@@ -85,7 +85,9 @@ describe('Search Effects', () => {
     location = TestBed.get(Location);
     router = TestBed.get(Router);
 
-    store$.dispatch(new SetProductListingPageSize({ itemsPerPage: TestBed.get(PRODUCT_LISTING_ITEMS_PER_PAGE) }));
+    store$.dispatch(
+      setProductListingPageSize({ payload: { itemsPerPage: TestBed.get(PRODUCT_LISTING_ITEMS_PER_PAGE) } })
+    );
   });
 
   describe('triggerSearch$', () => {
@@ -104,7 +106,7 @@ describe('Search Effects', () => {
 
   describe('suggestSearch$', () => {
     it('should not fire when search term is falsy', fakeAsync(() => {
-      const action = new SuggestSearch({ searchTerm: undefined });
+      const action = suggestSearch({ payload: { searchTerm: undefined } });
       store$.dispatch(action);
 
       tick(5000);
@@ -113,7 +115,7 @@ describe('Search Effects', () => {
     }));
 
     it('should not fire when search term is empty', fakeAsync(() => {
-      const action = new SuggestSearch({ searchTerm: '' });
+      const action = suggestSearch({ payload: { searchTerm: '' } });
       store$.dispatch(action);
 
       tick(5000);
@@ -122,7 +124,7 @@ describe('Search Effects', () => {
     }));
 
     it('should return search terms when available', fakeAsync(() => {
-      const action = new SuggestSearch({ searchTerm: 'g' });
+      const action = suggestSearch({ payload: { searchTerm: 'g' } });
       store$.dispatch(action);
 
       tick(5000);
@@ -131,11 +133,11 @@ describe('Search Effects', () => {
     }));
 
     it('should debounce correctly when search term is entered stepwise', fakeAsync(() => {
-      store$.dispatch(new SuggestSearch({ searchTerm: 'g' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'g' } }));
       tick(50);
-      store$.dispatch(new SuggestSearch({ searchTerm: 'goo' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'goo' } }));
       tick(100);
-      store$.dispatch(new SuggestSearch({ searchTerm: 'good' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'good' } }));
       tick(200);
 
       verify(suggestServiceMock.search(anyString())).never();
@@ -145,10 +147,10 @@ describe('Search Effects', () => {
     }));
 
     it('should send only once if search term is entered multiple times', fakeAsync(() => {
-      store$.dispatch(new SuggestSearch({ searchTerm: 'good' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'good' } }));
       tick(2000);
       verify(suggestServiceMock.search('good')).once();
-      store$.dispatch(new SuggestSearch({ searchTerm: 'good' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'good' } }));
       tick(2000);
 
       verify(suggestServiceMock.search('good')).once();
@@ -157,7 +159,7 @@ describe('Search Effects', () => {
     it('should not fire action when error is encountered at service level', fakeAsync(() => {
       when(suggestServiceMock.search(anyString())).thenReturn(throwError({ message: 'ERROR' }));
 
-      store$.dispatch(new SuggestSearch({ searchTerm: 'good' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'good' } }));
       tick(4000);
 
       effects.suggestSearch$.subscribe(fail, fail, fail);
@@ -166,7 +168,7 @@ describe('Search Effects', () => {
     }));
 
     it('should fire all necessary actions for suggest-search', fakeAsync(() => {
-      store$.dispatch(new SuggestSearch({ searchTerm: 'good' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'good' } }));
       tick(500); // debounceTime
       expect(store$.actionsArray(/\[Suggest Search/)).toMatchInlineSnapshot(`
           [Suggest Search] Load Search Suggestions:
@@ -177,7 +179,7 @@ describe('Search Effects', () => {
         `);
 
       // 2nd term to because distinctUntilChanged
-      store$.dispatch(new SuggestSearch({ searchTerm: 'goo' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'goo' } }));
       tick(500);
       expect(store$.actionsArray(/\[Suggest Search/)).toMatchInlineSnapshot(`
           [Suggest Search] Load Search Suggestions:
@@ -193,7 +195,7 @@ describe('Search Effects', () => {
         `);
 
       // test cache: search->api->success & search->success->api->success
-      store$.dispatch(new SuggestSearch({ searchTerm: 'good' }));
+      store$.dispatch(suggestSearch({ payload: { searchTerm: 'good' } }));
       tick(500);
       expect(store$.actionsArray(/\[Suggest Search/)).toMatchInlineSnapshot(`
           [Suggest Search] Load Search Suggestions:
@@ -217,7 +219,7 @@ describe('Search Effects', () => {
 
   describe('redirectIfSearchProductFail$', () => {
     it('should redirect if triggered', fakeAsync(() => {
-      const action = new SearchProductsFail({ error: { status: 404 } as HttpError });
+      const action = searchProductsFail({ payload: { error: { status: 404 } as HttpError } });
 
       store$.dispatch(action);
 
@@ -235,10 +237,10 @@ describe('Search Effects', () => {
 
       verify(productsServiceMock.searchProducts(searchTerm, 1, anything())).once();
 
-      store$.dispatch(new LoadMoreProducts({ id: { type: 'search', value: searchTerm }, page: 2 }));
+      store$.dispatch(loadMoreProducts({ payload: { id: { type: 'search', value: searchTerm }, page: 2 } }));
       verify(productsServiceMock.searchProducts(searchTerm, 2, anything())).once();
 
-      store$.dispatch(new LoadMoreProducts({ id: { type: 'search', value: searchTerm }, page: 3 }));
+      store$.dispatch(loadMoreProducts({ payload: { id: { type: 'search', value: searchTerm }, page: 3 } }));
       verify(productsServiceMock.searchProducts(searchTerm, 3, anything())).once();
     }));
   });

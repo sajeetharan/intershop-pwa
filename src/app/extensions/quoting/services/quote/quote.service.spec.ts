@@ -8,7 +8,7 @@ import { Customer } from 'ish-core/models/customer/customer.model';
 import { User } from 'ish-core/models/user/user.model';
 import { ApiService } from 'ish-core/services/api/api.service';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoadCompanyUserSuccess, LoginUserSuccess } from 'ish-core/store/user';
+import { loadCompanyUserSuccess, loginUserSuccess } from 'ish-core/store/user';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import { QuoteRequestItemData } from '../../models/quote-request-item/quote-request-item.interface';
@@ -67,8 +67,8 @@ describe('Quote Service', () => {
 
   describe('when logged in', () => {
     beforeEach(() => {
-      store$.dispatch(new LoginUserSuccess({ customer, user }));
-      store$.dispatch(new LoadCompanyUserSuccess({ user }));
+      store$.dispatch(loginUserSuccess({ payload: { customer, user } }));
+      store$.dispatch(loadCompanyUserSuccess({ payload: { user } }));
     });
 
     it("should get quotes data when 'getQuotes' is called", done => {

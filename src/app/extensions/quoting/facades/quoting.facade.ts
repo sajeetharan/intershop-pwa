@@ -8,34 +8,34 @@ import { LineItemUpdate } from 'ish-core/models/line-item-update/line-item-updat
 import { QuoteRequest } from '../models/quote-request/quote-request.model';
 import { Quote } from '../models/quote/quote.model';
 import {
-  AddQuoteToBasket,
-  CreateQuoteRequestFromQuote,
-  DeleteQuote,
-  LoadQuotes,
-  RejectQuote,
-  ResetQuoteError,
+  addQuoteToBasket,
+  createQuoteRequestFromQuote,
+  deleteQuote,
   getCurrentQuotes,
   getQuoteError,
   getQuoteLoading,
   getSelectedQuoteWithProducts,
+  loadQuotes,
+  rejectQuote,
+  resetQuoteError,
 } from '../store/quote';
 import {
-  AddBasketToQuoteRequest,
-  AddProductToQuoteRequest,
-  CreateQuoteRequestFromQuoteRequest,
-  DeleteItemFromQuoteRequest,
-  DeleteQuoteRequest,
-  LoadQuoteRequests,
-  SelectQuoteRequest,
-  SubmitQuoteRequest,
-  UpdateQuoteRequest,
-  UpdateQuoteRequestItems,
-  UpdateSubmitQuoteRequest,
+  addBasketToQuoteRequest,
+  addProductToQuoteRequest,
+  createQuoteRequestFromQuoteRequest,
+  deleteItemFromQuoteRequest,
+  deleteQuoteRequest,
   getActiveQuoteRequestWithProducts,
   getCurrentQuoteRequests,
   getQuoteRequestError,
   getQuoteRequestLoading,
   getSelectedQuoteRequestWithProducts,
+  loadQuoteRequests,
+  selectQuoteRequest,
+  submitQuoteRequest,
+  updateQuoteRequest,
+  updateQuoteRequestItems,
+  updateSubmitQuoteRequest,
 } from '../store/quote-request';
 
 const getQuotesAndQuoteRequests = createSelector(
@@ -60,23 +60,23 @@ export class QuotingFacade {
   }
 
   private loadQuotes() {
-    this.store.dispatch(new LoadQuotes());
+    this.store.dispatch(loadQuotes());
   }
 
   rejectQuote() {
-    this.store.dispatch(new RejectQuote());
+    this.store.dispatch(rejectQuote());
   }
 
   deleteQuote(id: string) {
-    this.store.dispatch(new DeleteQuote({ id }));
+    this.store.dispatch(deleteQuote({ payload: { id } }));
   }
 
   addQuoteToBasket(quoteId: string) {
-    this.store.dispatch(new AddQuoteToBasket({ quoteId }));
+    this.store.dispatch(addQuoteToBasket({ payload: { quoteId } }));
   }
 
   resetQuoteError() {
-    this.store.dispatch(new ResetQuoteError());
+    this.store.dispatch(resetQuoteError());
   }
 
   // QUOTE REQUEST
@@ -91,47 +91,47 @@ export class QuotingFacade {
   }
 
   private loadQuoteRequests() {
-    this.store.dispatch(new LoadQuoteRequests());
+    this.store.dispatch(loadQuoteRequests());
   }
 
   selectQuoteRequest(id: string) {
-    this.store.dispatch(new SelectQuoteRequest({ id }));
+    this.store.dispatch(selectQuoteRequest({ payload: { id } }));
   }
 
   updateQuoteRequest(payload: { displayName?: string; description?: string }) {
-    this.store.dispatch(new UpdateQuoteRequest(payload));
+    this.store.dispatch(updateQuoteRequest({ payload }));
   }
 
   deleteQuoteRequest(id: string) {
-    this.store.dispatch(new DeleteQuoteRequest({ id }));
+    this.store.dispatch(deleteQuoteRequest({ payload: { id } }));
   }
 
   submitQuoteRequest() {
-    this.store.dispatch(new SubmitQuoteRequest());
+    this.store.dispatch(submitQuoteRequest());
   }
 
   updateSubmitQuoteRequest(payload: { displayName?: string; description?: string }) {
-    this.store.dispatch(new UpdateSubmitQuoteRequest(payload));
+    this.store.dispatch(updateSubmitQuoteRequest({ payload }));
   }
 
   copyQuoteRequest(preventRedirect?: boolean) {
-    this.store.dispatch(new CreateQuoteRequestFromQuoteRequest({ redirect: !preventRedirect }));
+    this.store.dispatch(createQuoteRequestFromQuoteRequest({ payload: { redirect: !preventRedirect } }));
   }
 
   updateQuoteRequestItem(update: LineItemUpdate) {
-    this.store.dispatch(new UpdateQuoteRequestItems({ lineItemUpdates: [update] }));
+    this.store.dispatch(updateQuoteRequestItems({ payload: { lineItemUpdates: [update] } }));
   }
 
   deleteQuoteRequestItem(itemId: string) {
-    this.store.dispatch(new DeleteItemFromQuoteRequest({ itemId }));
+    this.store.dispatch(deleteItemFromQuoteRequest({ payload: { itemId } }));
   }
 
   addBasketToQuoteRequest() {
-    this.store.dispatch(new AddBasketToQuoteRequest());
+    this.store.dispatch(addBasketToQuoteRequest());
   }
 
   addProductToQuoteRequest(sku: string, quantity: number) {
-    this.store.dispatch(new AddProductToQuoteRequest({ sku, quantity }));
+    this.store.dispatch(addProductToQuoteRequest({ payload: { sku, quantity } }));
   }
 
   // QUOTE AND QUOTE REQUEST
@@ -154,6 +154,6 @@ export class QuotingFacade {
   }
 
   createQuoteRequestFromQuote() {
-    this.store.dispatch(new CreateQuoteRequestFromQuote());
+    this.store.dispatch(createQuoteRequestFromQuote());
   }
 }

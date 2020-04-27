@@ -1,12 +1,13 @@
 import { EntityState, createEntityAdapter } from '@ngrx/entity';
+import { Action, createReducer, on } from '@ngrx/store';
 
 import { ProductListingID, ProductListingType } from 'ish-core/models/product-listing/product-listing.model';
 import { ViewType } from 'ish-core/models/viewtype/viewtype.types';
-import { FilterActionTypes, FilterActions } from 'ish-core/store/shopping/filter';
-import { ProductsAction, ProductsActionTypes } from 'ish-core/store/shopping/products';
-import { SearchAction, SearchActionTypes } from 'ish-core/store/shopping/search';
+import { loadProductsForFilter, loadProductsForFilterFail } from 'ish-core/store/shopping/filter';
+import { loadProductsForCategory, loadProductsForCategoryFail } from 'ish-core/store/shopping/products';
+import { searchProducts, searchProductsFail } from 'ish-core/store/shopping/search';
 
-import { ProductListingAction, ProductListingActionTypes } from './product-listing.actions';
+import { setProductListingPageSize, setProductListingPages, setViewType } from './product-listing.actions';
 
 export function serializeProductListingID(id: ProductListingID) {
   return `${id.type}@${id.value}@${id.filters || id.sorting}`;
@@ -68,40 +69,29 @@ function mergeCurrentSettings(
   return { ...currentSettings, [serializedId]: { ...oldSettings, ...newSettings } };
 }
 
-export function productListingReducer(
-  state = initialState,
-  action: ProductListingAction | SearchAction | ProductsAction | FilterActions
-): ProductListingState {
-  switch (action.type) {
-    case ProductListingActionTypes.SetProductListingPageSize:
-      return { ...state, itemsPerPage: action.payload.itemsPerPage };
-
-    case ProductListingActionTypes.SetViewType:
-      return { ...state, viewType: action.payload.viewType };
-
-    case SearchActionTypes.SearchProducts:
-    case ProductsActionTypes.LoadProductsForCategory:
-    case FilterActionTypes.LoadProductsForFilter:
-      return { ...state, loading: true };
-
-    case SearchActionTypes.SearchProductsFail:
-    case ProductsActionTypes.LoadProductsForCategoryFail:
-    case FilterActionTypes.LoadProductsForFilterFail:
-      return { ...state, loading: false };
-
-    case ProductListingActionTypes.SetProductListingPages: {
-      const pages =
-        action.payload.pages ||
-        calculatePages({ ...state.entities[serializeProductListingID(action.payload.id)], ...action.payload });
-
-      const currentSettings = mergeCurrentSettings(state.currentSettings, action.payload.id, {
-        sorting: action.payload.id.sorting,
-        filters: action.payload.id.filters,
-      });
-
-      return adapter.upsertOne({ ...action.payload, pages }, { ...state, loading: false, currentSettings });
-    }
-  }
-
-  return state;
+export function productListingReducer(state = initialState, action: Action): ProductListingState {
+  return reducer(state, action);
 }
+
+const reducer = createReducer(
+  initialState,
+  on(setProductListingPageSize, (state, action) => ({ ...state, itemsPerPage: action.payload.itemsPerPage })),
+  on(setViewType, (state, action) => ({ ...state, viewType: action.payload.viewType })),
+  on(loadProductsForFilter, searchProducts, loadProductsForCategory, state => ({ ...state, loading: true })),
+  on(loadProductsForFilterFail, searchProductsFail, loadProductsForCategoryFail, state => ({
+    ...state,
+    loading: false,
+  })),
+  on(setProductListingPages, (state, action) => {
+    const pages =
+      action.payload.pages ||
+      calculatePages({ ...state.entities[serializeProductListingID(action.payload.id)], ...action.payload });
+
+    const currentSettings = mergeCurrentSettings(state.currentSettings, action.payload.id, {
+      sorting: action.payload.id.sorting,
+      filters: action.payload.id.filters,
+    });
+
+    return adapter.upsertOne({ ...action.payload, pages }, { ...state, loading: false, currentSettings });
+  })
+);

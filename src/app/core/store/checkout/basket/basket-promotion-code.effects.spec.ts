@@ -14,7 +14,16 @@ import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module'
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import { BasketPromotionCodeEffects } from './basket-promotion-code.effects';
-import * as basketActions from './basket.actions';
+import {
+  addPromotionCodeToBasket,
+  addPromotionCodeToBasketFail,
+  addPromotionCodeToBasketSuccess,
+  loadBasket,
+  loadBasketSuccess,
+  removePromotionCodeFromBasket,
+  removePromotionCodeFromBasketFail,
+  removePromotionCodeFromBasketSuccess,
+} from './basket.actions';
 
 describe('Basket Promotion Code Effects', () => {
   let actions$: Observable<Action>;
@@ -47,8 +56,8 @@ describe('Basket Promotion Code Effects', () => {
 
   describe('loadBasketAfterAddPromotionCodeToBasket$', () => {
     it('should map to action of type LoadBasket if AddPromotionCodeToBasketSuccess action triggered', () => {
-      const action = new basketActions.AddPromotionCodeToBasketSuccess();
-      const completion = new basketActions.LoadBasket();
+      const action = addPromotionCodeToBasketSuccess();
+      const completion = loadBasket();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -61,18 +70,20 @@ describe('Basket Promotion Code Effects', () => {
       when(basketServiceMock.addPromotionCodeToBasket(anyString(), anyString())).thenReturn(of(undefined));
 
       store$.dispatch(
-        new basketActions.LoadBasketSuccess({
-          basket: {
-            id: 'BID',
-            lineItems: [],
-          } as Basket,
+        loadBasketSuccess({
+          payload: {
+            basket: {
+              id: 'BID',
+              lineItems: [],
+            } as Basket,
+          },
         })
       );
     });
 
     it('should call the basketService for AddPromotionCodeToBasket action', done => {
       const code = 'CODE';
-      const action = new basketActions.AddPromotionCodeToBasket({ code });
+      const action = addPromotionCodeToBasket({ payload: { code } });
       actions$ = of(action);
 
       effects.addPromotionCodeToBasket$.subscribe(() => {
@@ -83,8 +94,8 @@ describe('Basket Promotion Code Effects', () => {
 
     it('should map to action of type AddPromotionCodeToBasketSuccess', () => {
       const code = 'CODE';
-      const action = new basketActions.AddPromotionCodeToBasket({ code });
-      const completion = new basketActions.AddPromotionCodeToBasketSuccess();
+      const action = addPromotionCodeToBasket({ payload: { code } });
+      const completion = addPromotionCodeToBasketSuccess();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -97,8 +108,8 @@ describe('Basket Promotion Code Effects', () => {
       );
 
       const code = 'CODE';
-      const action = new basketActions.AddPromotionCodeToBasket({ code });
-      const completion = new basketActions.AddPromotionCodeToBasketFail({ error: { message: 'invalid' } as HttpError });
+      const action = addPromotionCodeToBasket({ payload: { code } });
+      const completion = addPromotionCodeToBasketFail({ payload: { error: { message: 'invalid' } as HttpError } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -111,18 +122,20 @@ describe('Basket Promotion Code Effects', () => {
       when(basketServiceMock.removePromotionCodeFromBasket(anyString(), anyString())).thenReturn(of(undefined));
 
       store$.dispatch(
-        new basketActions.LoadBasketSuccess({
-          basket: {
-            id: 'BID',
-            lineItems: [],
-          } as Basket,
+        loadBasketSuccess({
+          payload: {
+            basket: {
+              id: 'BID',
+              lineItems: [],
+            } as Basket,
+          },
         })
       );
     });
 
     it('should call the basketService for RemovePromotionCodeFromBasket action', done => {
       const code = 'CODE';
-      const action = new basketActions.RemovePromotionCodeFromBasket({ code });
+      const action = removePromotionCodeFromBasket({ payload: { code } });
       actions$ = of(action);
 
       effects.removePromotionCodeFromBasket$.subscribe(() => {
@@ -133,8 +146,8 @@ describe('Basket Promotion Code Effects', () => {
 
     it('should map to action of type RemovePromotionCodeFromBasketSuccess', () => {
       const code = 'CODE';
-      const action = new basketActions.RemovePromotionCodeFromBasket({ code });
-      const completion = new basketActions.RemovePromotionCodeFromBasketSuccess();
+      const action = removePromotionCodeFromBasket({ payload: { code } });
+      const completion = removePromotionCodeFromBasketSuccess();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -147,9 +160,11 @@ describe('Basket Promotion Code Effects', () => {
       );
 
       const code = 'CODE';
-      const action = new basketActions.RemovePromotionCodeFromBasket({ code });
-      const completion = new basketActions.RemovePromotionCodeFromBasketFail({
-        error: { message: 'invalid' } as HttpError,
+      const action = removePromotionCodeFromBasket({ payload: { code } });
+      const completion = removePromotionCodeFromBasketFail({
+        payload: {
+          error: { message: 'invalid' } as HttpError,
+        },
       });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
@@ -160,8 +175,8 @@ describe('Basket Promotion Code Effects', () => {
 
   describe('loadBasketAfterRemovePromotionCodeFromBasket$', () => {
     it('should map to action of type LoadBasket if RemovePromotionCodeFromBasketSuccess action triggered', () => {
-      const action = new basketActions.RemovePromotionCodeFromBasketSuccess();
-      const completion = new basketActions.LoadBasket();
+      const action = removePromotionCodeFromBasketSuccess();
+      const completion = loadBasket();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 

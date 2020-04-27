@@ -6,18 +6,18 @@ import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
 import { Wishlist, WishlistHeader } from '../models/wishlist/wishlist.model';
 import {
-  AddProductToNewWishlist,
-  AddProductToWishlist,
-  CreateWishlist,
-  DeleteWishlist,
-  MoveItemToWishlist,
-  RemoveItemFromWishlist,
-  UpdateWishlist,
+  addProductToNewWishlist,
+  addProductToWishlist,
+  createWishlist,
+  deleteWishlist,
   getAllWishlists,
   getPreferredWishlist,
   getSelectedWishlistDetails,
   getWishlistsError,
   getWishlistsLoading,
+  moveItemToWishlist,
+  removeItemFromWishlist,
+  updateWishlist,
 } from '../store/wishlist';
 
 // tslint:disable:member-ordering
@@ -32,36 +32,36 @@ export class WishlistsFacade {
   wishlistError$: Observable<HttpError> = this.store.pipe(select(getWishlistsError));
 
   addWishlist(wishlist: WishlistHeader): void | HttpError {
-    this.store.dispatch(new CreateWishlist({ wishlist }));
+    this.store.dispatch(createWishlist({ payload: { wishlist } }));
   }
 
   deleteWishlist(id: string): void {
-    this.store.dispatch(new DeleteWishlist({ wishlistId: id }));
+    this.store.dispatch(deleteWishlist({ payload: { wishlistId: id } }));
   }
 
   updateWishlist(wishlist: Wishlist): void {
-    this.store.dispatch(new UpdateWishlist({ wishlist }));
+    this.store.dispatch(updateWishlist({ payload: { wishlist } }));
   }
 
   addProductToNewWishlist(title: string, sku: string): void {
-    this.store.dispatch(new AddProductToNewWishlist({ title, sku }));
+    this.store.dispatch(addProductToNewWishlist({ payload: { title, sku } }));
   }
 
   addProductToWishlist(wishlistId: string, sku: string, quantity?: number): void {
-    this.store.dispatch(new AddProductToWishlist({ wishlistId, sku, quantity }));
+    this.store.dispatch(addProductToWishlist({ payload: { wishlistId, sku, quantity } }));
   }
 
   moveItemToWishlist(sourceWishlistId: string, targetWishlistId: string, sku: string): void {
     this.store.dispatch(
-      new MoveItemToWishlist({ source: { id: sourceWishlistId }, target: { id: targetWishlistId, sku } })
+      moveItemToWishlist({ payload: { source: { id: sourceWishlistId }, target: { id: targetWishlistId, sku } } })
     );
   }
 
   moveItemToNewWishlist(sourceWishlistId: string, title: string, sku: string): void {
-    this.store.dispatch(new MoveItemToWishlist({ source: { id: sourceWishlistId }, target: { title, sku } }));
+    this.store.dispatch(moveItemToWishlist({ payload: { source: { id: sourceWishlistId }, target: { title, sku } } }));
   }
 
   removeProductFromWishlist(wishlistId: string, sku: string): void {
-    this.store.dispatch(new RemoveItemFromWishlist({ wishlistId, sku }));
+    this.store.dispatch(removeItemFromWishlist({ payload: { wishlistId, sku } }));
   }
 }

@@ -7,8 +7,8 @@ import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 import { LoadingComponent } from 'ish-shared/components/common/loading/loading.component';
 
 import { QuoteData } from '../../models/quote/quote.interface';
-import { LoadQuotes, LoadQuotesSuccess } from '../../store/quote';
-import { LoadQuoteRequests } from '../../store/quote-request';
+import { loadQuotes, loadQuotesSuccess } from '../../store/quote';
+import { loadQuoteRequests } from '../../store/quote-request';
 import { quotingReducers } from '../../store/quoting-store.module';
 
 import { QuoteListPageComponent } from './quote-list-page.component';
@@ -49,13 +49,13 @@ describe('Quote List Page Component', () => {
   });
 
   it('should render loading component if quotes loading', () => {
-    store$.dispatch(new LoadQuotes());
+    store$.dispatch(loadQuotes());
     fixture.detectChanges();
     expect(element.querySelector('ish-loading')).toBeTruthy();
   });
 
   it('should render loading component if quote requests loading', () => {
-    store$.dispatch(new LoadQuoteRequests());
+    store$.dispatch(loadQuoteRequests());
     fixture.detectChanges();
     expect(element.querySelector('ish-loading')).toBeTruthy();
   });
@@ -69,7 +69,7 @@ describe('Quote List Page Component', () => {
       ],
     };
 
-    store$.dispatch(new LoadQuotesSuccess(quotes));
+    store$.dispatch(loadQuotesSuccess({ payload: quotes }));
     fixture.detectChanges();
     expect(element.querySelector('ish-quote-list')).toBeTruthy();
   });

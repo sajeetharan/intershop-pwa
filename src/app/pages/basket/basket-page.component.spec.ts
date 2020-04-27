@@ -5,7 +5,7 @@ import { MockComponent } from 'ng-mocks';
 
 import { Basket } from 'ish-core/models/basket/basket.model';
 import { LineItem } from 'ish-core/models/line-item/line-item.model';
-import { LoadBasket, LoadBasketSuccess } from 'ish-core/store/checkout/basket';
+import { loadBasket, loadBasketSuccess } from 'ish-core/store/checkout/basket';
 import { checkoutReducers } from 'ish-core/store/checkout/checkout-store.module';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
@@ -58,21 +58,21 @@ describe('Basket Page Component', () => {
   });
 
   it('should render loading component if there is no basket', () => {
-    store$.dispatch(new LoadBasket({ id: 'BASKET_ID' }));
+    store$.dispatch(loadBasket({ payload: { id: 'BASKET_ID' } }));
     fixture.detectChanges();
     expect(element.querySelector('ish-loading')).toBeTruthy();
   });
 
   it('should render empty basket component if the basket has no line items', () => {
     const basket = { id: 'dummy', lineItems: [] } as Basket;
-    store$.dispatch(new LoadBasketSuccess({ basket }));
+    store$.dispatch(loadBasketSuccess({ payload: { basket } }));
     fixture.detectChanges();
     expect(element.querySelector('ish-shopping-basket-empty')).toBeTruthy();
   });
 
   it('should render shopping basket component if there is a basket with line items', () => {
     const basket = { id: 'dummy', lineItems: [{ id: '123', productSKU: 'SKU_123' }] as LineItem[] } as Basket;
-    store$.dispatch(new LoadBasketSuccess({ basket }));
+    store$.dispatch(loadBasketSuccess({ payload: { basket } }));
     fixture.detectChanges();
     expect(element.querySelector('ish-shopping-basket')).toBeTruthy();
   });

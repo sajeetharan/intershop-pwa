@@ -6,7 +6,7 @@ import { MockComponent } from 'ng-mocks';
 
 import { Category } from 'ish-core/models/category/category.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoadCategory, LoadCategorySuccess } from 'ish-core/store/shopping/categories';
+import { loadCategory, loadCategorySuccess } from 'ish-core/store/shopping/categories';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { findAllIshElements } from 'ish-core/utils/dev/html-query-utils';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
@@ -67,7 +67,7 @@ describe('Category Page Component', () => {
   });
 
   it('should display loading when category is loading', fakeAsync(() => {
-    store$.dispatch(new LoadCategory({ categoryId: 'dummy' }));
+    store$.dispatch(loadCategory({ payload: { categoryId: 'dummy' } }));
 
     fixture.detectChanges();
 
@@ -82,7 +82,7 @@ describe('Category Page Component', () => {
   it('should display categories when category has sub categories', done => {
     const category = { uniqueId: 'dummy', categoryPath: ['dummy'] } as Category;
     const subCategory = { uniqueId: 'dummy.A', categoryPath: ['dummy', 'dummy.A'] } as Category;
-    store$.dispatch(new LoadCategorySuccess({ categories: categoryTree([category, subCategory]) }));
+    store$.dispatch(loadCategorySuccess({ payload: { categories: categoryTree([category, subCategory]) } }));
     router.navigate(['category', category.uniqueId]);
 
     setTimeout(() => {
@@ -95,7 +95,7 @@ describe('Category Page Component', () => {
   it('should display products when category has products', done => {
     const category = { uniqueId: 'dummy', categoryPath: ['dummy'] } as Category;
     category.hasOnlineProducts = true;
-    store$.dispatch(new LoadCategorySuccess({ categories: categoryTree([category]) }));
+    store$.dispatch(loadCategorySuccess({ payload: { categories: categoryTree([category]) } }));
     router.navigate(['category', category.uniqueId]);
 
     setTimeout(() => {

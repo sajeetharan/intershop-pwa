@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, concat, forkJoin } from 'rxjs';
@@ -26,14 +26,14 @@ import {
 import { LineItemUpdate } from 'ish-core/models/line-item-update/line-item-update.model';
 import { ProductCompletenessLevel } from 'ish-core/models/product/product.model';
 import { getCurrentBasket } from 'ish-core/store/checkout/basket';
+import { toastMessage } from 'ish-core/store/messages';
 import { selectRouteParam } from 'ish-core/store/router';
-import { ToastMessage } from 'ish-core/store/messages';
-import { LoadProductIfNotLoaded } from 'ish-core/store/shopping/products';
-import { UserActionTypes, getUserAuthorized } from 'ish-core/store/user';
-import { SetBreadcrumbData } from 'ish-core/store/viewconf';
+import { loadProductIfNotLoaded } from 'ish-core/store/shopping/products';
+import { getUserAuthorized, loadCompanyUserSuccess } from 'ish-core/store/user';
+import { setBreadcrumbData } from 'ish-core/store/viewconf';
 import {
   distinctCompareWith,
-  mapErrorToAction,
+  mapErrorToActionV8,
   mapToPayload,
   mapToPayloadProperty,
   whenFalsy,
@@ -42,41 +42,44 @@ import {
 
 import { QuoteRequest } from '../../models/quote-request/quote-request.model';
 import { QuoteRequestService } from '../../services/quote-request/quote-request.service';
-import { QuoteActionTypes } from '../quote/quote.actions';
+import { createQuoteRequestFromQuoteSuccess } from '../quote/quote.actions';
 
 import {
-  AddBasketToQuoteRequestFail,
-  AddBasketToQuoteRequestSuccess,
-  AddProductToQuoteRequest,
-  AddProductToQuoteRequestFail,
-  AddProductToQuoteRequestSuccess,
-  AddQuoteRequestFail,
-  AddQuoteRequestSuccess,
-  CreateQuoteRequestFromQuoteRequest,
-  CreateQuoteRequestFromQuoteRequestFail,
-  CreateQuoteRequestFromQuoteRequestSuccess,
-  DeleteItemFromQuoteRequest,
-  DeleteItemFromQuoteRequestFail,
-  DeleteItemFromQuoteRequestSuccess,
-  DeleteQuoteRequest,
-  DeleteQuoteRequestFail,
-  DeleteQuoteRequestSuccess,
-  LoadQuoteRequestItems,
-  LoadQuoteRequestItemsFail,
-  LoadQuoteRequestItemsSuccess,
-  LoadQuoteRequests,
-  LoadQuoteRequestsFail,
-  LoadQuoteRequestsSuccess,
-  QuoteRequestActionTypes,
-  SelectQuoteRequest,
-  SubmitQuoteRequestFail,
-  SubmitQuoteRequestSuccess,
-  UpdateQuoteRequest,
-  UpdateQuoteRequestFail,
-  UpdateQuoteRequestItems,
-  UpdateQuoteRequestItemsFail,
-  UpdateQuoteRequestItemsSuccess,
-  UpdateQuoteRequestSuccess,
+  addBasketToQuoteRequest,
+  addBasketToQuoteRequestFail,
+  addBasketToQuoteRequestSuccess,
+  addProductToQuoteRequest,
+  addProductToQuoteRequestFail,
+  addProductToQuoteRequestSuccess,
+  addQuoteRequest,
+  addQuoteRequestFail,
+  addQuoteRequestSuccess,
+  createQuoteRequestFromQuoteRequest,
+  createQuoteRequestFromQuoteRequestFail,
+  createQuoteRequestFromQuoteRequestSuccess,
+  deleteItemFromQuoteRequest,
+  deleteItemFromQuoteRequestFail,
+  deleteItemFromQuoteRequestSuccess,
+  deleteQuoteRequest,
+  deleteQuoteRequestFail,
+  deleteQuoteRequestSuccess,
+  loadQuoteRequestItems,
+  loadQuoteRequestItemsFail,
+  loadQuoteRequestItemsSuccess,
+  loadQuoteRequests,
+  loadQuoteRequestsFail,
+  loadQuoteRequestsSuccess,
+  selectQuoteRequest,
+  submitQuoteRequest,
+  submitQuoteRequestFail,
+  submitQuoteRequestSuccess,
+  updateQuoteRequest,
+  updateQuoteRequestFail,
+  updateQuoteRequestItems,
+  updateQuoteRequestItemsFail,
+  updateQuoteRequestItemsSuccess,
+  updateQuoteRequestSuccess,
+  updateSubmitQuoteRequest,
 } from './quote-request.actions';
 import {
   getCurrentQuoteRequests,
@@ -96,360 +99,310 @@ export class QuoteRequestEffects {
     private translateService: TranslateService
   ) {}
 
-  /**
-   * The load quote requests effect.
-   */
-  @Effect()
-  loadQuoteRequests$ = this.actions$.pipe(
-    ofType(QuoteRequestActionTypes.LoadQuoteRequests),
-    concatMap(() =>
-      this.quoteRequestService.getQuoteRequests().pipe(
-        map(quoteRequests => new LoadQuoteRequestsSuccess({ quoteRequests })),
-        mapErrorToAction(LoadQuoteRequestsFail)
+  loadQuoteRequests$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadQuoteRequests),
+      concatMap(() =>
+        this.quoteRequestService.getQuoteRequests().pipe(
+          map(quoteRequests => loadQuoteRequestsSuccess({ payload: { quoteRequests } })),
+          mapErrorToActionV8(loadQuoteRequestsFail)
+        )
       )
     )
   );
-
-  /**
-   * Add quote request to a specific user of a specific customer.
-   */
-  @Effect()
-  addQuoteRequest$ = this.actions$.pipe(
-    ofType(QuoteRequestActionTypes.AddQuoteRequest),
-    concatMap(() =>
-      this.quoteRequestService.addQuoteRequest().pipe(
-        map(id => new AddQuoteRequestSuccess({ id })),
-        mapErrorToAction(AddQuoteRequestFail)
+  addQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addQuoteRequest),
+      concatMap(() =>
+        this.quoteRequestService.addQuoteRequest().pipe(
+          map(id => addQuoteRequestSuccess({ payload: { id } })),
+          mapErrorToActionV8(addQuoteRequestFail)
+        )
       )
     )
   );
-
-  /**
-   * Update specific quote request for a specific user of a specific customer.
-   */
-  @Effect()
-  updateQuoteRequest$ = this.actions$.pipe(
-    ofType<UpdateQuoteRequest>(QuoteRequestActionTypes.UpdateQuoteRequest),
-    mapToPayload(),
-    withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestId))),
-    concatMap(([payload, quoteRequestId]) =>
-      this.quoteRequestService.updateQuoteRequest(quoteRequestId, payload).pipe(
-        map(quoteRequest => new UpdateQuoteRequestSuccess({ quoteRequest })),
-        mapErrorToAction(UpdateQuoteRequestFail)
+  updateQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateQuoteRequest),
+      mapToPayload(),
+      withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestId))),
+      concatMap(([payload, quoteRequestId]) =>
+        this.quoteRequestService.updateQuoteRequest(quoteRequestId, payload).pipe(
+          map(quoteRequest => updateQuoteRequestSuccess({ payload: { quoteRequest } })),
+          mapErrorToActionV8(updateQuoteRequestFail)
+        )
       )
     )
   );
+  deleteQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteQuoteRequest),
+      mapToPayloadProperty('id'),
 
-  /**
-   * Delete quote request from a specific user of a specific customer.
-   */
-  @Effect()
-  deleteQuoteRequest$ = this.actions$.pipe(
-    ofType<DeleteQuoteRequest>(QuoteRequestActionTypes.DeleteQuoteRequest),
-    mapToPayloadProperty('id'),
-
-    concatMap(quoteRequestId =>
-      this.quoteRequestService.deleteQuoteRequest(quoteRequestId).pipe(
-        mergeMap(id => [
-          new DeleteQuoteRequestSuccess({ id }),
-          new ToastMessage({ message: 'quote.delete.message', messageType: 'success' }),
-        ]),
-        mapErrorToAction(DeleteQuoteRequestFail)
+      concatMap(quoteRequestId =>
+        this.quoteRequestService.deleteQuoteRequest(quoteRequestId).pipe(
+          mergeMap(id => [
+            deleteQuoteRequestSuccess({ payload: { id } }),
+            toastMessage({ payload: { message: 'quote.delete.message', messageType: 'success' } }),
+          ]),
+          mapErrorToActionV8(deleteQuoteRequestFail)
+        )
       )
     )
   );
-
-  /**
-   * Submit quote request from a specific user of a specific customer.
-   */
-  @Effect()
-  submitQuoteRequest$ = this.actions$.pipe(
-    ofType(QuoteRequestActionTypes.SubmitQuoteRequest),
-    withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestId))),
-    concatMap(([, quoteRequestId]) =>
-      this.quoteRequestService.submitQuoteRequest(quoteRequestId).pipe(
-        map(id => new SubmitQuoteRequestSuccess({ id })),
-        mapErrorToAction(SubmitQuoteRequestFail)
+  submitQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(submitQuoteRequest),
+      withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestId))),
+      concatMap(([, quoteRequestId]) =>
+        this.quoteRequestService.submitQuoteRequest(quoteRequestId).pipe(
+          map(id => submitQuoteRequestSuccess({ payload: { id } })),
+          mapErrorToActionV8(submitQuoteRequestFail)
+        )
       )
     )
   );
-
-  /**
-   * Update quote request before submitting the quote request.
-   */
-  @Effect()
-  updateSubmitQuoteRequest$ = this.actions$.pipe(
-    ofType(QuoteRequestActionTypes.UpdateSubmitQuoteRequest),
-    mapToPayload(),
-    withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestId))),
-    concatMap(([payload, quoteRequestId]) =>
-      this.quoteRequestService.updateQuoteRequest(quoteRequestId, payload).pipe(
-        switchMap(quoteRequest =>
-          this.quoteRequestService.submitQuoteRequest(quoteRequest.id).pipe(
-            map(id => new SubmitQuoteRequestSuccess({ id })),
-            mapErrorToAction(SubmitQuoteRequestFail)
+  updateSubmitQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateSubmitQuoteRequest),
+      mapToPayload(),
+      withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestId))),
+      concatMap(([payload, quoteRequestId]) =>
+        this.quoteRequestService.updateQuoteRequest(quoteRequestId, payload).pipe(
+          switchMap(quoteRequest =>
+            this.quoteRequestService.submitQuoteRequest(quoteRequest.id).pipe(
+              map(id => submitQuoteRequestSuccess({ payload: { id } })),
+              mapErrorToActionV8(submitQuoteRequestFail)
+            )
+          ),
+          mapErrorToActionV8(updateQuoteRequestFail)
+        )
+      )
+    )
+  );
+  createQuoteRequestFromQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(createQuoteRequestFromQuoteRequest),
+      mapToPayloadProperty('redirect'),
+      withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestWithProducts))),
+      concatMap(([redirect, currentQuoteRequest]) =>
+        this.quoteRequestService.createQuoteRequestFromQuoteRequest(currentQuoteRequest).pipe(
+          map(quoteLineItemResult => createQuoteRequestFromQuoteRequestSuccess({ payload: { quoteLineItemResult } })),
+          tap(quoteLineItemResult => {
+            if (redirect) {
+              this.router.navigate([
+                `/account/quotes/request/${quoteLineItemResult.payload.quoteLineItemResult.title}`,
+              ]);
+            }
+          }),
+          mapErrorToActionV8(createQuoteRequestFromQuoteRequestFail)
+        )
+      )
+    )
+  );
+  loadQuoteRequestItems$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadQuoteRequestItems),
+      mapToPayloadProperty('id'),
+      withLatestFrom(this.store.pipe(select(getCurrentQuoteRequests))),
+      map(([quoteId, quoteRequests]) => quoteRequests.filter(item => item.id === quoteId).pop()),
+      whenTruthy(),
+      mergeMap(quoteRequest =>
+        forkJoin(
+          // tslint:disable-next-line:no-string-literal
+          quoteRequest.items.map(item => this.quoteRequestService.getQuoteRequestItem(quoteRequest.id, item['title']))
+        ).pipe(
+          defaultIfEmpty([]),
+          mergeMap(quoteRequestItems => [
+            ...quoteRequestItems.map(item =>
+              loadProductIfNotLoaded({ payload: { sku: item.productSKU, level: ProductCompletenessLevel.List } })
+            ),
+            loadQuoteRequestItemsSuccess({ payload: { quoteRequestItems } }),
+          ]),
+          mapErrorToActionV8(loadQuoteRequestItemsFail)
+        )
+      )
+    )
+  );
+  loadProductsForQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadQuoteRequestItemsSuccess),
+      mapToPayloadProperty('quoteRequestItems'),
+      concatMap(lineItems => [
+        ...lineItems.map(({ productSKU }) =>
+          loadProductIfNotLoaded({ payload: { sku: productSKU, level: ProductCompletenessLevel.List } })
+        ),
+      ])
+    )
+  );
+  addProductToQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addProductToQuoteRequest),
+      mapToPayload(),
+      withLatestFrom(this.store.pipe(select(getUserAuthorized))),
+      filter(([, authorized]) => authorized),
+      concatMap(([item]) =>
+        this.quoteRequestService.addProductToQuoteRequest(item.sku, item.quantity).pipe(
+          map(id => addProductToQuoteRequestSuccess({ payload: { id } })),
+          mapErrorToActionV8(addProductToQuoteRequestFail)
+        )
+      )
+    )
+  );
+  addBasketToQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addBasketToQuoteRequest),
+      withLatestFrom(this.store.pipe(select(getCurrentBasket))),
+      concatMap(([, currentBasket]) =>
+        concat(
+          ...currentBasket.lineItems.map(lineItem =>
+            this.quoteRequestService.addProductToQuoteRequest(lineItem.productSKU, lineItem.quantity.value)
+          )
+        ).pipe(
+          last(),
+          map(id => addBasketToQuoteRequestSuccess({ payload: { id } })),
+          mapErrorToActionV8(addBasketToQuoteRequestFail)
+        )
+      )
+    )
+  );
+  updateQuoteRequestItems$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateQuoteRequestItems),
+      mapToPayloadProperty('lineItemUpdates'),
+      withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestWithProducts))),
+      map(([lineItemUpdates, selectedQuoteRequest]) => ({
+        quoteRequestId: selectedQuoteRequest.id,
+        updatedItems: this.filterQuoteRequestsForChanges(lineItemUpdates, selectedQuoteRequest),
+      })),
+      concatMap(payload =>
+        forkJoin(
+          payload.updatedItems.map(item =>
+            item.quantity === 0
+              ? this.quoteRequestService.removeItemFromQuoteRequest(payload.quoteRequestId, item.itemId)
+              : this.quoteRequestService.updateQuoteRequestItem(payload.quoteRequestId, item)
+          )
+        ).pipe(
+          defaultIfEmpty(),
+          map(itemIds => updateQuoteRequestItemsSuccess({ payload: { itemIds } })),
+          mapErrorToActionV8(updateQuoteRequestItemsFail)
+        )
+      )
+    )
+  );
+  deleteItemFromQuoteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteItemFromQuoteRequest),
+      mapToPayloadProperty('itemId'),
+      withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestId))),
+      concatMap(([payload, quoteRequestId]) =>
+        this.quoteRequestService.removeItemFromQuoteRequest(quoteRequestId, payload).pipe(
+          map(id => deleteItemFromQuoteRequestSuccess({ payload: { id } })),
+          mapErrorToActionV8(deleteItemFromQuoteRequestFail)
+        )
+      )
+    )
+  );
+  goToLoginOnAddQuoteRequest$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(addProductToQuoteRequest, addBasketToQuoteRequest),
+        mergeMap(() =>
+          this.store.pipe(
+            select(getUserAuthorized),
+            first()
           )
         ),
-        mapErrorToAction(UpdateQuoteRequestFail)
-      )
-    )
-  );
-
-  /**
-   * Create quote request based on selected, submited quote request from a specific user of a specific customer.
-   */
-  @Effect()
-  createQuoteRequestFromQuoteRequest$ = this.actions$.pipe(
-    ofType<CreateQuoteRequestFromQuoteRequest>(QuoteRequestActionTypes.CreateQuoteRequestFromQuoteRequest),
-    mapToPayloadProperty('redirect'),
-    withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestWithProducts))),
-    concatMap(([redirect, currentQuoteRequest]) =>
-      this.quoteRequestService.createQuoteRequestFromQuoteRequest(currentQuoteRequest).pipe(
-        map(quoteLineItemResult => new CreateQuoteRequestFromQuoteRequestSuccess({ quoteLineItemResult })),
-        tap(quoteLineItemResult => {
-          if (redirect) {
-            this.router.navigate([`/account/quotes/request/${quoteLineItemResult.payload.quoteLineItemResult.title}`]);
-          }
-        }),
-        mapErrorToAction(CreateQuoteRequestFromQuoteRequestFail)
-      )
-    )
-  );
-
-  /**
-   * The load quote requests items effect.
-   */
-  @Effect()
-  loadQuoteRequestItems$ = this.actions$.pipe(
-    ofType<LoadQuoteRequestItems>(QuoteRequestActionTypes.LoadQuoteRequestItems),
-    mapToPayloadProperty('id'),
-    withLatestFrom(this.store.pipe(select(getCurrentQuoteRequests))),
-    map(([quoteId, quoteRequests]) => quoteRequests.filter(item => item.id === quoteId).pop()),
-    whenTruthy(),
-    mergeMap(quoteRequest =>
-      forkJoin(
-        // tslint:disable-next-line:no-string-literal
-        quoteRequest.items.map(item => this.quoteRequestService.getQuoteRequestItem(quoteRequest.id, item['title']))
-      ).pipe(
-        defaultIfEmpty([]),
-        mergeMap(quoteRequestItems => [
-          ...quoteRequestItems.map(
-            item => new LoadProductIfNotLoaded({ sku: item.productSKU, level: ProductCompletenessLevel.List })
-          ),
-          new LoadQuoteRequestItemsSuccess({ quoteRequestItems }),
-        ]),
-        mapErrorToAction(LoadQuoteRequestItemsFail)
-      )
-    )
-  );
-
-  /**
-   * After successfully loading quote request, trigger a LoadProduct action
-   * for each product that is missing in the current product entities state.
-   */
-  @Effect()
-  loadProductsForQuoteRequest$ = this.actions$.pipe(
-    ofType<LoadQuoteRequestItemsSuccess>(QuoteRequestActionTypes.LoadQuoteRequestItemsSuccess),
-    mapToPayloadProperty('quoteRequestItems'),
-    concatMap(lineItems => [
-      ...lineItems.map(
-        ({ productSKU }) => new LoadProductIfNotLoaded({ sku: productSKU, level: ProductCompletenessLevel.List })
+        whenFalsy(),
+        tap(() => {
+          const queryParams = { returnUrl: this.router.routerState.snapshot.url, messageKey: 'quotes' };
+          this.router.navigate(['/login'], { queryParams });
+        })
       ),
-    ])
+    { dispatch: false }
   );
-
-  /**
-   * Add an item to the current editable quote request from a specific user of a specific customer.
-   */
-  @Effect()
-  addProductToQuoteRequest$ = this.actions$.pipe(
-    ofType<AddProductToQuoteRequest>(QuoteRequestActionTypes.AddProductToQuoteRequest),
-    mapToPayload(),
-    withLatestFrom(this.store.pipe(select(getUserAuthorized))),
-    filter(([, authorized]) => authorized),
-    concatMap(([item]) =>
-      this.quoteRequestService.addProductToQuoteRequest(item.sku, item.quantity).pipe(
-        map(id => new AddProductToQuoteRequestSuccess({ id })),
-        mapErrorToAction(AddProductToQuoteRequestFail)
-      )
+  goToQuoteRequestDetail$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(addBasketToQuoteRequestSuccess),
+        mapToPayloadProperty('id'),
+        tap(quoteRequestId => {
+          this.router.navigate([`/account/quotes/request/${quoteRequestId}`]);
+        })
+      ),
+    { dispatch: false }
+  );
+  selectQuoteRequestAfterCopy$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(createQuoteRequestFromQuoteRequestSuccess),
+      mapToPayload(),
+      map(payload => selectQuoteRequest({ payload: { id: payload.quoteLineItemResult.title } }))
     )
   );
-
-  /**
-   * Trigger an AddProductToQuoteRequest action for each line item thats in the current basket.
-   */
-  @Effect()
-  addBasketToQuoteRequest$ = this.actions$.pipe(
-    ofType(QuoteRequestActionTypes.AddBasketToQuoteRequest),
-    withLatestFrom(this.store.pipe(select(getCurrentBasket))),
-    concatMap(([, currentBasket]) =>
-      concat(
-        ...currentBasket.lineItems.map(lineItem =>
-          this.quoteRequestService.addProductToQuoteRequest(lineItem.productSKU, lineItem.quantity.value)
-        )
-      ).pipe(
-        last(),
-        map(id => new AddBasketToQuoteRequestSuccess({ id })),
-        mapErrorToAction(AddBasketToQuoteRequestFail)
+  loadQuoteRequestsAfterChangeSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        addQuoteRequestSuccess,
+        updateQuoteRequestSuccess,
+        deleteQuoteRequestSuccess,
+        submitQuoteRequestSuccess,
+        createQuoteRequestFromQuoteRequestSuccess,
+        addProductToQuoteRequestSuccess,
+        addBasketToQuoteRequestSuccess,
+        updateQuoteRequestItemsSuccess,
+        deleteItemFromQuoteRequestSuccess,
+        createQuoteRequestFromQuoteSuccess,
+        loadCompanyUserSuccess
+      ),
+      filter(() => this.featureToggleService.enabled('quoting')),
+      mapTo(loadQuoteRequests())
+    )
+  );
+  routeListenerForSelectingQuote$ = createEffect(() =>
+    this.store.pipe(
+      select(selectRouteParam('quoteRequestId')),
+      distinctCompareWith(this.store.pipe(select(getSelectedQuoteRequestId))),
+      map(id => selectQuoteRequest({ payload: { id } }))
+    )
+  );
+  loadQuoteRequestItemsAfterSelectQuoteRequest$ = createEffect(() =>
+    combineLatest([
+      this.actions$.pipe(
+        ofType(selectQuoteRequest),
+        mapToPayloadProperty('id')
+      ),
+      this.actions$.pipe(ofType(loadQuoteRequestsSuccess)),
+    ]).pipe(
+      filter(([quoteId]) => !!quoteId),
+      map(([quoteId]) => loadQuoteRequestItems({ payload: { id: quoteId } }))
+    )
+  );
+  loadQuoteRequestsOnLogin$ = createEffect(() =>
+    this.store.pipe(
+      select(getUserAuthorized),
+      whenTruthy(),
+      mapTo(loadQuoteRequests())
+    )
+  );
+  setQuoteRequestBreadcrumb$ = createEffect(() =>
+    this.store.pipe(
+      select(getSelectedQuoteRequest),
+      whenTruthy(),
+      withLatestFrom(this.translateService.get('quote.edit.unsubmitted.quote_request_details.text')),
+      map(([quoteRequest, x]) =>
+        setBreadcrumbData({
+          payload: {
+            breadcrumbData: [
+              { key: 'quote.quotes.link', link: '/account/quotes' },
+              { text: `${x} - ${quoteRequest.displayName}` },
+            ],
+          },
+        })
       )
     )
   );
 
   // TODO: currently updating more than one item at a time is not needed. We could simplify this effect.
-  /**
-   * Update quote request items effect.
-   * Triggers update item request if item quantity has changed and is greater zero
-   * Triggers delete item request if item quantity set to zero
-   */
-  @Effect()
-  updateQuoteRequestItems$ = this.actions$.pipe(
-    ofType<UpdateQuoteRequestItems>(QuoteRequestActionTypes.UpdateQuoteRequestItems),
-    mapToPayloadProperty('lineItemUpdates'),
-    withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestWithProducts))),
-    map(([lineItemUpdates, selectedQuoteRequest]) => ({
-      quoteRequestId: selectedQuoteRequest.id,
-      updatedItems: this.filterQuoteRequestsForChanges(lineItemUpdates, selectedQuoteRequest),
-    })),
-    concatMap(payload =>
-      forkJoin(
-        payload.updatedItems.map(item =>
-          item.quantity === 0
-            ? this.quoteRequestService.removeItemFromQuoteRequest(payload.quoteRequestId, item.itemId)
-            : this.quoteRequestService.updateQuoteRequestItem(payload.quoteRequestId, item)
-        )
-      ).pipe(
-        defaultIfEmpty(),
-        map(itemIds => new UpdateQuoteRequestItemsSuccess({ itemIds })),
-        mapErrorToAction(UpdateQuoteRequestItemsFail)
-      )
-    )
-  );
-
-  /**
-   * Delete item from quote request for a specific user of a specific customer.
-   */
-  @Effect()
-  deleteItemFromQuoteRequest$ = this.actions$.pipe(
-    ofType<DeleteItemFromQuoteRequest>(QuoteRequestActionTypes.DeleteItemFromQuoteRequest),
-    mapToPayloadProperty('itemId'),
-    withLatestFrom(this.store.pipe(select(getSelectedQuoteRequestId))),
-    concatMap(([payload, quoteRequestId]) =>
-      this.quoteRequestService.removeItemFromQuoteRequest(quoteRequestId, payload).pipe(
-        map(id => new DeleteItemFromQuoteRequestSuccess({ id })),
-        mapErrorToAction(DeleteItemFromQuoteRequestFail)
-      )
-    )
-  );
-
-  /**
-   * Call router for navigate to login on AddProductToQuoteRequest if not logged in.
-   */
-  @Effect({ dispatch: false })
-  goToLoginOnAddQuoteRequest$ = this.actions$.pipe(
-    ofType(QuoteRequestActionTypes.AddProductToQuoteRequest, QuoteRequestActionTypes.AddBasketToQuoteRequest),
-    mergeMap(() =>
-      this.store.pipe(
-        select(getUserAuthorized),
-        first()
-      )
-    ),
-    whenFalsy(),
-    tap(() => {
-      const queryParams = { returnUrl: this.router.routerState.snapshot.url, messageKey: 'quotes' };
-      this.router.navigate(['/login'], { queryParams });
-    })
-  );
-
-  @Effect({ dispatch: false })
-  goToQuoteRequestDetail$ = this.actions$.pipe(
-    ofType<AddBasketToQuoteRequestSuccess>(QuoteRequestActionTypes.AddBasketToQuoteRequestSuccess),
-    mapToPayloadProperty('id'),
-    tap(quoteRequestId => {
-      this.router.navigate([`/account/quotes/request/${quoteRequestId}`]);
-    })
-  );
-
-  /**
-   * Triggers a SelectQuoteRequest action for the just created copy after successfully creating a quote request copy.
-   */
-  @Effect()
-  selectQuoteRequestAfterCopy$ = this.actions$.pipe(
-    ofType<CreateQuoteRequestFromQuoteRequestSuccess>(
-      QuoteRequestActionTypes.CreateQuoteRequestFromQuoteRequestSuccess
-    ),
-    mapToPayload(),
-    map(payload => new SelectQuoteRequest({ id: payload.quoteLineItemResult.title }))
-  );
-
-  /**
-   * Triggers a LoadQuoteRequests action after successful quote request related interaction with the Quote API.
-   */
-  @Effect()
-  loadQuoteRequestsAfterChangeSuccess$ = this.actions$.pipe(
-    ofType(
-      QuoteRequestActionTypes.AddQuoteRequestSuccess,
-      QuoteRequestActionTypes.UpdateQuoteRequestSuccess,
-      QuoteRequestActionTypes.DeleteQuoteRequestSuccess,
-      QuoteRequestActionTypes.SubmitQuoteRequestSuccess,
-      QuoteRequestActionTypes.CreateQuoteRequestFromQuoteRequestSuccess,
-      QuoteRequestActionTypes.AddProductToQuoteRequestSuccess,
-      QuoteRequestActionTypes.AddBasketToQuoteRequestSuccess,
-      QuoteRequestActionTypes.UpdateQuoteRequestItemsSuccess,
-      QuoteRequestActionTypes.DeleteItemFromQuoteRequestSuccess,
-      QuoteActionTypes.CreateQuoteRequestFromQuoteSuccess,
-      UserActionTypes.LoadCompanyUserSuccess
-    ),
-    filter(() => this.featureToggleService.enabled('quoting')),
-    mapTo(new LoadQuoteRequests())
-  );
-
-  /**
-   * Triggers a SelectQuoteRequest action if route contains quoteRequestId parameter
-   */
-  @Effect()
-  routeListenerForSelectingQuote$ = this.store.pipe(
-    select(selectRouteParam('quoteRequestId')),
-    distinctCompareWith(this.store.pipe(select(getSelectedQuoteRequestId))),
-    map(id => new SelectQuoteRequest({ id }))
-  );
-
-  /**
-   * Triggers a LoadQuoteRequestItems action if a quote request gets selected and LoadQuoteRequestsSuccess action triggered
-   */
-  @Effect()
-  loadQuoteRequestItemsAfterSelectQuoteRequest$ = combineLatest([
-    this.actions$.pipe(
-      ofType<SelectQuoteRequest>(QuoteRequestActionTypes.SelectQuoteRequest),
-      mapToPayloadProperty('id')
-    ),
-    this.actions$.pipe(ofType(QuoteRequestActionTypes.LoadQuoteRequestsSuccess)),
-  ]).pipe(
-    filter(([quoteId]) => !!quoteId),
-    map(([quoteId]) => new LoadQuoteRequestItems({ id: quoteId }))
-  );
-
-  @Effect()
-  loadQuoteRequestsOnLogin$ = this.store.pipe(
-    select(getUserAuthorized),
-    whenTruthy(),
-    mapTo(new LoadQuoteRequests())
-  );
-
-  @Effect()
-  setQuoteRequestBreadcrumb$ = this.store.pipe(
-    select(getSelectedQuoteRequest),
-    whenTruthy(),
-    withLatestFrom(this.translateService.get('quote.edit.unsubmitted.quote_request_details.text')),
-    map(
-      ([quoteRequest, x]) =>
-        new SetBreadcrumbData({
-          breadcrumbData: [
-            { key: 'quote.quotes.link', link: '/account/quotes' },
-            { text: `${x} - ${quoteRequest.displayName}` },
-          ],
-        })
-    )
-  );
 
   /**
    * Filter for itemId and update pairs with actual quantity or sku changes.

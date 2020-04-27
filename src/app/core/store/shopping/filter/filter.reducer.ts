@@ -1,6 +1,15 @@
+import { Action, createReducer, on } from '@ngrx/store';
+
 import { FilterNavigation } from 'ish-core/models/filter-navigation/filter-navigation.model';
 
-import { FilterActionTypes, FilterActions } from './filter.actions';
+import {
+  applyFilter,
+  applyFilterSuccess,
+  loadFilterFail,
+  loadFilterForCategory,
+  loadFilterForSearch,
+  loadFilterSuccess,
+} from './filter.actions';
 
 export interface FilterState {
   loading: boolean;
@@ -12,41 +21,33 @@ export const initialState: FilterState = {
   availableFilter: undefined,
 };
 
-export function filterReducer(state = initialState, action: FilterActions): FilterState {
-  switch (action.type) {
-    case FilterActionTypes.LoadFilterForCategory:
-    case FilterActionTypes.LoadFilterForSearch: {
-      return { ...initialState, loading: true };
-    }
-    case FilterActionTypes.LoadFilterSuccess: {
-      return {
-        ...state,
-        availableFilter: action.payload.filterNavigation,
-        loading: false,
-      };
-    }
-    case FilterActionTypes.LoadFilterFail: {
-      return {
-        ...state,
-        availableFilter: undefined,
-        loading: false,
-      };
-    }
-    case FilterActionTypes.ApplyFilter: {
-      return {
-        ...state,
-        loading: true,
-      };
-    }
-    case FilterActionTypes.ApplyFilterSuccess: {
-      const { availableFilter } = action.payload;
-      return {
-        ...state,
-        availableFilter,
-        loading: false,
-      };
-    }
-  }
-
-  return state;
+export function filterReducer(state = initialState, action: Action): FilterState {
+  return reducer(state, action);
 }
+
+const reducer = createReducer(
+  initialState,
+  on(loadFilterForSearch, loadFilterForCategory, () => ({ ...initialState, loading: true })),
+  on(loadFilterSuccess, (state, action) => ({
+    ...state,
+    availableFilter: action.payload.filterNavigation,
+    loading: false,
+  })),
+  on(loadFilterFail, state => ({
+    ...state,
+    availableFilter: undefined,
+    loading: false,
+  })),
+  on(applyFilter, state => ({
+    ...state,
+    loading: true,
+  })),
+  on(applyFilterSuccess, (state, action) => {
+    const { availableFilter } = action.payload;
+    return {
+      ...state,
+      availableFilter,
+      loading: false,
+    };
+  })
+);

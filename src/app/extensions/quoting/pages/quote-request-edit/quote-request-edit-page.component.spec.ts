@@ -9,7 +9,7 @@ import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 import { LoadingComponent } from 'ish-shared/components/common/loading/loading.component';
 
 import { QuoteEditComponent } from '../../shared/quote/quote-edit/quote-edit.component';
-import { LoadQuoteRequests } from '../../store/quote-request';
+import { loadQuoteRequests } from '../../store/quote-request';
 import { quotingReducers } from '../../store/quoting-store.module';
 
 import { QuoteRequestEditPageComponent } from './quote-request-edit-page.component';
@@ -51,7 +51,7 @@ describe('Quote Request Edit Page Component', () => {
   });
 
   it('should render loading component if quote requests loading', () => {
-    store$.dispatch(new LoadQuoteRequests());
+    store$.dispatch(loadQuoteRequests());
     fixture.detectChanges();
     expect(element.querySelector('ish-loading')).toBeTruthy();
   });

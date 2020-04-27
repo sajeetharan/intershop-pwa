@@ -9,8 +9,8 @@ import { anything, deepEqual, instance, mock, spy, verify, when } from 'ts-mocki
 import { Customer } from 'ish-core/models/customer/customer.model';
 import { Region } from 'ish-core/models/region/region.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoadRegions, LoadRegionsSuccess } from 'ish-core/store/regions';
-import { LoginUserSuccess } from 'ish-core/store/user';
+import { loadRegions, loadRegionsSuccess } from 'ish-core/store/regions';
+import { loginUserSuccess } from 'ish-core/store/user';
 import { AddressMockData } from 'ish-core/utils/dev/address-mock-data';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 import { AddressFormComponent } from 'ish-shared/address-forms/components/address-form/address-form.component';
@@ -51,8 +51,8 @@ describe('Address Form Container Component', () => {
     store$ = TestBed.get(Store);
     const customer: Customer = { customerNo: '1', type: 'SMBCustomer' };
     const region: Region[] = [{ countryCode: 'BG', id: 'BGS', name: 'Sofia', regionCode: 'S' }];
-    store$.dispatch(new LoginUserSuccess({ customer }));
-    store$.dispatch(new LoadRegionsSuccess({ regions: region }));
+    store$.dispatch(loginUserSuccess({ payload: { customer } }));
+    store$.dispatch(loadRegionsSuccess({ payload: { regions: region } }));
   });
 
   it('should be created', () => {
@@ -85,7 +85,7 @@ describe('Address Form Container Component', () => {
     component.parentForm.get('countryCodeSwitch').setValue(newCountry);
 
     expect(component.parentForm.get('address').get('countryCode').value).toEqual(newCountry);
-    verify(storeSpy$.dispatch(deepEqual(new LoadRegions({ countryCode: newCountry })))).once();
+    verify(storeSpy$.dispatch(deepEqual(loadRegions({ payload: { countryCode: newCountry } })))).once();
     expect(parentForm.get('address').get('mainDivisionCode').validator).not.toBeNull();
   });
 });

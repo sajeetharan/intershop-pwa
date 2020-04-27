@@ -19,11 +19,11 @@ import { ApplyConfiguration } from 'ish-core/store/configuration';
 import { coreEffects, coreReducers } from 'ish-core/store/core-store.module';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import {
-  LoadCompanyUserSuccess,
-  LoginUserSuccess,
-  LogoutUser,
   getLoggedInCustomer,
   getLoggedInUser,
+  loadCompanyUserSuccess,
+  loginUserSuccess,
+  logoutUser,
 } from 'ish-core/store/user';
 import {
   TestStore,
@@ -36,12 +36,13 @@ import { QuoteRequestData } from '../models/quote-request/quote-request.interfac
 import { QuoteRequestService } from '../services/quote-request/quote-request.service';
 import { QuoteService } from '../services/quote/quote.service';
 
-import { QuoteActionTypes, getCurrentQuotes } from './quote';
+import { getCurrentQuotes, loadQuotes, loadQuotesSuccess } from './quote';
 import {
-  AddProductToQuoteRequest,
-  QuoteRequestActionTypes,
+  addProductToQuoteRequest,
   getActiveQuoteRequest,
   getCurrentQuoteRequests,
+  loadQuoteRequests,
+  loadQuoteRequestsSuccess,
 } from './quote-request';
 import { quotingEffects, quotingReducers } from './quoting-store.module';
 
@@ -135,8 +136,8 @@ describe('Quoting Store', () => {
         return of({ type: 'Link', uri: 'customers/CID/users/UID/quoterequests/' + id, title: id }).pipe(delay(1000));
       });
 
-      store$.dispatch(new LoginUserSuccess({ customer, user }));
-      store$.dispatch(new LoadCompanyUserSuccess({ user }));
+      store$.dispatch(loginUserSuccess({ payload: { customer, user } }));
+      store$.dispatch(loadCompanyUserSuccess({ payload: { user } }));
     });
 
     it('should be created', () => {
@@ -147,17 +148,12 @@ describe('Quoting Store', () => {
     it('should load the quotes and quote requests after user login', () => {
       const firedActions = store$.actionsArray(['Quote']);
 
-      expect(firedActions).toSatisfy(containsActionWithType(QuoteActionTypes.LoadQuotes));
-      expect(firedActions).toSatisfy(containsActionWithType(QuoteRequestActionTypes.LoadQuoteRequests));
+      expect(firedActions).toSatisfy(containsActionWithType(loadQuotes.type));
+      expect(firedActions).toSatisfy(containsActionWithType(loadQuoteRequests.type));
 
+      expect(firedActions).toSatisfy(containsActionWithTypeAndPayload(loadQuotesSuccess.type, p => !p.length));
       expect(firedActions).toSatisfy(
-        containsActionWithTypeAndPayload(QuoteActionTypes.LoadQuotesSuccess, p => !p.length)
-      );
-      expect(firedActions).toSatisfy(
-        containsActionWithTypeAndPayload(
-          QuoteRequestActionTypes.LoadQuoteRequestsSuccess,
-          p => !!p.quoteRequests.length
-        )
+        containsActionWithTypeAndPayload(loadQuoteRequestsSuccess.type, p => !!p.quoteRequests.length)
       );
     });
 
@@ -201,9 +197,9 @@ describe('Quoting Store', () => {
 
         store$.reset();
         resetCalls(apiServiceMock);
-        setTimeout(() => store$.dispatch(new AddProductToQuoteRequest({ sku: 'SKU', quantity: 1 })), 400);
-        setTimeout(() => store$.dispatch(new AddProductToQuoteRequest({ sku: 'SKU', quantity: 1 })), 450);
-        setTimeout(() => store$.dispatch(new AddProductToQuoteRequest({ sku: 'SKU', quantity: 1 })), 480);
+        setTimeout(() => store$.dispatch(addProductToQuoteRequest({ payload: { sku: 'SKU', quantity: 1 } })), 400);
+        setTimeout(() => store$.dispatch(addProductToQuoteRequest({ payload: { sku: 'SKU', quantity: 1 } })), 450);
+        setTimeout(() => store$.dispatch(addProductToQuoteRequest({ payload: { sku: 'SKU', quantity: 1 } })), 480);
       });
 
       it('should add all add requests to the same newly aquired quote request', done =>
@@ -222,7 +218,7 @@ describe('Quoting Store', () => {
       describe('user logs out', () => {
         beforeEach(() => {
           store$.reset();
-          store$.dispatch(new LogoutUser());
+          store$.dispatch(logoutUser());
         });
 
         it('should no longer have any quoting related data after user logout', () => {
@@ -234,8 +230,8 @@ describe('Quoting Store', () => {
         describe('user logs in again', () => {
           beforeEach(() => {
             store$.reset();
-            store$.dispatch(new LoginUserSuccess({ customer, user }));
-            store$.dispatch(new LoadCompanyUserSuccess({ user }));
+            store$.dispatch(loginUserSuccess({ payload: { customer, user } }));
+            store$.dispatch(loadCompanyUserSuccess({ payload: { user } }));
           });
 
           it('should load all the quotes when logging in again', done =>

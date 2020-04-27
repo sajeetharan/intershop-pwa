@@ -5,7 +5,7 @@ import { MockComponent } from 'ng-mocks';
 
 import { FilterNavigation } from 'ish-core/models/filter-navigation/filter-navigation.model';
 import { Filter } from 'ish-core/models/filter/filter.model';
-import { LoadFilterSuccess } from 'ish-core/store/shopping/filter';
+import { loadFilterSuccess } from 'ish-core/store/shopping/filter';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { findAllIshElements } from 'ish-core/utils/dev/html-query-utils';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
@@ -61,7 +61,7 @@ describe('Filter Navigation Component', () => {
 
   it('should display sidebar component for default mode', () => {
     const filterNavigation = { filter: [{ displayType: 'dropdown' } as Filter] } as FilterNavigation;
-    store$.dispatch(new LoadFilterSuccess({ filterNavigation }));
+    store$.dispatch(loadFilterSuccess({ payload: { filterNavigation } }));
     fixture.detectChanges();
 
     expect(findAllIshElements(element)).toMatchInlineSnapshot(`
@@ -73,7 +73,7 @@ describe('Filter Navigation Component', () => {
 
   it('should display horizontal components if set', () => {
     const filterNavigation = { filter: [{ displayType: 'dropdown' } as Filter] } as FilterNavigation;
-    store$.dispatch(new LoadFilterSuccess({ filterNavigation }));
+    store$.dispatch(loadFilterSuccess({ payload: { filterNavigation } }));
     component.orientation = 'horizontal';
     fixture.detectChanges();
 

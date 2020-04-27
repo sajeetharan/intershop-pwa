@@ -7,7 +7,14 @@ import { contactReducers } from 'ish-core/store/contact/contact-store.module';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import * as actions from './contact.actions';
+import {
+  createContact,
+  createContactFail,
+  createContactSuccess,
+  loadContact,
+  loadContactFail,
+  loadContactSuccess,
+} from '.';
 import { getContactLoading, getContactSubjects } from './contact.selectors';
 
 describe('Contact Selectors', () => {
@@ -48,7 +55,7 @@ describe('Contact Selectors', () => {
   });
 
   describe('CreateContact', () => {
-    const action = new actions.CreateContact({ contact });
+    const action = createContact({ payload: { contact } });
 
     beforeEach(() => {
       store$.dispatch(action);
@@ -60,7 +67,7 @@ describe('Contact Selectors', () => {
 
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new actions.CreateContactSuccess());
+        store$.dispatch(createContactSuccess());
       });
 
       it('should set loading to false', () => {
@@ -70,7 +77,7 @@ describe('Contact Selectors', () => {
 
     describe('and reporting failure', () => {
       beforeEach(() => {
-        store$.dispatch(new actions.CreateContactFail({ error: { message: 'error' } as HttpError }));
+        store$.dispatch(createContactFail({ payload: { error: { message: 'error' } as HttpError } }));
       });
 
       it('should not have loaded subjects on error', () => {
@@ -80,7 +87,7 @@ describe('Contact Selectors', () => {
   });
   describe('loading subjects', () => {
     beforeEach(() => {
-      store$.dispatch(new actions.LoadContact());
+      store$.dispatch(loadContact());
     });
 
     it('should set the state to loading', () => {
@@ -89,7 +96,7 @@ describe('Contact Selectors', () => {
 
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new actions.LoadContactSuccess({ subjects }));
+        store$.dispatch(loadContactSuccess({ payload: { subjects } }));
       });
 
       it('should set loading to false', () => {
@@ -100,7 +107,7 @@ describe('Contact Selectors', () => {
 
     describe('and reporting failure', () => {
       beforeEach(() => {
-        store$.dispatch(new actions.LoadContactFail({ error: { message: 'error' } as HttpError }));
+        store$.dispatch(loadContactFail({ payload: { error: { message: 'error' } as HttpError } }));
       });
 
       it('should not have loaded subjects on error', () => {

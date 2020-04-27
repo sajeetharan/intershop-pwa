@@ -16,12 +16,12 @@ import { HttpError } from 'ish-core/models/http-error/http-error.model';
 import { Link } from 'ish-core/models/link/link.model';
 import { User } from 'ish-core/models/user/user.model';
 import { BasketService } from 'ish-core/services/basket/basket.service';
-import { LoadBasketSuccess } from 'ish-core/store/checkout/basket/basket.actions';
+import { loadBasketSuccess } from 'ish-core/store/checkout/basket/basket.actions';
 import { checkoutReducers } from 'ish-core/store/checkout/checkout-store.module';
 import { ApplyConfiguration } from 'ish-core/store/configuration';
 import { configurationReducer } from 'ish-core/store/configuration/configuration.reducer';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
-import { LoadCompanyUserSuccess, LoginUserSuccess } from 'ish-core/store/user';
+import { loadCompanyUserSuccess, loginUserSuccess } from 'ish-core/store/user';
 import { userReducer } from 'ish-core/store/user/user.reducer';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
@@ -29,10 +29,27 @@ import { QuoteLineItemResult } from '../../models/quote-line-item-result/quote-l
 import { QuoteRequestItem } from '../../models/quote-request-item/quote-request-item.model';
 import { QuoteData } from '../../models/quote/quote.interface';
 import { QuoteService } from '../../services/quote/quote.service';
-import { SubmitQuoteRequestSuccess } from '../quote-request';
+import { submitQuoteRequestSuccess } from '../quote-request';
 import { quotingReducers } from '../quoting-store.module';
 
-import * as quoteActions from './quote.actions';
+import {
+  addQuoteToBasket,
+  addQuoteToBasketFail,
+  addQuoteToBasketSuccess,
+  createQuoteRequestFromQuote,
+  createQuoteRequestFromQuoteFail,
+  createQuoteRequestFromQuoteSuccess,
+  deleteQuote,
+  deleteQuoteFail,
+  deleteQuoteSuccess,
+  loadQuotes,
+  loadQuotesFail,
+  loadQuotesSuccess,
+  rejectQuote,
+  rejectQuoteFail,
+  rejectQuoteSuccess,
+  selectQuote,
+} from './quote.actions';
 import { QuoteEffects } from './quote.effects';
 
 describe('Quote Effects', () => {
@@ -84,8 +101,8 @@ describe('Quote Effects', () => {
     location = TestBed.get(Location);
 
     store$.dispatch(new ApplyConfiguration({ features: ['quoting'] }));
-    store$.dispatch(new LoginUserSuccess({ customer }));
-    store$.dispatch(new LoadCompanyUserSuccess({ user: { email: 'test' } as User }));
+    store$.dispatch(loginUserSuccess({ payload: { customer } }));
+    store$.dispatch(loadCompanyUserSuccess({ payload: { user: { email: 'test' } as User } }));
   }));
 
   describe('loadQuotes$', () => {
@@ -94,7 +111,7 @@ describe('Quote Effects', () => {
     });
 
     it('should call the quoteService for getQuotes', done => {
-      const action = new quoteActions.LoadQuotes();
+      const action = loadQuotes();
       actions$ = of(action);
 
       effects.loadQuotes$.subscribe(() => {
@@ -104,8 +121,8 @@ describe('Quote Effects', () => {
     });
 
     it('should map to action of type LoadQuotesSuccess', () => {
-      const action = new quoteActions.LoadQuotes();
-      const completion = new quoteActions.LoadQuotesSuccess({ quotes: [{ id: 'QID' } as QuoteData] });
+      const action = loadQuotes();
+      const completion = loadQuotesSuccess({ payload: { quotes: [{ id: 'QID' } as QuoteData] } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -115,8 +132,8 @@ describe('Quote Effects', () => {
     it('should map invalid request to action of type LoadQuotesFail', () => {
       when(quoteServiceMock.getQuotes()).thenReturn(throwError({ message: 'invalid' }));
 
-      const action = new quoteActions.LoadQuotes();
-      const completion = new quoteActions.LoadQuotesFail({ error: { message: 'invalid' } as HttpError });
+      const action = loadQuotes();
+      const completion = loadQuotesFail({ payload: { error: { message: 'invalid' } as HttpError } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -131,7 +148,7 @@ describe('Quote Effects', () => {
 
     it('should call the quoteService for deleteQuote with specific quoteId', done => {
       const id = 'QID';
-      const action = new quoteActions.DeleteQuote({ id });
+      const action = deleteQuote({ payload: { id } });
       actions$ = of(action);
 
       effects.deleteQuote$.subscribe(() => {
@@ -142,8 +159,8 @@ describe('Quote Effects', () => {
 
     it('should map to action of type DeleteQuoteSuccess', () => {
       const id = 'QID';
-      const action = new quoteActions.DeleteQuote({ id });
-      const completion = new quoteActions.DeleteQuoteSuccess({ id });
+      const action = deleteQuote({ payload: { id } });
+      const completion = deleteQuoteSuccess({ payload: { id } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -153,8 +170,8 @@ describe('Quote Effects', () => {
     it('should map invalid request to action of type DeleteQuoteFail', () => {
       when(quoteServiceMock.deleteQuote(anyString())).thenReturn(throwError({ message: 'invalid' }));
 
-      const action = new quoteActions.DeleteQuote({ id: 'QID' });
-      const completion = new quoteActions.DeleteQuoteFail({ error: { message: 'invalid' } as HttpError });
+      const action = deleteQuote({ payload: { id: 'QID' } });
+      const completion = deleteQuoteFail({ payload: { error: { message: 'invalid' } as HttpError } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -165,22 +182,24 @@ describe('Quote Effects', () => {
   describe('rejectQuote$', () => {
     beforeEach(() => {
       store$.dispatch(
-        new quoteActions.LoadQuotesSuccess({
-          quotes: [
-            {
-              id: 'QID',
-              items: [{ productSKU: 'SKU', quantity: { value: 1 } } as QuoteRequestItem],
-            } as QuoteData,
-          ],
+        loadQuotesSuccess({
+          payload: {
+            quotes: [
+              {
+                id: 'QID',
+                items: [{ productSKU: 'SKU', quantity: { value: 1 } } as QuoteRequestItem],
+              } as QuoteData,
+            ],
+          },
         })
       );
-      store$.dispatch(new quoteActions.SelectQuote({ id: 'QID' }));
+      store$.dispatch(selectQuote({ payload: { id: 'QID' } }));
 
       when(quoteServiceMock.rejectQuote(anyString())).thenCall(() => of('QID'));
     });
 
     it('should call the quoteService for rejectQuote', done => {
-      const action = new quoteActions.RejectQuote();
+      const action = rejectQuote();
       actions$ = of(action);
 
       effects.rejectQuote$.subscribe(() => {
@@ -190,8 +209,8 @@ describe('Quote Effects', () => {
     });
 
     it('should map to action of type RejectQuoteSuccess', () => {
-      const action = new quoteActions.RejectQuote();
-      const completion = new quoteActions.RejectQuoteSuccess({ id: 'QID' });
+      const action = rejectQuote();
+      const completion = rejectQuoteSuccess({ payload: { id: 'QID' } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -201,8 +220,8 @@ describe('Quote Effects', () => {
     it('should map invalid request to action of type RejectQuoteFail', () => {
       when(quoteServiceMock.rejectQuote(anyString())).thenCall(() => throwError({ message: 'invalid' }));
 
-      const action = new quoteActions.RejectQuote();
-      const completion = new quoteActions.RejectQuoteFail({ error: { message: 'invalid' } as HttpError });
+      const action = rejectQuote();
+      const completion = rejectQuoteFail({ payload: { error: { message: 'invalid' } as HttpError } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -212,19 +231,21 @@ describe('Quote Effects', () => {
 
   describe('createQuoteRequestFromQuote$', () => {
     beforeEach(() => {
-      store$.dispatch(new LoginUserSuccess({ customer }));
-      store$.dispatch(new LoadCompanyUserSuccess({ user: { email: 'test' } as User }));
+      store$.dispatch(loginUserSuccess({ payload: { customer } }));
+      store$.dispatch(loadCompanyUserSuccess({ payload: { user: { email: 'test' } as User } }));
       store$.dispatch(
-        new quoteActions.LoadQuotesSuccess({
-          quotes: [
-            {
-              id: 'QID',
-              items: [{ productSKU: 'SKU', quantity: { value: 1 } } as QuoteRequestItem],
-            } as QuoteData,
-          ],
+        loadQuotesSuccess({
+          payload: {
+            quotes: [
+              {
+                id: 'QID',
+                items: [{ productSKU: 'SKU', quantity: { value: 1 } } as QuoteRequestItem],
+              } as QuoteData,
+            ],
+          },
         })
       );
-      store$.dispatch(new quoteActions.SelectQuote({ id: 'QID' }));
+      store$.dispatch(selectQuote({ payload: { id: 'QID' } }));
 
       when(quoteServiceMock.createQuoteRequestFromQuote(anything())).thenReturn(
         of({ type: 'test' } as QuoteLineItemResult)
@@ -232,7 +253,7 @@ describe('Quote Effects', () => {
     });
 
     it('should call the quoteService for createQuoteRequestFromQuote', done => {
-      const action = new quoteActions.CreateQuoteRequestFromQuote();
+      const action = createQuoteRequestFromQuote();
       actions$ = of(action);
 
       effects.createQuoteRequestFromQuote$.subscribe(() => {
@@ -242,11 +263,13 @@ describe('Quote Effects', () => {
     });
 
     it('should map to action of type CreateQuoteRequestFromQuoteSuccess', () => {
-      const action = new quoteActions.CreateQuoteRequestFromQuote();
-      const completion = new quoteActions.CreateQuoteRequestFromQuoteSuccess({
-        quoteLineItemRequest: {
-          type: 'test',
-        } as QuoteLineItemResult,
+      const action = createQuoteRequestFromQuote();
+      const completion = createQuoteRequestFromQuoteSuccess({
+        payload: {
+          quoteLineItemRequest: {
+            type: 'test',
+          } as QuoteLineItemResult,
+        },
       });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
@@ -257,11 +280,13 @@ describe('Quote Effects', () => {
     it('should map invalid request to action of type CreateQuoteRequestFromQuoteFail', () => {
       when(quoteServiceMock.createQuoteRequestFromQuote(anything())).thenReturn(throwError({ message: 'invalid' }));
 
-      const action = new quoteActions.CreateQuoteRequestFromQuote();
-      const completion = new quoteActions.CreateQuoteRequestFromQuoteFail({
-        error: {
-          message: 'invalid',
-        } as HttpError,
+      const action = createQuoteRequestFromQuote();
+      const completion = createQuoteRequestFromQuoteFail({
+        payload: {
+          error: {
+            message: 'invalid',
+          } as HttpError,
+        },
       });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
@@ -272,8 +297,8 @@ describe('Quote Effects', () => {
 
   describe('loadQuotesAfterChangeSuccess$', () => {
     it('should map to action of type LoadQuotes if DeleteQuoteSuccess action triggered', () => {
-      const action = new quoteActions.DeleteQuoteSuccess(anyString());
-      const completion = new quoteActions.LoadQuotes();
+      const action = deleteQuoteSuccess({ payload: anyString() });
+      const completion = loadQuotes();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -281,8 +306,8 @@ describe('Quote Effects', () => {
     });
 
     it('should map to action of type LoadQuotes if RejectQuoteSuccess action triggered', () => {
-      const action = new quoteActions.RejectQuoteSuccess(anyString());
-      const completion = new quoteActions.LoadQuotes();
+      const action = rejectQuoteSuccess({ payload: anyString() });
+      const completion = loadQuotes();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -290,8 +315,8 @@ describe('Quote Effects', () => {
     });
 
     it('should map to action of type LoadQuotes if SubmitQuoteRequestSuccess action triggered', () => {
-      const action = new SubmitQuoteRequestSuccess(anyString());
-      const completion = new quoteActions.LoadQuotes();
+      const action = submitQuoteRequestSuccess({ payload: anyString() });
+      const completion = loadQuotes();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -299,8 +324,8 @@ describe('Quote Effects', () => {
     });
 
     it('should map to action of type LoadQuotes if LoadCompanyUserSuccess action triggered', () => {
-      const action = new LoadCompanyUserSuccess({ user: {} as User });
-      const completion = new quoteActions.LoadQuotes();
+      const action = loadCompanyUserSuccess({ payload: { user: {} as User } });
+      const completion = loadQuotes();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -312,16 +337,18 @@ describe('Quote Effects', () => {
     it('should call the basketService for addQuoteToBasket', done => {
       when(quoteServiceMock.addQuoteToBasket(anyString(), anyString())).thenReturn(of({} as Link));
       store$.dispatch(
-        new LoadBasketSuccess({
-          basket: {
-            id: 'BID',
-            lineItems: [],
-          } as Basket,
+        loadBasketSuccess({
+          payload: {
+            basket: {
+              id: 'BID',
+              lineItems: [],
+            } as Basket,
+          },
         })
       );
 
       const quoteId = 'QID';
-      const action = new quoteActions.AddQuoteToBasket({ quoteId });
+      const action = addQuoteToBasket({ payload: { quoteId } });
       actions$ = of(action);
 
       effects.addQuoteToBasket$.subscribe(() => {
@@ -334,7 +361,7 @@ describe('Quote Effects', () => {
       when(basketServiceMock.createBasket()).thenReturn(of({} as Basket));
 
       const quoteId = 'quoteId';
-      const action = new quoteActions.AddQuoteToBasket({ quoteId });
+      const action = addQuoteToBasket({ payload: { quoteId } });
       actions$ = of(action);
 
       effects.getBasketBeforeAddQuoteToBasket$.subscribe(() => {
@@ -347,17 +374,19 @@ describe('Quote Effects', () => {
       when(quoteServiceMock.addQuoteToBasket(anyString(), anyString())).thenReturn(of({} as Link));
 
       store$.dispatch(
-        new LoadBasketSuccess({
-          basket: {
-            id: 'BID',
-            lineItems: [],
-          } as Basket,
+        loadBasketSuccess({
+          payload: {
+            basket: {
+              id: 'BID',
+              lineItems: [],
+            } as Basket,
+          },
         })
       );
 
       const quoteId = 'QID';
-      const action = new quoteActions.AddQuoteToBasket({ quoteId });
-      const completion = new quoteActions.AddQuoteToBasketSuccess({ link: {} as Link });
+      const action = addQuoteToBasket({ payload: { quoteId } });
+      const completion = addQuoteToBasketSuccess({ payload: { link: {} as Link } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -368,17 +397,19 @@ describe('Quote Effects', () => {
       when(quoteServiceMock.addQuoteToBasket(anyString(), anyString())).thenReturn(throwError({ message: 'invalid' }));
 
       store$.dispatch(
-        new LoadBasketSuccess({
-          basket: {
-            id: 'BID',
-            lineItems: [],
-          } as Basket,
+        loadBasketSuccess({
+          payload: {
+            basket: {
+              id: 'BID',
+              lineItems: [],
+            } as Basket,
+          },
         })
       );
 
       const quoteId = 'QID';
-      const action = new quoteActions.AddQuoteToBasket({ quoteId });
-      const completion = new quoteActions.AddQuoteToBasketFail({ error: { message: 'invalid' } as HttpError });
+      const action = addQuoteToBasket({ payload: { quoteId } });
+      const completion = addQuoteToBasketFail({ payload: { error: { message: 'invalid' } as HttpError } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 
@@ -388,7 +419,7 @@ describe('Quote Effects', () => {
 
   describe('gotoBasketAfterAddQuoteToBasketSuccess$', () => {
     it('should navigate to basket when success', fakeAsync(() => {
-      const action = new quoteActions.AddQuoteToBasketSuccess({ link: {} as Link });
+      const action = addQuoteToBasketSuccess({ payload: { link: {} as Link } });
       actions$ = of(action);
       effects.gotoBasketAfterAddQuoteToBasketSuccess$.subscribe(noop, fail, noop);
       tick(1000);

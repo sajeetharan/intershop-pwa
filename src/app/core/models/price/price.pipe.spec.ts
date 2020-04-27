@@ -9,7 +9,7 @@ import { Customer } from 'ish-core/models/customer/customer.model';
 import { PriceItem } from 'ish-core/models/price-item/price-item.model';
 import { ApplyConfiguration } from 'ish-core/store/configuration';
 import { configurationReducer } from 'ish-core/store/configuration/configuration.reducer';
-import { LoginUserSuccess, LogoutUser } from 'ish-core/store/user';
+import { loginUserSuccess, logoutUser } from 'ish-core/store/user';
 import { userReducer } from 'ish-core/store/user/user.reducer';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
@@ -169,13 +169,13 @@ describe('Price Pipe', () => {
 
       expect(element).toMatchInlineSnapshot(`flex: $12,391.98 pinned: $987.60`);
 
-      store$.dispatch(new LoginUserSuccess({ customer: { isBusinessCustomer: true } as Customer }));
+      store$.dispatch(loginUserSuccess({ payload: { customer: { isBusinessCustomer: true } as Customer } }));
       fixture.detectChanges();
       tick(500);
 
       expect(element).toMatchInlineSnapshot(`flex: $987.60 pinned: $987.60`);
 
-      store$.dispatch(new LogoutUser());
+      store$.dispatch(logoutUser());
       fixture.detectChanges();
       tick(500);
 

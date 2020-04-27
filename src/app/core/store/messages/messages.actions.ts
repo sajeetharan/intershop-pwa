@@ -1,4 +1,4 @@
-import { Action } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 
 export interface MessagesPayloadType {
   /**
@@ -32,13 +32,4 @@ export interface MessagesPayloadType {
   messageType?: 'info' | 'error' | 'warning' | 'success';
 }
 
-export enum MessagesActionTypes {
-  ToastMessage = '[Message] Set Toast',
-}
-
-export class ToastMessage implements Action {
-  readonly type = MessagesActionTypes.ToastMessage;
-  constructor(public payload: MessagesPayloadType) {}
-}
-
-export type MessagesActions = ToastMessage;
+export const toastMessage = createAction('[Message] Set Toast', props<{ payload: MessagesPayloadType }>());

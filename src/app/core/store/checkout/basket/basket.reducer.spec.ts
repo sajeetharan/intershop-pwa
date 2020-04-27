@@ -8,17 +8,66 @@ import { HttpError } from 'ish-core/models/http-error/http-error.model';
 import { LineItem } from 'ish-core/models/line-item/line-item.model';
 import { Order } from 'ish-core/models/order/order.model';
 import { PaymentInstrument } from 'ish-core/models/payment-instrument/payment-instrument.model';
-import { CreateOrderSuccess } from 'ish-core/store/orders';
+import { createOrderSuccess } from 'ish-core/store/orders';
 import { BasketMockData } from 'ish-core/utils/dev/basket-mock-data';
 
-import * as fromActions from './basket.actions';
+import {
+  addItemsToBasketFail,
+  addItemsToBasketSuccess,
+  addProductToBasket,
+  addPromotionCodeToBasket,
+  addPromotionCodeToBasketFail,
+  addPromotionCodeToBasketSuccess,
+  continueCheckout,
+  continueCheckoutFail,
+  continueCheckoutSuccess,
+  continueCheckoutWithIssues,
+  createBasketPayment,
+  createBasketPaymentFail,
+  createBasketPaymentSuccess,
+  deleteBasketItem,
+  deleteBasketItemFail,
+  deleteBasketItemSuccess,
+  deleteBasketPayment,
+  deleteBasketPaymentFail,
+  deleteBasketPaymentSuccess,
+  loadBasket,
+  loadBasketEligiblePaymentMethods,
+  loadBasketEligiblePaymentMethodsFail,
+  loadBasketEligiblePaymentMethodsSuccess,
+  loadBasketEligibleShippingMethods,
+  loadBasketEligibleShippingMethodsFail,
+  loadBasketEligibleShippingMethodsSuccess,
+  loadBasketFail,
+  loadBasketSuccess,
+  mergeBasket,
+  mergeBasketFail,
+  mergeBasketSuccess,
+  removePromotionCodeFromBasket,
+  removePromotionCodeFromBasketFail,
+  removePromotionCodeFromBasketSuccess,
+  resetBasket,
+  resetBasketErrors,
+  setBasketPayment,
+  setBasketPaymentFail,
+  setBasketPaymentSuccess,
+  updateBasket,
+  updateBasketFail,
+  updateBasketItems,
+  updateBasketItemsFail,
+  updateBasketItemsSuccess,
+  updateBasketPayment,
+  updateBasketPaymentFail,
+  updateBasketPaymentSuccess,
+  updateBasketShippingMethod,
+} from './basket.actions';
 import { basketReducer, initialState } from './basket.reducer';
 
 describe('Basket Reducer', () => {
   describe('LoadBasket actions', () => {
     describe('LoadBasket action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.LoadBasket({ id: 'test' });
+        const action = loadBasket({ payload: { id: 'test' } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -28,7 +77,7 @@ describe('Basket Reducer', () => {
     describe('LoadBasketFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.LoadBasketFail({ error });
+        const action = loadBasketFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -42,7 +91,7 @@ describe('Basket Reducer', () => {
           id: 'test',
         } as Basket;
 
-        const action = new fromActions.LoadBasketSuccess({ basket });
+        const action = loadBasketSuccess({ payload: { basket } });
         const state = basketReducer(initialState, action);
 
         expect(state.basket).toEqual(basket);
@@ -54,7 +103,7 @@ describe('Basket Reducer', () => {
   describe('MergeBasket actions', () => {
     describe('MergeBasket action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.MergeBasket();
+        const action = mergeBasket();
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -67,7 +116,7 @@ describe('Basket Reducer', () => {
           id: 'test',
         } as Basket;
 
-        const action = new fromActions.MergeBasketSuccess({ basket });
+        const action = mergeBasketSuccess({ payload: { basket } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -78,7 +127,7 @@ describe('Basket Reducer', () => {
     describe('MergeBasketFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.MergeBasketFail({ error });
+        const action = mergeBasketFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -90,7 +139,7 @@ describe('Basket Reducer', () => {
   describe('UpdateBasket actions', () => {
     describe('UpdateBasket action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.UpdateBasket({ update: { invoiceToAddress: '1234' } });
+        const action = updateBasket({ payload: { update: { invoiceToAddress: '1234' } } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -99,7 +148,7 @@ describe('Basket Reducer', () => {
 
     describe('UpdateBasketShippingMethod action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.UpdateBasketShippingMethod({ shippingId: '1234' });
+        const action = updateBasketShippingMethod({ payload: { shippingId: '1234' } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -109,7 +158,7 @@ describe('Basket Reducer', () => {
     describe('UpdateBasketFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.UpdateBasketFail({ error });
+        const action = updateBasketFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -128,7 +177,7 @@ describe('Basket Reducer', () => {
     };
     describe('ContinueCheckout action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.ContinueCheckout({ targetStep: 1 });
+        const action = continueCheckout({ payload: { targetStep: 1 } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -138,7 +187,7 @@ describe('Basket Reducer', () => {
 
     describe('ContinueCheckoutSuccess action', () => {
       it('should save validationResults when called', () => {
-        const action = new fromActions.ContinueCheckoutSuccess({ targetRoute: '/checkout/address', basketValidation });
+        const action = continueCheckoutSuccess({ payload: { targetRoute: '/checkout/address', basketValidation } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -148,9 +197,11 @@ describe('Basket Reducer', () => {
 
     describe('ContinueCheckoutWithIssues action', () => {
       it('should save validationResults when called', () => {
-        const action = new fromActions.ContinueCheckoutWithIssues({
-          targetRoute: '/checkout/address',
-          basketValidation,
+        const action = continueCheckoutWithIssues({
+          payload: {
+            targetRoute: '/checkout/address',
+            basketValidation,
+          },
         });
         const state = basketReducer(initialState, action);
 
@@ -162,7 +213,7 @@ describe('Basket Reducer', () => {
     describe('ContinueCheckoutFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.ContinueCheckoutFail({ error });
+        const action = continueCheckoutFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -174,7 +225,7 @@ describe('Basket Reducer', () => {
   describe('AddItemsToBasket actions', () => {
     describe('AddProductToBasket action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.AddProductToBasket({ sku: 'test', quantity: 1 });
+        const action = addProductToBasket({ payload: { sku: 'test', quantity: 1 } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -185,7 +236,7 @@ describe('Basket Reducer', () => {
     describe('AddItemsToBasketFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.AddItemsToBasketFail({ error });
+        const action = addItemsToBasketFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -195,7 +246,7 @@ describe('Basket Reducer', () => {
 
     describe('AddItemsToBasketSuccess action', () => {
       it('should set loading to false', () => {
-        const action = new fromActions.AddItemsToBasketSuccess({ info: [{ message: 'info' } as BasketInfo] });
+        const action = addItemsToBasketSuccess({ payload: { info: [{ message: 'info' } as BasketInfo] } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -209,13 +260,15 @@ describe('Basket Reducer', () => {
   describe('UpdateBasketItems actions', () => {
     describe('UpdateBasketItems action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.UpdateBasketItems({
-          lineItemUpdates: [
-            {
-              quantity: 2,
-              itemId: 'test',
-            },
-          ],
+        const action = updateBasketItems({
+          payload: {
+            lineItemUpdates: [
+              {
+                quantity: 2,
+                itemId: 'test',
+              },
+            ],
+          },
         });
         const state = basketReducer(initialState, action);
 
@@ -226,7 +279,7 @@ describe('Basket Reducer', () => {
     describe('UpdateBasketItemsFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.UpdateBasketItemsFail({ error });
+        const action = updateBasketItemsFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -236,7 +289,7 @@ describe('Basket Reducer', () => {
 
     describe('UpdateBasketItemsSuccess action', () => {
       it('should set loading to false', () => {
-        const action = new fromActions.UpdateBasketItemsSuccess({ info: [{ message: 'info' } as BasketInfo] });
+        const action = updateBasketItemsSuccess({ payload: { info: [{ message: 'info' } as BasketInfo] } });
         const state = basketReducer(initialState, action);
 
         expect(state.info[0].message).toEqual('info');
@@ -249,7 +302,7 @@ describe('Basket Reducer', () => {
   describe('DeleteBasketItem actions', () => {
     describe('DeleteBasketItem action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.DeleteBasketItem({ itemId: 'test' });
+        const action = deleteBasketItem({ payload: { itemId: 'test' } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -259,7 +312,7 @@ describe('Basket Reducer', () => {
     describe('DeleteBasketItemFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.DeleteBasketItemFail({ error });
+        const action = deleteBasketItemFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -269,7 +322,7 @@ describe('Basket Reducer', () => {
 
     describe('DeleteBasketItemSuccess action', () => {
       it('should set loading to false', () => {
-        const action = new fromActions.DeleteBasketItemSuccess({ info: [{ message: 'info' } as BasketInfo] });
+        const action = deleteBasketItemSuccess({ payload: { info: [{ message: 'info' } as BasketInfo] } });
         const state = basketReducer(initialState, action);
 
         expect(state.info[0].message).toEqual('info');
@@ -281,7 +334,7 @@ describe('Basket Reducer', () => {
     describe('AddPromotionCodeToBasket actions', () => {
       describe('AddPromotionCodeToBasket action', () => {
         it('should set loading to true', () => {
-          const action = new fromActions.AddPromotionCodeToBasket({ code: 'test' });
+          const action = addPromotionCodeToBasket({ payload: { code: 'test' } });
           const state = basketReducer(initialState, action);
 
           expect(state.loading).toBeTrue();
@@ -291,7 +344,7 @@ describe('Basket Reducer', () => {
       describe('AddPromotionCodeToBasketFail action', () => {
         it('should set loading to false', () => {
           const error = { message: 'invalid' } as HttpError;
-          const action = new fromActions.AddPromotionCodeToBasketFail({ error });
+          const action = addPromotionCodeToBasketFail({ payload: { error } });
           const state = basketReducer(initialState, action);
 
           expect(state.loading).toBeFalse();
@@ -301,7 +354,7 @@ describe('Basket Reducer', () => {
 
       describe('AddPromotionCodeToBasketSuccess action', () => {
         it('should set loading to false', () => {
-          const action = new fromActions.AddPromotionCodeToBasketSuccess();
+          const action = addPromotionCodeToBasketSuccess();
           const state = basketReducer(initialState, action);
 
           expect(state.loading).toBeFalse();
@@ -313,7 +366,7 @@ describe('Basket Reducer', () => {
     describe('RemovePromotionCodeFromBasket actions', () => {
       describe('RemovePromotionCodeFromBasket action', () => {
         it('should set loading to true', () => {
-          const action = new fromActions.RemovePromotionCodeFromBasket({ code: 'test' });
+          const action = removePromotionCodeFromBasket({ payload: { code: 'test' } });
           const state = basketReducer(initialState, action);
 
           expect(state.loading).toBeTrue();
@@ -323,7 +376,7 @@ describe('Basket Reducer', () => {
       describe('RemovePromotionCodeFromBasketFail action', () => {
         it('should set loading to false', () => {
           const error = undefined as HttpError;
-          const action = new fromActions.RemovePromotionCodeFromBasketFail({ error });
+          const action = removePromotionCodeFromBasketFail({ payload: { error } });
           const state = basketReducer(initialState, action);
 
           expect(state.loading).toBeFalse();
@@ -333,7 +386,7 @@ describe('Basket Reducer', () => {
 
       describe('RemovePromotionCodeFromBasketSuccess action', () => {
         it('should set loading to false', () => {
-          const action = new fromActions.RemovePromotionCodeFromBasketSuccess();
+          const action = removePromotionCodeFromBasketSuccess();
           const state = basketReducer(initialState, action);
 
           expect(state.loading).toBeFalse();
@@ -349,7 +402,7 @@ describe('Basket Reducer', () => {
           loading: true,
           lineItems: [{ id: 'test' } as LineItem],
         };
-        const action = new fromActions.ResetBasket();
+        const action = resetBasket();
         const state = basketReducer(oldState, action);
 
         expect(state).toEqual(initialState);
@@ -360,7 +413,7 @@ describe('Basket Reducer', () => {
   describe('LoadBasketEligibleShippingMethods actions', () => {
     describe('LoadBasketEligibleShippingMethods action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.LoadBasketEligibleShippingMethods();
+        const action = loadBasketEligibleShippingMethods();
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -370,7 +423,7 @@ describe('Basket Reducer', () => {
     describe('LoadBasketEligibleShippingMethodsFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.LoadBasketEligibleShippingMethodsFail({ error });
+        const action = loadBasketEligibleShippingMethodsFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -385,8 +438,8 @@ describe('Basket Reducer', () => {
         } as Basket;
         const shippingMethods = [BasketMockData.getShippingMethod()];
 
-        const basketAction = new fromActions.LoadBasketSuccess({ basket });
-        const basketShippingAction = new fromActions.LoadBasketEligibleShippingMethodsSuccess({ shippingMethods });
+        const basketAction = loadBasketSuccess({ payload: { basket } });
+        const basketShippingAction = loadBasketEligibleShippingMethodsSuccess({ payload: { shippingMethods } });
         let state = basketReducer(initialState, basketAction);
         state = basketReducer(state, basketShippingAction);
 
@@ -400,7 +453,7 @@ describe('Basket Reducer', () => {
   describe('LoadBasketEligiblePaymentMethods actions', () => {
     describe('LoadBasketEligiblePaymentMethods action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.LoadBasketEligiblePaymentMethods();
+        const action = loadBasketEligiblePaymentMethods();
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -410,7 +463,7 @@ describe('Basket Reducer', () => {
     describe('LoadBasketEligiblePaymentMethodsFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.LoadBasketEligiblePaymentMethodsFail({ error });
+        const action = loadBasketEligiblePaymentMethodsFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -425,8 +478,8 @@ describe('Basket Reducer', () => {
         } as Basket;
         const paymentMethods = [BasketMockData.getPaymentMethod()];
 
-        const basketAction = new fromActions.LoadBasketSuccess({ basket });
-        const basketPaymentAction = new fromActions.LoadBasketEligiblePaymentMethodsSuccess({ paymentMethods });
+        const basketAction = loadBasketSuccess({ payload: { basket } });
+        const basketPaymentAction = loadBasketEligiblePaymentMethodsSuccess({ payload: { paymentMethods } });
         let state = basketReducer(initialState, basketAction);
         state = basketReducer(state, basketPaymentAction);
 
@@ -440,7 +493,7 @@ describe('Basket Reducer', () => {
   describe('SetBasketPayment actions', () => {
     describe('SetBasketPayment action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.SetBasketPayment({ id: 'testPayment' });
+        const action = setBasketPayment({ payload: { id: 'testPayment' } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -450,7 +503,7 @@ describe('Basket Reducer', () => {
     describe('SetBasketPaymentFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.SetBasketPaymentFail({ error });
+        const action = setBasketPaymentFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -460,7 +513,7 @@ describe('Basket Reducer', () => {
 
     describe('SetBasketPaymentSuccess action', () => {
       it('should set loading to false', () => {
-        const action = new fromActions.SetBasketPaymentSuccess();
+        const action = setBasketPaymentSuccess();
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -486,7 +539,7 @@ describe('Basket Reducer', () => {
     };
     describe('CreateBasketPayment action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.CreateBasketPayment({ paymentInstrument, saveForLater: false });
+        const action = createBasketPayment({ payload: { paymentInstrument, saveForLater: false } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -496,7 +549,7 @@ describe('Basket Reducer', () => {
     describe('CreateBasketPaymentFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.CreateBasketPaymentFail({ error });
+        const action = createBasketPaymentFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -506,7 +559,7 @@ describe('Basket Reducer', () => {
 
     describe('CreateBasketPaymentSuccess action', () => {
       it('should set loading to false', () => {
-        const action = new fromActions.CreateBasketPaymentSuccess();
+        const action = createBasketPaymentSuccess();
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -524,7 +577,7 @@ describe('Basket Reducer', () => {
 
     describe('UpdateBasketPayment action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.UpdateBasketPayment({ params });
+        const action = updateBasketPayment({ payload: { params } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -534,7 +587,7 @@ describe('Basket Reducer', () => {
     describe('UpdateBasketPaymentFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.UpdateBasketPaymentFail({ error });
+        const action = updateBasketPaymentFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -544,7 +597,7 @@ describe('Basket Reducer', () => {
 
     describe('UpdateBasketPaymentSuccess action', () => {
       it('should set loading to false', () => {
-        const action = new fromActions.UpdateBasketPaymentSuccess();
+        const action = updateBasketPaymentSuccess();
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -556,21 +609,23 @@ describe('Basket Reducer', () => {
   describe('DeleteBasketPayment actions', () => {
     describe('DeleteBasketPayment action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.DeleteBasketPayment({
-          paymentInstrument: {
-            id: '12345',
-            paymentMethod: 'ISH_DirectDebit',
-            parameters_: [
-              {
-                name: 'accountHolder',
-                value: 'Patricia Miller',
-              },
-              {
-                name: 'IBAN',
-                value: 'DE430859340859340',
-              },
-            ],
-          } as PaymentInstrument,
+        const action = deleteBasketPayment({
+          payload: {
+            paymentInstrument: {
+              id: '12345',
+              paymentMethod: 'ISH_DirectDebit',
+              parameters_: [
+                {
+                  name: 'accountHolder',
+                  value: 'Patricia Miller',
+                },
+                {
+                  name: 'IBAN',
+                  value: 'DE430859340859340',
+                },
+              ],
+            } as PaymentInstrument,
+          },
         });
         const state = basketReducer(initialState, action);
 
@@ -581,7 +636,7 @@ describe('Basket Reducer', () => {
     describe('DeleteBasketPaymentFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.DeleteBasketPaymentFail({ error });
+        const action = deleteBasketPaymentFail({ payload: { error } });
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -591,7 +646,7 @@ describe('Basket Reducer', () => {
 
     describe('DeleteBasketPaymentSuccess action', () => {
       it('should set loading to false', () => {
-        const action = new fromActions.DeleteBasketPaymentSuccess();
+        const action = deleteBasketPaymentSuccess();
         const state = basketReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -607,7 +662,7 @@ describe('Basket Reducer', () => {
         loading: true,
         lineItems: [{ id: 'test' } as LineItem],
       };
-      const action = new CreateOrderSuccess({ order: { id: '123' } as Order });
+      const action = createOrderSuccess({ payload: { order: { id: '123' } as Order } });
       const state = basketReducer(oldState, action);
 
       expect(state).toEqual(initialState);
@@ -620,7 +675,7 @@ describe('Basket Reducer', () => {
         ...initialState,
         error: { message: 'invalid' } as HttpError,
       };
-      const action = new fromActions.ResetBasketErrors();
+      const action = resetBasketErrors();
       const state = basketReducer(oldState, action);
 
       expect(state.error).toBeUndefined();
@@ -631,7 +686,7 @@ describe('Basket Reducer', () => {
         ...initialState,
         promotionError: { message: 'invalid' } as HttpError,
       };
-      const action = new fromActions.ResetBasketErrors();
+      const action = resetBasketErrors();
       const state = basketReducer(oldState, action);
 
       expect(state.promotionError).toBeUndefined();
@@ -642,7 +697,7 @@ describe('Basket Reducer', () => {
         ...initialState,
         validationResults: { errors: [{ message: 'errorMessage' }] } as BasketValidationResultType,
       };
-      const action = new fromActions.ResetBasketErrors();
+      const action = resetBasketErrors();
       const state = basketReducer(oldState, action);
 
       expect(state.validationResults.errors).toHaveLength(0);

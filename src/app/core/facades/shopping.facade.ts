@@ -5,26 +5,24 @@ import { debounce, debounceTime, filter, map, switchMap, tap } from 'rxjs/operat
 
 import { ProductListingID } from 'ish-core/models/product-listing/product-listing.model';
 import { ProductCompletenessLevel, ProductHelper } from 'ish-core/models/product/product.model';
-import { AddProductToBasket } from 'ish-core/store/checkout/basket';
+import { addProductToBasket } from 'ish-core/store/checkout/basket';
 import { getCategoryLoading, getSelectedCategory, getTopLevelCategories } from 'ish-core/store/shopping/categories';
 import {
-  AddToCompare,
-  RemoveFromCompare,
-  ToggleCompare,
+  addToCompare,
   getCompareProducts,
   getCompareProductsCount,
   isInCompareProducts,
+  removeFromCompare,
+  toggleCompare,
 } from 'ish-core/store/shopping/compare';
 import { getAvailableFilter } from 'ish-core/store/shopping/filter';
 import {
-  LoadMoreProducts,
   getProductListingLoading,
   getProductListingView,
   getProductListingViewType,
+  loadMoreProducts,
 } from 'ish-core/store/shopping/product-listing';
 import {
-  LoadProductIfNotLoaded,
-  LoadProductLinks,
   getProduct,
   getProductBundleParts,
   getProductLinks,
@@ -32,14 +30,16 @@ import {
   getProducts,
   getSelectedProduct,
   getSelectedProductVariationOptions,
+  loadProductIfNotLoaded,
+  loadProductLinks,
 } from 'ish-core/store/shopping/products';
-import { LoadPromotion, getPromotion, getPromotions } from 'ish-core/store/shopping/promotions';
+import { getPromotion, getPromotions, loadPromotion } from 'ish-core/store/shopping/promotions';
 import {
-  ClearRecently,
+  clearRecently,
   getMostRecentlyViewedProducts,
   getRecentlyViewedProducts,
 } from 'ish-core/store/shopping/recently';
-import { SuggestSearch, getSearchTerm, getSuggestSearchResults } from 'ish-core/store/shopping/search';
+import { getSearchTerm, getSuggestSearchResults, suggestSearch } from 'ish-core/store/shopping/search';
 import { toObservable } from 'ish-core/utils/functions';
 import { whenFalsy } from 'ish-core/utils/operators';
 
@@ -65,7 +65,7 @@ export class ShoppingFacade {
 
   product$(sku: string | Observable<string>, level: ProductCompletenessLevel) {
     return toObservable(sku).pipe(
-      tap(plainSKU => this.store.dispatch(new LoadProductIfNotLoaded({ sku: plainSKU, level }))),
+      tap(plainSKU => this.store.dispatch(loadProductIfNotLoaded({ payload: { sku: plainSKU, level } }))),
       switchMap(plainSKU =>
         this.store.pipe(
           select(getProduct, { sku: plainSKU }),
@@ -102,7 +102,7 @@ export class ShoppingFacade {
 
   // CHECKOUT
   addProductToBasket(sku: string, quantity: number) {
-    this.store.dispatch(new AddProductToBasket({ sku, quantity }));
+    this.store.dispatch(addProductToBasket({ payload: { sku, quantity } }));
   }
 
   // PRODUCT LISTING
@@ -114,12 +114,12 @@ export class ShoppingFacade {
   productListingLoading$ = this.store.pipe(select(getProductListingLoading));
 
   loadMoreProducts(id: ProductListingID, page: number) {
-    this.store.dispatch(new LoadMoreProducts({ id, page }));
+    this.store.dispatch(loadMoreProducts({ payload: { id, page } }));
   }
 
   // PRODUCT LINKS
   productLinks$(sku: string) {
-    this.store.dispatch(new LoadProductLinks({ sku }));
+    this.store.dispatch(loadProductLinks({ payload: { sku } }));
     return this.store.pipe(select(getProductLinks, { sku }));
   }
 
@@ -127,7 +127,7 @@ export class ShoppingFacade {
   searchTerm$ = this.store.pipe(select(getSearchTerm));
   searchResults$(searchTerm: Observable<string>) {
     return searchTerm.pipe(
-      tap(term => this.store.dispatch(new SuggestSearch({ searchTerm: term }))),
+      tap(term => this.store.dispatch(suggestSearch({ payload: { searchTerm: term } }))),
       switchMap(term => this.store.pipe(select(getSuggestSearchResults(term))))
     );
   }
@@ -160,15 +160,15 @@ export class ShoppingFacade {
   }
 
   addProductToCompare(sku: string) {
-    this.store.dispatch(new AddToCompare({ sku }));
+    this.store.dispatch(addToCompare({ payload: { sku } }));
   }
 
   toggleProductCompare(sku: string) {
-    this.store.dispatch(new ToggleCompare({ sku }));
+    this.store.dispatch(toggleCompare({ payload: { sku } }));
   }
 
   removeProductFromCompare(sku: string) {
-    this.store.dispatch(new RemoveFromCompare({ sku }));
+    this.store.dispatch(removeFromCompare({ payload: { sku } }));
   }
 
   // RECENTLY
@@ -176,18 +176,18 @@ export class ShoppingFacade {
   mostRecentlyViewedProducts$ = this.store.pipe(select(getMostRecentlyViewedProducts));
 
   clearRecentlyViewedProducts() {
-    this.store.dispatch(new ClearRecently());
+    this.store.dispatch(clearRecently());
   }
 
   // PROMOTIONS
   promotion$(promotionId: string) {
-    this.store.dispatch(new LoadPromotion({ promoId: promotionId }));
+    this.store.dispatch(loadPromotion({ payload: { promoId: promotionId } }));
     return this.store.pipe(select(getPromotion(), { promoId: promotionId }));
   }
 
   promotions$(promotionIds: string[]) {
     promotionIds.forEach(promotionId => {
-      this.store.dispatch(new LoadPromotion({ promoId: promotionId }));
+      this.store.dispatch(loadPromotion({ payload: { promoId: promotionId } }));
     });
     return this.store.pipe(select(getPromotions(), { promotionIds }));
   }

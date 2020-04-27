@@ -9,11 +9,11 @@ import { Basket } from 'ish-core/models/basket/basket.model';
 import { Customer } from 'ish-core/models/customer/customer.model';
 import { LineItem } from 'ish-core/models/line-item/line-item.model';
 import { User } from 'ish-core/models/user/user.model';
-import { LoadBasketSuccess } from 'ish-core/store/checkout/basket';
+import { loadBasketSuccess } from 'ish-core/store/checkout/basket';
 import { checkoutReducers } from 'ish-core/store/checkout/checkout-store.module';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
-import { LoginUserSuccess } from 'ish-core/store/user';
+import { loginUserSuccess } from 'ish-core/store/user';
 import { BasketMockData } from 'ish-core/utils/dev/basket-mock-data';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 import { LoadingComponent } from 'ish-shared/components/common/loading/loading.component';
@@ -62,7 +62,7 @@ describe('Checkout Address Page Component', () => {
     element = fixture.nativeElement;
 
     store$.dispatch(
-      new LoadBasketSuccess({ basket: { lineItems: [BasketMockData.getBasketItem() as LineItem] } as Basket })
+      loadBasketSuccess({ payload: { basket: { lineItems: [BasketMockData.getBasketItem() as LineItem] } as Basket } })
     );
   });
 
@@ -73,7 +73,7 @@ describe('Checkout Address Page Component', () => {
   });
 
   it('should render checkout address component if user is logged in', () => {
-    store$.dispatch(new LoginUserSuccess({ customer: { customerNo: '4711' } as Customer, user: {} as User }));
+    store$.dispatch(loginUserSuccess({ payload: { customer: { customerNo: '4711' } as Customer, user: {} as User } }));
     fixture.detectChanges();
     expect(element.querySelector('ish-checkout-address')).toBeTruthy();
   });

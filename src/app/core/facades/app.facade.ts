@@ -4,9 +4,9 @@ import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { getAvailableLocales, getCurrentLocale } from 'ish-core/store/configuration';
-import { LoadCountries, getAllCountries, getCountriesLoading } from 'ish-core/store/countries';
+import { getAllCountries, getCountriesLoading, loadCountries } from 'ish-core/store/countries';
 import { getGeneralError, getGeneralErrorType } from 'ish-core/store/error';
-import { LoadRegions, getRegionsByCountryCode } from 'ish-core/store/regions';
+import { getRegionsByCountryCode, loadRegions } from 'ish-core/store/regions';
 import {
   getBreadcrumbData,
   getDeviceType,
@@ -46,12 +46,12 @@ export class AppFacade {
   countriesLoading$ = this.store.pipe(select(getCountriesLoading));
 
   countries$() {
-    this.store.dispatch(new LoadCountries());
+    this.store.dispatch(loadCountries());
     return this.store.pipe(select(getAllCountries));
   }
 
   regions$(countryCode: string) {
-    this.store.dispatch(new LoadRegions({ countryCode }));
+    this.store.dispatch(loadRegions({ payload: { countryCode } }));
     return this.store.pipe(select(getRegionsByCountryCode, { countryCode }));
   }
 }

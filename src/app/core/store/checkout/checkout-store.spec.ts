@@ -36,13 +36,13 @@ import { PromotionsService } from 'ish-core/services/promotions/promotions.servi
 import { SuggestService } from 'ish-core/services/suggest/suggest.service';
 import { UserService } from 'ish-core/services/user/user.service';
 import { coreEffects, coreReducers } from 'ish-core/store/core-store.module';
-import { LoadProductSuccess } from 'ish-core/store/shopping/products';
+import { loadProductSuccess } from 'ish-core/store/shopping/products';
 import { shoppingEffects, shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
-import { LoginUser } from 'ish-core/store/user';
+import { loginUser } from 'ish-core/store/user';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 import { categoryTree } from 'ish-core/utils/dev/test-data-utils';
 
-import { AddProductToBasket } from './basket';
+import { addProductToBasket } from './basket';
 import { checkoutEffects, checkoutReducers } from './checkout-store.module';
 
 let basketId: string;
@@ -267,11 +267,13 @@ describe('Checkout Store', () => {
   describe('with anonymous user', () => {
     beforeEach(fakeAsync(() => {
       store.dispatch(
-        new LoadProductSuccess({
-          product: { sku: 'test', packingUnit: 'pcs.', completenessLevel: ProductCompletenessLevel.List } as Product,
+        loadProductSuccess({
+          payload: {
+            product: { sku: 'test', packingUnit: 'pcs.', completenessLevel: ProductCompletenessLevel.List } as Product,
+          },
         })
       );
-      store.dispatch(new AddProductToBasket({ sku: 'test', quantity: 1 }));
+      store.dispatch(addProductToBasket({ payload: { sku: 'test', quantity: 1 } }));
       tick(5000);
     }));
 
@@ -315,7 +317,7 @@ describe('Checkout Store', () => {
     describe('and with basket', () => {
       it('should merge basket on user login.', fakeAsync(() => {
         store.reset();
-        store.dispatch(new LoginUser({ credentials: {} as LoginCredentials }));
+        store.dispatch(loginUser({ payload: { credentials: {} as LoginCredentials } }));
 
         expect(store.actionsArray()).toMatchInlineSnapshot(`
           [Account] Login User:

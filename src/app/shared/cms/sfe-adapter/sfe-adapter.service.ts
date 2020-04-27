@@ -6,7 +6,7 @@ import { fromEvent, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, switchMapTo, take, withLatestFrom } from 'rxjs/operators';
 
 import { getICMBaseURL } from 'ish-core/store/configuration';
-import { LoadContentInclude, getContentIncludeLoading } from 'ish-core/store/content/includes';
+import { getContentIncludeLoading, loadContentInclude } from 'ish-core/store/content/includes';
 import { whenTruthy } from 'ish-core/utils/operators';
 
 import { SfeMapper } from './sfe.mapper';
@@ -201,7 +201,7 @@ export class SfeAdapterService {
     switch (message.type) {
       case 'dv-designchange': {
         const { includeId } = message.payload;
-        this.store.dispatch(new LoadContentInclude({ includeId }));
+        this.store.dispatch(loadContentInclude({ payload: { includeId } }));
         return;
       }
     }

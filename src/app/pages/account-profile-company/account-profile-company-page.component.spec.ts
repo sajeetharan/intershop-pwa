@@ -6,7 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { Customer } from 'ish-core/models/customer/customer.model';
 import { User } from 'ish-core/models/user/user.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoginUserSuccess } from 'ish-core/store/user';
+import { loginUserSuccess } from 'ish-core/store/user';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 import { LoadingComponent } from 'ish-shared/components/common/loading/loading.component';
 
@@ -51,9 +51,11 @@ describe('Account Profile Company Page Component', () => {
       type: 'SMBCustomer',
     } as Customer;
     store$.dispatch(
-      new LoginUserSuccess({
-        customer: businessCustomer,
-        user: {} as User,
+      loginUserSuccess({
+        payload: {
+          customer: businessCustomer,
+          user: {} as User,
+        },
       })
     );
     fixture.detectChanges();
@@ -67,9 +69,11 @@ describe('Account Profile Company Page Component', () => {
       type: 'PrivateCustomer',
     } as Customer;
     store$.dispatch(
-      new LoginUserSuccess({
-        customer: privateCustomer,
-        user: {} as User,
+      loginUserSuccess({
+        payload: {
+          customer: privateCustomer,
+          user: {} as User,
+        },
       })
     );
     fixture.detectChanges();

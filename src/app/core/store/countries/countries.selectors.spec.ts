@@ -5,7 +5,7 @@ import { HttpError } from 'ish-core/models/http-error/http-error.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { LoadCountries, LoadCountriesFail, LoadCountriesSuccess } from './countries.actions';
+import { loadCountries, loadCountriesFail, loadCountriesSuccess } from './countries.actions';
 import { getAllCountries, getCountriesLoading } from './countries.selectors';
 
 describe('Countries Selectors', () => {
@@ -30,7 +30,7 @@ describe('Countries Selectors', () => {
 
   describe('loading countries', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadCountries());
+      store$.dispatch(loadCountries());
     });
 
     it('should set the state to loading', () => {
@@ -39,7 +39,7 @@ describe('Countries Selectors', () => {
 
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadCountriesSuccess({ countries }));
+        store$.dispatch(loadCountriesSuccess({ payload: { countries } }));
       });
 
       it('should set loading to false', () => {
@@ -50,7 +50,7 @@ describe('Countries Selectors', () => {
 
     describe('and reporting failure', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadCountriesFail({ error: { message: 'error' } as HttpError }));
+        store$.dispatch(loadCountriesFail({ payload: { error: { message: 'error' } as HttpError } }));
       });
 
       it('should not have loaded category on error', () => {

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import * as fromActions from './compare.actions';
+import { addToCompare, removeFromCompare, toggleCompare } from './compare.actions';
 import { CompareEffects } from './compare.effects';
 
 describe('Compare Effects', () => {
@@ -35,8 +35,8 @@ describe('Compare Effects', () => {
     it('should switch to ADD action', () => {
       const sku = '123';
 
-      const action = new fromActions.ToggleCompare({ sku });
-      const completion = new fromActions.AddToCompare({ sku });
+      const action = toggleCompare({ payload: { sku } });
+      const completion = addToCompare({ payload: { sku } });
 
       actions$ = hot('-a', { a: action });
       const expected$ = cold('-b', { b: completion });
@@ -46,10 +46,10 @@ describe('Compare Effects', () => {
 
     it('should switch to REMOVE action', () => {
       const sku = '123';
-      store$.dispatch(new fromActions.AddToCompare({ sku }));
+      store$.dispatch(addToCompare({ payload: { sku } }));
 
-      const action = new fromActions.ToggleCompare({ sku });
-      const completion = new fromActions.RemoveFromCompare({ sku });
+      const action = toggleCompare({ payload: { sku } });
+      const completion = removeFromCompare({ payload: { sku } });
 
       actions$ = hot('-a', { a: action });
       const expected$ = cold('-b', { b: completion });

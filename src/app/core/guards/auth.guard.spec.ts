@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 
 import { Customer } from 'ish-core/models/customer/customer.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoginUserSuccess } from 'ish-core/store/user';
+import { loginUserSuccess } from 'ish-core/store/user';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import { AuthGuard } from './auth.guard';
@@ -35,7 +35,7 @@ describe('Auth Guard', () => {
     });
 
     it('should return true when user is authorized', done => {
-      store$.dispatch(new LoginUserSuccess({ customer: {} as Customer }));
+      store$.dispatch(loginUserSuccess({ payload: { customer: {} as Customer } }));
 
       authGuard
         .canActivate({} as ActivatedRouteSnapshot, { url: 'home' } as RouterStateSnapshot)

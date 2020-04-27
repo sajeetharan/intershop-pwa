@@ -1,13 +1,43 @@
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 import { Product } from 'ish-core/models/product/product.model';
 
-import * as fromActions from './products.actions';
+import {
+  loadProduct,
+  loadProductBundlesSuccess,
+  loadProductFail,
+  loadProductIfNotLoaded,
+  loadProductLinks,
+  loadProductLinksFail,
+  loadProductLinksSuccess,
+  loadProductSuccess,
+  loadProductVariations,
+  loadProductVariationsFail,
+  loadProductVariationsSuccess,
+  loadProductsForCategory,
+  loadProductsForCategoryFail,
+  loadRetailSetSuccess,
+} from './products.actions';
 import { ProductsState, initialState, productsReducer } from './products.reducer';
 
 describe('Products Reducer', () => {
   describe('undefined action', () => {
     it('should return the default state when previous state is undefined', () => {
-      const action = {} as fromActions.ProductsAction;
+      const action = {} as ReturnType<
+        | typeof loadProduct
+        | typeof loadProductBundlesSuccess
+        | typeof loadProductFail
+        | typeof loadProductIfNotLoaded
+        | typeof loadProductSuccess
+        | typeof loadProductsForCategory
+        | typeof loadProductsForCategoryFail
+        | typeof loadProductVariations
+        | typeof loadProductVariationsFail
+        | typeof loadProductVariationsSuccess
+        | typeof loadRetailSetSuccess
+        | typeof loadProductLinks
+        | typeof loadProductLinksFail
+        | typeof loadProductLinksSuccess
+      >;
       const state = productsReducer(undefined, action);
 
       expect(state).toBe(initialState);
@@ -17,7 +47,7 @@ describe('Products Reducer', () => {
   describe('LoadProduct actions', () => {
     describe('LoadProduct action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.LoadProduct({ sku: '123' });
+        const action = loadProduct({ payload: { sku: '123' } });
         const state = productsReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -29,7 +59,7 @@ describe('Products Reducer', () => {
       let state: ProductsState;
 
       beforeEach(() => {
-        const action = new fromActions.LoadProductFail({ error: {} as HttpError, sku: 'invalid' });
+        const action = loadProductFail({ payload: { error: {} as HttpError, sku: 'invalid' } });
         state = productsReducer(initialState, action);
       });
 
@@ -42,7 +72,7 @@ describe('Products Reducer', () => {
       describe('followed by LoadProductSuccess', () => {
         beforeEach(() => {
           const product = { sku: 'invalid' } as Product;
-          const action = new fromActions.LoadProductSuccess({ product });
+          const action = loadProductSuccess({ payload: { product } });
           state = productsReducer(initialState, action);
         });
 
@@ -68,7 +98,7 @@ describe('Products Reducer', () => {
       });
 
       it('should insert product if not exists', () => {
-        const action = new fromActions.LoadProductSuccess({ product });
+        const action = loadProductSuccess({ payload: { product } });
         const state = productsReducer(initialState, action);
 
         expect(state.ids).toHaveLength(1);
@@ -76,7 +106,7 @@ describe('Products Reducer', () => {
       });
 
       it('should merge product updates when new info is available', () => {
-        const action1 = new fromActions.LoadProductSuccess({ product });
+        const action1 = loadProductSuccess({ payload: { product } });
         const state1 = productsReducer(initialState, action1);
 
         const updatedProduct = {
@@ -87,7 +117,7 @@ describe('Products Reducer', () => {
           inStock: false,
         } as Product;
 
-        const action2 = new fromActions.LoadProductSuccess({ product: updatedProduct });
+        const action2 = loadProductSuccess({ payload: { product: updatedProduct } });
         const state2 = productsReducer(state1, action2);
 
         expect(state2.ids).toHaveLength(1);
@@ -104,7 +134,7 @@ describe('Products Reducer', () => {
       });
 
       it('should set loading to false', () => {
-        const action = new fromActions.LoadProductSuccess({ product });
+        const action = loadProductSuccess({ payload: { product } });
         const state = productsReducer(initialState, action);
 
         expect(state.loading).toBeFalse();
@@ -115,7 +145,7 @@ describe('Products Reducer', () => {
   describe('LoadProductVariations actions', () => {
     describe('LoadProductVariations action', () => {
       it('should set loading to true', () => {
-        const action = new fromActions.LoadProductVariations({ sku: '123' });
+        const action = loadProductVariations({ payload: { sku: '123' } });
         const state = productsReducer(initialState, action);
 
         expect(state.loading).toBeTrue();
@@ -125,14 +155,16 @@ describe('Products Reducer', () => {
     describe('LoadProductVariationsSuccess action', () => {
       it('should set product variation data and set loading to false', () => {
         const product = { sku: 'SKU' } as Product;
-        let state = productsReducer(initialState, new fromActions.LoadProductSuccess({ product }));
+        let state = productsReducer(initialState, loadProductSuccess({ payload: { product } }));
 
         state = productsReducer(
           state,
-          new fromActions.LoadProductVariationsSuccess({
-            sku: 'SKU',
-            variations: ['VAR'],
-            defaultVariation: 'VAR',
+          loadProductVariationsSuccess({
+            payload: {
+              sku: 'SKU',
+              variations: ['VAR'],
+              defaultVariation: 'VAR',
+            },
           })
         );
 
@@ -144,7 +176,7 @@ describe('Products Reducer', () => {
     describe('LoadProductVariationsFail action', () => {
       it('should set loading to false', () => {
         const error = { message: 'invalid' } as HttpError;
-        const action = new fromActions.LoadProductVariationsFail({ error, sku: 'SKU' });
+        const action = loadProductVariationsFail({ payload: { error, sku: 'SKU' } });
         const state = productsReducer(initialState, action);
 
         expect(state.loading).toBeFalse();

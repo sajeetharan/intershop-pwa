@@ -9,7 +9,7 @@ import { contentReducers } from 'ish-core/store/content/content-store.module';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import * as actions from './pages.actions';
+import { loadContentPageSuccess } from '.';
 import { getContentPageLoading, getSelectedContentPage } from './pages.selectors';
 
 describe('Pages Selectors', () => {
@@ -51,7 +51,7 @@ describe('Pages Selectors', () => {
 
     it('should select include when it was successfully loaded', fakeAsync(() => {
       store$.dispatch(
-        new actions.LoadContentPageSuccess({ page: { id: 'dummy' } as ContentPageletEntryPoint, pagelets: [] })
+        loadContentPageSuccess({ payload: { page: { id: 'dummy' } as ContentPageletEntryPoint, pagelets: [] } })
       );
       router.navigateByUrl('/any;contentPageId=dummy');
       tick(500);

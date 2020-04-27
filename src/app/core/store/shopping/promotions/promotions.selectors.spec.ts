@@ -6,7 +6,7 @@ import { Promotion } from 'ish-core/models/promotion/promotion.model';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { LoadPromotionFail, LoadPromotionSuccess } from './promotions.actions';
+import { loadPromotionFail, loadPromotionSuccess } from './promotions.actions';
 import { getPromotion, getPromotionEntities, getPromotions } from './promotions.selectors';
 
 describe('Promotions Selectors', () => {
@@ -39,7 +39,7 @@ describe('Promotions Selectors', () => {
   describe('loading a promotion', () => {
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadPromotionSuccess({ promotion: promo }));
+        store$.dispatch(loadPromotionSuccess({ payload: { promotion: promo } }));
       });
 
       it('should put the promotion to the state', () => {
@@ -50,7 +50,7 @@ describe('Promotions Selectors', () => {
     describe('and reporting failure', () => {
       beforeEach(() => {
         store$.dispatch(
-          new LoadPromotionFail({ error: { message: 'error' } as HttpError, promoId: 'erroneous_promo' })
+          loadPromotionFail({ payload: { error: { message: 'error' } as HttpError, promoId: 'erroneous_promo' } })
         );
       });
 
@@ -62,8 +62,8 @@ describe('Promotions Selectors', () => {
 
   describe('state with a promotion', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadPromotionSuccess({ promotion: promo }));
-      store$.dispatch(new LoadPromotionSuccess({ promotion: promo1 }));
+      store$.dispatch(loadPromotionSuccess({ payload: { promotion: promo } }));
+      store$.dispatch(loadPromotionSuccess({ payload: { promotion: promo1 } }));
     });
 
     describe('but no current router state', () => {

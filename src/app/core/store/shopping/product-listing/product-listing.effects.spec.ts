@@ -12,7 +12,7 @@ import { coreReducers } from 'ish-core/store/core-store.module';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { LoadMoreProducts } from './product-listing.actions';
+import { loadMoreProducts } from './product-listing.actions';
 import { ProductListingEffects } from './product-listing.effects';
 import { getProductListingItemsPerPage, getProductListingViewType } from './product-listing.selectors';
 
@@ -79,7 +79,7 @@ describe('Product Listing Effects', () => {
     }));
 
     it('should fire all necessary actions for search page', fakeAsync(() => {
-      store$.dispatch(new LoadMoreProducts({ id: { type: 'search', value: 'term' } }));
+      store$.dispatch(loadMoreProducts({ payload: { id: { type: 'search', value: 'term' } } }));
 
       expect(store$.actionsArray()).toMatchInlineSnapshot(`
         [ProductListing] Load More Products:
@@ -99,7 +99,7 @@ describe('Product Listing Effects', () => {
     }));
 
     it('should fire all necessary actions for family page', fakeAsync(() => {
-      store$.dispatch(new LoadMoreProducts({ id: { type: 'category', value: 'cat' } }));
+      store$.dispatch(loadMoreProducts({ payload: { id: { type: 'category', value: 'cat' } } }));
 
       expect(store$.actionsArray()).toMatchInlineSnapshot(`
         [ProductListing] Load More Products:
@@ -127,7 +127,7 @@ describe('Product Listing Effects', () => {
     }));
 
     it('should fire all necessary actions for search page', fakeAsync(() => {
-      store$.dispatch(new LoadMoreProducts({ id: { type: 'search', value: 'term' } }));
+      store$.dispatch(loadMoreProducts({ payload: { id: { type: 'search', value: 'term' } } }));
 
       expect(store$.actionsArray()).toMatchInlineSnapshot(`
         [ProductListing] Load More Products:
@@ -146,7 +146,7 @@ describe('Product Listing Effects', () => {
     }));
 
     it('should fire all necessary actions for family page', fakeAsync(() => {
-      store$.dispatch(new LoadMoreProducts({ id: { type: 'category', value: 'cat' } }));
+      store$.dispatch(loadMoreProducts({ payload: { id: { type: 'category', value: 'cat' } } }));
 
       expect(store$.actionsArray()).toMatchInlineSnapshot(`
         [ProductListing] Load More Products:

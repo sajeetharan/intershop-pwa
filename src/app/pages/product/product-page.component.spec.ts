@@ -18,8 +18,8 @@ import { Product, ProductCompletenessLevel } from 'ish-core/models/product/produ
 import { ProductRoutePipe } from 'ish-core/routing/product/product-route.pipe';
 import { ApplyConfiguration } from 'ish-core/store/configuration';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoadCategorySuccess } from 'ish-core/store/shopping/categories';
-import { LoadProductSuccess, LoadProductVariationsSuccess } from 'ish-core/store/shopping/products';
+import { loadCategorySuccess } from 'ish-core/store/shopping/categories';
+import { loadProductSuccess, loadProductVariationsSuccess } from 'ish-core/store/shopping/products';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { findAllIshElements } from 'ish-core/utils/dev/html-query-utils';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
@@ -85,7 +85,9 @@ describe('Product Page Component', () => {
     store$.dispatch(new ApplyConfiguration({ features: ['recently'] }));
 
     store$.dispatch(
-      new LoadCategorySuccess({ categories: categoryTree([{ uniqueId: 'A', categoryPath: ['A'] } as Category]) })
+      loadCategorySuccess({
+        payload: { categories: categoryTree([{ uniqueId: 'A', categoryPath: ['A'] } as Category]) },
+      })
     );
   });
 
@@ -96,7 +98,7 @@ describe('Product Page Component', () => {
   });
 
   it('should display loading when product is loading', () => {
-    store$.dispatch(new LoadProductSuccess({ product: { sku: 'dummy', completenessLevel: 0 } as Product }));
+    store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'dummy', completenessLevel: 0 } as Product } }));
 
     fixture.detectChanges();
 
@@ -106,7 +108,7 @@ describe('Product Page Component', () => {
 
   it('should display product-detail when product is available', fakeAsync(() => {
     const product = { sku: 'dummy', completenessLevel: ProductCompletenessLevel.Detail } as Product;
-    store$.dispatch(new LoadProductSuccess({ product }));
+    store$.dispatch(loadProductSuccess({ payload: { product } }));
     router.navigateByUrl('/product/' + product.sku);
     tick(500);
 
@@ -122,7 +124,7 @@ describe('Product Page Component', () => {
 
   it('should not display product-detail when product is not completely loaded', fakeAsync(() => {
     const product = { sku: 'dummy' } as Product;
-    store$.dispatch(new LoadProductSuccess({ product }));
+    store$.dispatch(loadProductSuccess({ payload: { product } }));
     router.navigateByUrl('/product/' + product.sku);
     tick(500);
 
@@ -187,12 +189,14 @@ describe('Product Page Component', () => {
         defaultCategoryId: 'A',
       } as VariationProduct;
 
-      store$.dispatch(new LoadProductSuccess({ product }));
-      store$.dispatch(new LoadProductSuccess({ product: variation1 }));
-      store$.dispatch(new LoadProductSuccess({ product: variation2 }));
+      store$.dispatch(loadProductSuccess({ payload: { product } }));
+      store$.dispatch(loadProductSuccess({ payload: { product: variation1 } }));
+      store$.dispatch(loadProductSuccess({ payload: { product: variation2 } }));
 
       store$.dispatch(
-        new LoadProductVariationsSuccess({ sku: product.sku, variations: ['111', '222'], defaultVariation: '222' })
+        loadProductVariationsSuccess({
+          payload: { sku: product.sku, variations: ['111', '222'], defaultVariation: '222' },
+        })
       );
     });
 
@@ -222,7 +226,7 @@ describe('Product Page Component', () => {
       partSKUs: ['A', 'B', 'C'],
       type: 'RetailSet',
     } as ProductRetailSet;
-    store$.dispatch(new LoadProductSuccess({ product }));
+    store$.dispatch(loadProductSuccess({ payload: { product } }));
     router.navigateByUrl('/product/' + product.sku);
     tick(500);
 

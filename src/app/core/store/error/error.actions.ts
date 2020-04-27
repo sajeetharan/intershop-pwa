@@ -1,26 +1,10 @@
-import { Action } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
-
-export enum ErrorActionTypes {
-  GeneralError = '[Error] Communication Error',
-  TimeoutError = '[Error] Communication Timeout Error',
-  ServerError = '[Error] Server Error (5xx)',
-}
-
-export class GeneralError implements Action {
-  readonly type = ErrorActionTypes.GeneralError;
-  constructor(public payload: { error: HttpError }) {}
-}
-
-export class TimeoutError implements Action {
-  readonly type = ErrorActionTypes.TimeoutError;
-  constructor(public payload: { error: HttpError }) {}
-}
 // 500
-export class ServerError implements Action {
-  readonly type = ErrorActionTypes.ServerError;
-  constructor(public payload: { error: HttpError }) {}
-}
-
-export type HttpErrorAction = GeneralError | TimeoutError | ServerError;
+export const generalError = createAction('[Error] Communication Error', props<{ payload: { error: HttpError } }>());
+export const timeoutError = createAction(
+  '[Error] Communication Timeout Error',
+  props<{ payload: { error: HttpError } }>()
+);
+export const serverError = createAction('[Error] Server Error (5xx)', props<{ payload: { error: HttpError } }>());

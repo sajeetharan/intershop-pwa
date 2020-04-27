@@ -6,7 +6,6 @@ import { cold } from 'jest-marbles';
 import { noop } from 'rxjs';
 import { anything, capture, spy, verify } from 'ts-mockito';
 
-import { ErrorActionTypes } from 'ish-core/store/error';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import { ApiServiceErrorHandler } from './api.service.errorhandler';
@@ -27,8 +26,8 @@ describe('Api Service Errorhandler', () => {
 
   function dataProviderKnown() {
     return [
-      { error: { status: 0 }, expectedType: ErrorActionTypes.TimeoutError },
-      { error: { status: 500 }, expectedType: ErrorActionTypes.ServerError },
+      { error: { status: 0 }, expectedType: timeoutError.type },
+      { error: { status: 500 }, expectedType: serverError.type },
     ];
   }
   function dataProviderUnknown() {

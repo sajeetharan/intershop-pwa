@@ -9,12 +9,12 @@ import { anyString, anything, capture, instance, mock, verify, when } from 'ts-m
 import { Order } from 'ish-core/models/order/order.model';
 import { User } from 'ish-core/models/user/user.model';
 import { CookiesService } from 'ish-core/services/cookies/cookies.service';
-import { BasketActionTypes, LoadBasketSuccess, ResetBasket } from 'ish-core/store/checkout/basket';
+import { loadBasketByAPIToken, loadBasketSuccess, resetBasket } from 'ish-core/store/checkout/basket';
 import { checkoutReducers } from 'ish-core/store/checkout/checkout-store.module';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoadOrderSuccess, OrdersActionTypes } from 'ish-core/store/orders';
+import { loadOrderByAPIToken, loadOrderSuccess } from 'ish-core/store/orders';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
-import { LoginUserSuccess, LogoutUser, SetAPIToken, UserActionTypes } from 'ish-core/store/user';
+import { loadUserByAPIToken, loginUserSuccess, logoutUser, setAPIToken } from 'ish-core/store/user';
 import { BasketMockData } from 'ish-core/utils/dev/basket-mock-data';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
@@ -64,7 +64,7 @@ describe('Restore Effects', () => {
         done();
       }, fail);
 
-      store$.dispatch(new LogoutUser());
+      store$.dispatch(logoutUser());
     });
   });
 
@@ -78,7 +78,7 @@ describe('Restore Effects', () => {
       when(cookiesServiceMock.get('apiToken')).thenReturn(JSON.stringify({ apiToken: 'dummy', type: 'basket' }));
 
       restoreEffects.restoreUserOrBasketOrOrderByToken$.subscribe(action => {
-        expect(action).toHaveProperty('type', BasketActionTypes.LoadBasketByAPIToken);
+        expect(action).toHaveProperty('type', loadBasketByAPIToken.type);
         expect(action).toHaveProperty('payload.apiToken', 'dummy');
         done();
       }, fail);
@@ -89,7 +89,7 @@ describe('Restore Effects', () => {
       when(cookiesServiceMock.get('apiToken')).thenReturn(JSON.stringify({ apiToken: 'dummy', type: 'user' }));
 
       restoreEffects.restoreUserOrBasketOrOrderByToken$.subscribe(action => {
-        expect(action).toHaveProperty('type', UserActionTypes.LoadUserByAPIToken);
+        expect(action).toHaveProperty('type', loadUserByAPIToken.type);
         expect(action).toHaveProperty('payload.apiToken', 'dummy');
         done();
       }, fail);
@@ -102,7 +102,7 @@ describe('Restore Effects', () => {
       );
 
       restoreEffects.restoreUserOrBasketOrOrderByToken$.subscribe(action => {
-        expect(action).toHaveProperty('type', OrdersActionTypes.LoadOrderByAPIToken);
+        expect(action).toHaveProperty('type', loadOrderByAPIToken.type);
         expect(action).toHaveProperty('payload.apiToken', 'dummy');
         expect(action).toHaveProperty('payload.orderId', '12345');
         done();
@@ -113,14 +113,14 @@ describe('Restore Effects', () => {
 
   describe('saveAPITokenToCookie$', () => {
     it('should not save token when neither basket nor user nor order is available', () => {
-      store$.dispatch(new SetAPIToken({ apiToken: 'dummy' }));
+      store$.dispatch(setAPIToken({ payload: { apiToken: 'dummy' } }));
 
       expect(restoreEffects.saveAPITokenToCookie$).toBeObservable(cold('-'));
     });
 
     it('should save basket token when basket is available', done => {
-      store$.dispatch(new SetAPIToken({ apiToken: 'dummy' }));
-      store$.dispatch(new LoadBasketSuccess({ basket: BasketMockData.getBasket() }));
+      store$.dispatch(setAPIToken({ payload: { apiToken: 'dummy' } }));
+      store$.dispatch(loadBasketSuccess({ payload: { basket: BasketMockData.getBasket() } }));
 
       restoreEffects.saveAPITokenToCookie$.subscribe(
         () => {
@@ -135,8 +135,10 @@ describe('Restore Effects', () => {
     });
 
     it('should save user token when user is available', done => {
-      store$.dispatch(new SetAPIToken({ apiToken: 'dummy' }));
-      store$.dispatch(new LoginUserSuccess({ user: { email: 'test@intershop.de' } as User, customer: undefined }));
+      store$.dispatch(setAPIToken({ payload: { apiToken: 'dummy' } }));
+      store$.dispatch(
+        loginUserSuccess({ payload: { user: { email: 'test@intershop.de' } as User, customer: undefined } })
+      );
 
       restoreEffects.saveAPITokenToCookie$.subscribe(
         () => {
@@ -151,9 +153,11 @@ describe('Restore Effects', () => {
     });
 
     it('should save user token when basket and user are available', done => {
-      store$.dispatch(new SetAPIToken({ apiToken: 'dummy' }));
-      store$.dispatch(new LoadBasketSuccess({ basket: BasketMockData.getBasket() }));
-      store$.dispatch(new LoginUserSuccess({ user: { email: 'test@intershop.de' } as User, customer: undefined }));
+      store$.dispatch(setAPIToken({ payload: { apiToken: 'dummy' } }));
+      store$.dispatch(loadBasketSuccess({ payload: { basket: BasketMockData.getBasket() } }));
+      store$.dispatch(
+        loginUserSuccess({ payload: { user: { email: 'test@intershop.de' } as User, customer: undefined } })
+      );
 
       restoreEffects.saveAPITokenToCookie$.subscribe(
         () => {
@@ -168,8 +172,8 @@ describe('Restore Effects', () => {
     });
 
     it('should save order token when order is available', done => {
-      store$.dispatch(new SetAPIToken({ apiToken: 'dummy' }));
-      store$.dispatch(new LoadOrderSuccess({ order: { id: '12345' } as Order }));
+      store$.dispatch(setAPIToken({ payload: { apiToken: 'dummy' } }));
+      store$.dispatch(loadOrderSuccess({ payload: { order: { id: '12345' } as Order } }));
 
       restoreEffects.saveAPITokenToCookie$.subscribe(
         () => {
@@ -188,11 +192,13 @@ describe('Restore Effects', () => {
 
   describe('logOutUserIfTokenVanishes$', () => {
     it('should log out user when token is not available', done => {
-      store$.dispatch(new LoginUserSuccess({ user: { email: 'test@intershop.de' } as User, customer: undefined }));
+      store$.dispatch(
+        loginUserSuccess({ payload: { user: { email: 'test@intershop.de' } as User, customer: undefined } })
+      );
 
       restoreEffects.logOutUserIfTokenVanishes$.subscribe(
         action => {
-          expect(action.type).toEqual(UserActionTypes.LogoutUser);
+          expect(action.type).toEqual(logoutUser.type);
           done();
         },
         fail,
@@ -203,11 +209,11 @@ describe('Restore Effects', () => {
 
   describe('removeAnonymousBasketIfTokenVanishes$', () => {
     it('should remove basket when token is not available', done => {
-      store$.dispatch(new LoadBasketSuccess({ basket: BasketMockData.getBasket() }));
+      store$.dispatch(loadBasketSuccess({ payload: { basket: BasketMockData.getBasket() } }));
 
       restoreEffects.removeAnonymousBasketIfTokenVanishes$.subscribe({
         next: action => {
-          expect(action.type).toEqual(BasketActionTypes.ResetBasket);
+          expect(action.type).toEqual(resetBasket.type);
           done();
         },
         complete: fail,
@@ -215,8 +221,10 @@ describe('Restore Effects', () => {
     });
 
     it('should do nothing when user is available', done => {
-      store$.dispatch(new LoginUserSuccess({ user: { email: 'test@intershop.de' } as User, customer: undefined }));
-      store$.dispatch(new LoadBasketSuccess({ basket: BasketMockData.getBasket() }));
+      store$.dispatch(
+        loginUserSuccess({ payload: { user: { email: 'test@intershop.de' } as User, customer: undefined } })
+      );
+      store$.dispatch(loadBasketSuccess({ payload: { basket: BasketMockData.getBasket() } }));
 
       restoreEffects.removeAnonymousBasketIfTokenVanishes$.subscribe(fail, fail, fail);
 
@@ -236,7 +244,7 @@ describe('Restore Effects', () => {
         done();
       });
 
-      store$.dispatch(new LoadBasketSuccess({ basket: BasketMockData.getBasket() }));
+      store$.dispatch(loadBasketSuccess({ payload: { basket: BasketMockData.getBasket() } }));
 
       jest.advanceTimersByTime(RestoreEffects.SESSION_KEEP_ALIVE + 100);
     });
@@ -244,11 +252,11 @@ describe('Restore Effects', () => {
     it('should not refresh the basket if it is getting unavailable', done => {
       restoreEffects.sessionKeepAlive$.subscribe(fail);
 
-      store$.dispatch(new LoadBasketSuccess({ basket: BasketMockData.getBasket() }));
+      store$.dispatch(loadBasketSuccess({ payload: { basket: BasketMockData.getBasket() } }));
 
       jest.advanceTimersByTime(RestoreEffects.SESSION_KEEP_ALIVE / 2);
 
-      store$.dispatch(new ResetBasket());
+      store$.dispatch(resetBasket());
 
       jest.advanceTimersByTime(RestoreEffects.SESSION_KEEP_ALIVE + 100);
 

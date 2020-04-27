@@ -9,8 +9,8 @@ import { anything, capture, spy, verify } from 'ts-mockito';
 import { Link } from 'ish-core/models/link/link.model';
 import { Locale } from 'ish-core/models/locale/locale.model';
 import { configurationReducer } from 'ish-core/store/configuration/configuration.reducer';
-import { ErrorActionTypes, ServerError } from 'ish-core/store/error';
-import { SetAPIToken } from 'ish-core/store/user';
+import { ServerError, serverError } from 'ish-core/store/error';
+import { setAPIToken } from 'ish-core/store/user';
 import { userReducer } from 'ish-core/store/user/user.reducer';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
@@ -74,7 +74,7 @@ describe('Api Service', () => {
 
       verify(storeSpy$.dispatch(anything())).once();
       const [action] = capture(storeSpy$.dispatch).last();
-      expect((action as Action).type).toEqual(ErrorActionTypes.ServerError);
+      expect((action as Action).type).toEqual(serverError.type);
       expect((action as ServerError).payload.error).toHaveProperty('statusText', statusText);
     });
 
@@ -101,7 +101,7 @@ describe('Api Service', () => {
 
       verify(storeSpy$.dispatch(anything())).once();
       const [action] = capture(storeSpy$.dispatch).last();
-      expect((action as Action).type).toEqual(ErrorActionTypes.ServerError);
+      expect((action as Action).type).toEqual(serverError.type);
       expect((action as ServerError).payload.error).toHaveProperty('statusText', statusText);
     });
 
@@ -475,7 +475,7 @@ describe('Api Service', () => {
 
     it('should have a token, when token is in store', () => {
       const apiToken = 'blubb';
-      store$.dispatch(new SetAPIToken({ apiToken }));
+      store$.dispatch(setAPIToken({ payload: { apiToken } }));
       apiService.get('dummy').subscribe(fail, fail, fail);
 
       const req = httpTestingController.expectOne(`${REST_URL}/dummy`);
@@ -485,7 +485,7 @@ describe('Api Service', () => {
 
     it('should not have a token, when request is authorization request', () => {
       const apiToken = 'blubb';
-      store$.dispatch(new SetAPIToken({ apiToken }));
+      store$.dispatch(setAPIToken({ payload: { apiToken } }));
       apiService
         .get('dummy', { headers: new HttpHeaders().set(ApiService.AUTHORIZATION_HEADER_KEY, 'dummy') })
         .subscribe(fail, fail, fail);

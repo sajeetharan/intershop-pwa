@@ -7,7 +7,7 @@ import { ProductView } from 'ish-core/models/product-view/product-view.model';
 import { getFeatures } from 'ish-core/store/configuration';
 import { getSelectedProduct } from 'ish-core/store/shopping/products';
 
-import { AddToRecently } from './recently.actions';
+import { addToRecently } from './recently.actions';
 import { RecentlyEffects } from './recently.effects';
 
 describe('Recently Effects', () => {
@@ -28,7 +28,7 @@ describe('Recently Effects', () => {
     it('should fire when product is in store and selected', () => {
       store$.overrideSelector(getSelectedProduct, { sku: 'A' } as ProductView);
 
-      expect(effects.viewedProduct$).toBeObservable(cold('a', { a: new AddToRecently({ sku: 'A' }) }));
+      expect(effects.viewedProduct$).toBeObservable(cold('a', { a: addToRecently({ payload: { sku: 'A' } }) }));
     });
 
     it('should not fire when product failed loading', () => {

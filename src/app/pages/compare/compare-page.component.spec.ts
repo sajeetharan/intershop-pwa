@@ -5,8 +5,8 @@ import { MockComponent } from 'ng-mocks';
 import { anything, spy, verify } from 'ts-mockito';
 
 import { Product } from 'ish-core/models/product/product.model';
-import { AddToCompare } from 'ish-core/store/shopping/compare';
-import { LoadProductSuccess } from 'ish-core/store/shopping/products';
+import { addToCompare } from 'ish-core/store/shopping/compare';
+import { loadProductSuccess } from 'ish-core/store/shopping/products';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { findAllIshElements } from 'ish-core/utils/dev/html-query-utils';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
@@ -53,10 +53,10 @@ describe('Compare Page Component', () => {
   });
 
   it('should display compare product list when compare products available', () => {
-    store$.dispatch(new LoadProductSuccess({ product: { sku: '1' } as Product }));
-    store$.dispatch(new LoadProductSuccess({ product: { sku: '2' } as Product }));
-    store$.dispatch(new AddToCompare({ sku: '1' }));
-    store$.dispatch(new AddToCompare({ sku: '2' }));
+    store$.dispatch(loadProductSuccess({ payload: { product: { sku: '1' } as Product } }));
+    store$.dispatch(loadProductSuccess({ payload: { product: { sku: '2' } as Product } }));
+    store$.dispatch(addToCompare({ payload: { sku: '1' } }));
+    store$.dispatch(addToCompare({ payload: { sku: '2' } }));
 
     fixture.detectChanges();
     expect(findAllIshElements(element)).toEqual(['ish-product-compare-list']);

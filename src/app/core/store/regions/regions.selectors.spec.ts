@@ -5,7 +5,7 @@ import { Region } from 'ish-core/models/region/region.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { LoadRegions, LoadRegionsFail, LoadRegionsSuccess } from './regions.actions';
+import { loadRegions, loadRegionsFail, loadRegionsSuccess } from './regions.actions';
 import { getAllRegions, getRegionsByCountryCode, getRegionsLoading } from './regions.selectors';
 
 describe('Regions Selectors', () => {
@@ -38,7 +38,7 @@ describe('Regions Selectors', () => {
 
   describe('loading regions', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadRegions({ countryCode }));
+      store$.dispatch(loadRegions({ payload: { countryCode } }));
     });
     it('should set the state to loading', () => {
       expect(getRegionsLoading(store$.state)).toBeTrue();
@@ -46,7 +46,7 @@ describe('Regions Selectors', () => {
 
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadRegionsSuccess({ regions: allRegions }));
+        store$.dispatch(loadRegionsSuccess({ payload: { regions: allRegions } }));
       });
 
       it('should set loading to false', () => {
@@ -57,7 +57,7 @@ describe('Regions Selectors', () => {
 
     describe('and reporting failure', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadRegionsFail({ error: { message: 'error' } as HttpError }));
+        store$.dispatch(loadRegionsFail({ payload: { error: { message: 'error' } as HttpError } }));
       });
 
       it('should not have loaded category on error', () => {

@@ -5,7 +5,7 @@ import { Store, combineReducers } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
-import { SetProductListingPageSize, SetProductListingPages } from 'ish-core/store/shopping/product-listing';
+import { setProductListingPageSize, setProductListingPages } from 'ish-core/store/shopping/product-listing';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { findAllIshElements } from 'ish-core/utils/dev/html-query-utils';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
@@ -69,8 +69,8 @@ describe('Product Listing Component', () => {
 
   describe('display modes', () => {
     beforeEach(() => {
-      store$.dispatch(new SetProductListingPageSize({ itemsPerPage: 1 }));
-      store$.dispatch(new SetProductListingPages({ id: TEST_ID, itemCount: 30, sortKeys: [] }));
+      store$.dispatch(setProductListingPageSize({ payload: { itemsPerPage: 1 } }));
+      store$.dispatch(setProductListingPages({ payload: { id: TEST_ID, itemCount: 30, sortKeys: [] } }));
 
       component.ngOnChanges({ id: new SimpleChange(undefined, TEST_ID, true) });
     });

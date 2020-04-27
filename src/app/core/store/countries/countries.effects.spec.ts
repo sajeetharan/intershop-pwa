@@ -11,7 +11,7 @@ import { CountryService } from 'ish-core/services/country/country.service';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { CountryActionTypes, LoadCountriesFail, LoadCountriesSuccess } from './countries.actions';
+import { loadCountries, loadCountriesFail, loadCountriesSuccess } from './countries.actions';
 import { CountriesEffects } from './countries.effects';
 
 describe('Countries Effects', () => {
@@ -39,8 +39,8 @@ describe('Countries Effects', () => {
 
   describe('loadCountries$', () => {
     it('should load all countries on effects init and dispatch a LoadCountriesSuccess action', () => {
-      const action = { type: CountryActionTypes.LoadCountries } as Action;
-      const expected = new LoadCountriesSuccess({ countries });
+      const action = { type: loadCountries.type } as Action;
+      const expected = loadCountriesSuccess({ payload: { countries } });
 
       actions$ = hot('-a-------', { a: action });
 
@@ -50,8 +50,8 @@ describe('Countries Effects', () => {
     it('should dispatch a LoadCountriesFail action if a load error occurs', () => {
       when(countryServiceMock.getCountries()).thenReturn(throwError({ message: 'error' }));
 
-      const action = { type: CountryActionTypes.LoadCountries } as Action;
-      const expected = new LoadCountriesFail({ error: { message: 'error' } as HttpError });
+      const action = { type: loadCountries.type } as Action;
+      const expected = loadCountriesFail({ payload: { error: { message: 'error' } as HttpError } });
 
       actions$ = hot('-a', { a: action });
 

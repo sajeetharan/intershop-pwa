@@ -3,7 +3,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Action, Store } from '@ngrx/store';
 import { anything, capture, spy, verify } from 'ts-mockito';
 
-import { UserActionTypes } from 'ish-core/store/user';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import { LogoutGuard } from './logout.guard';
@@ -30,7 +29,7 @@ describe('Logout Guard', () => {
       verify(store$.dispatch(anything())).called();
 
       const [arg] = capture(store$.dispatch).last();
-      expect((arg as Action).type).toBe(UserActionTypes.LogoutUser);
+      expect((arg as Action).type).toBe(logoutUser.type);
     });
 
     it('should redirect to /home when called', () => {

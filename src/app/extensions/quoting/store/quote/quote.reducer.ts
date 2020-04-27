@@ -1,10 +1,29 @@
 import { EntityState, createEntityAdapter } from '@ngrx/entity';
+import { Action, createReducer, on } from '@ngrx/store';
 
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
 import { QuoteData } from '../../models/quote/quote.interface';
 
-import { QuoteAction, QuoteActionTypes } from './quote.actions';
+import {
+  addQuoteToBasket,
+  addQuoteToBasketFail,
+  addQuoteToBasketSuccess,
+  createQuoteRequestFromQuote,
+  createQuoteRequestFromQuoteFail,
+  createQuoteRequestFromQuoteSuccess,
+  deleteQuote,
+  deleteQuoteFail,
+  deleteQuoteSuccess,
+  loadQuotes,
+  loadQuotesFail,
+  loadQuotesSuccess,
+  rejectQuote,
+  rejectQuoteFail,
+  rejectQuoteSuccess,
+  resetQuoteError,
+  selectQuote,
+} from './quote.actions';
 
 export const quoteAdapter = createEntityAdapter<QuoteData>();
 
@@ -20,31 +39,27 @@ export const initialState: QuoteState = quoteAdapter.getInitialState({
   selected: undefined,
 });
 
-export function quoteReducer(state = initialState, action: QuoteAction): QuoteState {
-  switch (action.type) {
-    case QuoteActionTypes.SelectQuote: {
-      return {
-        ...state,
-        selected: action.payload.id,
-      };
-    }
+export function quoteReducer(state = initialState, action: Action): QuoteState {
+  return reducer(state, action);
+}
 
-    case QuoteActionTypes.LoadQuotes:
-    case QuoteActionTypes.DeleteQuote:
-    case QuoteActionTypes.RejectQuote:
-    case QuoteActionTypes.CreateQuoteRequestFromQuote:
-    case QuoteActionTypes.AddQuoteToBasket: {
-      return {
-        ...state,
-        loading: true,
-      };
-    }
-
-    case QuoteActionTypes.LoadQuotesFail:
-    case QuoteActionTypes.DeleteQuoteFail:
-    case QuoteActionTypes.RejectQuoteFail:
-    case QuoteActionTypes.CreateQuoteRequestFromQuoteFail:
-    case QuoteActionTypes.AddQuoteToBasketFail: {
+const reducer = createReducer(
+  initialState,
+  on(selectQuote, (state, action) => ({
+    ...state,
+    selected: action.payload.id,
+  })),
+  on(addQuoteToBasket, loadQuotes, deleteQuote, rejectQuote, createQuoteRequestFromQuote, state => ({
+    ...state,
+    loading: true,
+  })),
+  on(
+    addQuoteToBasketFail,
+    loadQuotesFail,
+    deleteQuoteFail,
+    rejectQuoteFail,
+    createQuoteRequestFromQuoteFail,
+    (state, action) => {
       const error = action.payload.error;
 
       return {
@@ -53,36 +68,24 @@ export function quoteReducer(state = initialState, action: QuoteAction): QuoteSt
         loading: false,
       };
     }
-
-    case QuoteActionTypes.LoadQuotesSuccess: {
-      const quotes = action.payload.quotes;
-      if (!state) {
-        return;
-      }
-
-      return {
-        ...quoteAdapter.setAll(quotes, state),
-        loading: false,
-      };
+  ),
+  on(loadQuotesSuccess, (state, action) => {
+    const quotes = action.payload.quotes;
+    if (!state) {
+      return;
     }
 
-    case QuoteActionTypes.DeleteQuoteSuccess:
-    case QuoteActionTypes.RejectQuoteSuccess:
-    case QuoteActionTypes.CreateQuoteRequestFromQuoteSuccess:
-    case QuoteActionTypes.AddQuoteToBasketSuccess: {
-      return {
-        ...state,
-        loading: false,
-      };
-    }
-
-    case QuoteActionTypes.ResetQuoteError: {
-      return {
-        ...state,
-        error: undefined,
-      };
-    }
-  }
-
-  return state;
-}
+    return {
+      ...quoteAdapter.setAll(quotes, state),
+      loading: false,
+    };
+  }),
+  on(addQuoteToBasketSuccess, deleteQuoteSuccess, rejectQuoteSuccess, createQuoteRequestFromQuoteSuccess, state => ({
+    ...state,
+    loading: false,
+  })),
+  on(resetQuoteError, state => ({
+    ...state,
+    error: undefined,
+  }))
+);

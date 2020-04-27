@@ -7,12 +7,12 @@ import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module'
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import {
-  ApplyFilter,
-  ApplyFilterFail,
-  ApplyFilterSuccess,
-  LoadFilterFail,
-  LoadFilterForCategory,
-  LoadFilterSuccess,
+  applyFilter,
+  applyFilterFail,
+  applyFilterSuccess,
+  loadFilterFail,
+  loadFilterForCategory,
+  loadFilterSuccess,
 } from './filter.actions';
 import { getAvailableFilter, getFilterLoading } from './filter.selectors';
 
@@ -39,7 +39,7 @@ describe('Filter Selectors', () => {
 
   describe('with LoadFilterForCategory state', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadFilterForCategory({ uniqueId: 'dummy' }));
+      store$.dispatch(loadFilterForCategory({ payload: { uniqueId: 'dummy' } }));
     });
 
     it('should set the state to loading', () => {
@@ -49,7 +49,9 @@ describe('Filter Selectors', () => {
 
   describe('with LoadFilterSuccess state', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadFilterSuccess({ filterNavigation: { filter: [{ name: 'a' }] } as FilterNavigation }));
+      store$.dispatch(
+        loadFilterSuccess({ payload: { filterNavigation: { filter: [{ name: 'a' }] } as FilterNavigation } })
+      );
     });
 
     it('should set the state to loaded', () => {
@@ -63,7 +65,7 @@ describe('Filter Selectors', () => {
 
   describe('with LoadFilterFail state', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadFilterFail({ error: {} as HttpError }));
+      store$.dispatch(loadFilterFail({ payload: { error: {} as HttpError } }));
     });
 
     it('should set the state to loaded', () => {
@@ -77,7 +79,7 @@ describe('Filter Selectors', () => {
 
   describe('with ApplyFilter state', () => {
     beforeEach(() => {
-      store$.dispatch(new ApplyFilter({ searchParameter: 'b' }));
+      store$.dispatch(applyFilter({ payload: { searchParameter: 'b' } }));
     });
 
     it('should set the state to loaded', () => {
@@ -88,9 +90,11 @@ describe('Filter Selectors', () => {
   describe('with ApplyFilterSuccess state', () => {
     beforeEach(() => {
       store$.dispatch(
-        new ApplyFilterSuccess({
-          availableFilter: {} as FilterNavigation,
-          searchParameter: 'b',
+        applyFilterSuccess({
+          payload: {
+            availableFilter: {} as FilterNavigation,
+            searchParameter: 'b',
+          },
         })
       );
     });
@@ -102,7 +106,7 @@ describe('Filter Selectors', () => {
 
   describe('with ApplyFilterFail state', () => {
     beforeEach(() => {
-      store$.dispatch(new ApplyFilterFail({ error: {} as HttpError }));
+      store$.dispatch(applyFilterFail({ payload: { error: {} as HttpError } }));
     });
 
     it('should set the state to loaded', () => {

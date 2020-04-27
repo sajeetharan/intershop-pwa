@@ -1,4 +1,13 @@
-import { ContactAction, ContactActionTypes } from './contact.actions';
+import { Action, createReducer, on } from '@ngrx/store';
+
+import {
+  createContact,
+  createContactFail,
+  createContactSuccess,
+  loadContact,
+  loadContactFail,
+  loadContactSuccess,
+} from './contact.actions';
 
 export interface ContactState {
   subjects: string[];
@@ -12,53 +21,44 @@ export const initialState: ContactState = {
   success: undefined,
 };
 
-export function contactReducer(state = initialState, action: ContactAction): ContactState {
-  switch (action.type) {
-    case ContactActionTypes.LoadContact: {
-      return {
-        ...state,
-        loading: true,
-        success: undefined,
-      };
-    }
-    case ContactActionTypes.LoadContactFail: {
-      return {
-        ...state,
-        loading: false,
-        success: undefined,
-      };
-    }
-    case ContactActionTypes.LoadContactSuccess: {
-      const { subjects } = action.payload;
-      return {
-        ...state,
-        subjects,
-        loading: false,
-        success: undefined,
-      };
-    }
-    case ContactActionTypes.CreateContact: {
-      return {
-        ...state,
-        loading: true,
-        success: undefined,
-      };
-    }
-    case ContactActionTypes.CreateContactFail: {
-      return {
-        ...state,
-        loading: false,
-        success: false,
-      };
-    }
-    case ContactActionTypes.CreateContactSuccess: {
-      return {
-        ...state,
-        loading: false,
-        success: true,
-      };
-    }
-  }
-
-  return state;
+export function contactReducer(state = initialState, action: Action): ContactState {
+  return reducer(state, action);
 }
+
+const reducer = createReducer(
+  initialState,
+  on(loadContact, state => ({
+    ...state,
+    loading: true,
+    success: undefined,
+  })),
+  on(loadContactFail, state => ({
+    ...state,
+    loading: false,
+    success: undefined,
+  })),
+  on(loadContactSuccess, (state, action) => {
+    const { subjects } = action.payload;
+    return {
+      ...state,
+      subjects,
+      loading: false,
+      success: undefined,
+    };
+  }),
+  on(createContact, state => ({
+    ...state,
+    loading: true,
+    success: undefined,
+  })),
+  on(createContactFail, state => ({
+    ...state,
+    loading: false,
+    success: false,
+  })),
+  on(createContactSuccess, state => ({
+    ...state,
+    loading: false,
+    success: true,
+  }))
+);

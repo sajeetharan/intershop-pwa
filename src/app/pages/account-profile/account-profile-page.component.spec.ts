@@ -6,7 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { Customer } from 'ish-core/models/customer/customer.model';
 import { User } from 'ish-core/models/user/user.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoginUserSuccess } from 'ish-core/store/user';
+import { loginUserSuccess } from 'ish-core/store/user';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import { AccountProfilePageComponent } from './account-profile-page.component';
@@ -33,7 +33,7 @@ describe('Account Profile Page Component', () => {
     })
       .compileComponents()
       .then(() => {
-        TestBed.get(Store).dispatch(new LoginUserSuccess({ customer, user }));
+        TestBed.get(Store).dispatch(loginUserSuccess({ payload: { customer, user } }));
       });
   }));
 

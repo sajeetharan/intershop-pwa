@@ -14,7 +14,7 @@ import { PromotionsService } from 'ish-core/services/promotions/promotions.servi
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import * as fromActions from './promotions.actions';
+import { loadPromotion, loadPromotionFail, loadPromotionSuccess } from './promotions.actions';
 import { PromotionsEffects } from './promotions.effects';
 
 describe('Promotions Effects', () => {
@@ -59,7 +59,7 @@ describe('Promotions Effects', () => {
   describe('loadPromotion$', () => {
     it('should call the promotionsService for LoadPromotion action', done => {
       const promoId = 'P123';
-      const action = new fromActions.LoadPromotion({ promoId });
+      const action = loadPromotion({ payload: { promoId } });
       actions$ = of(action);
 
       effects.loadPromotion$.subscribe(() => {
@@ -71,8 +71,8 @@ describe('Promotions Effects', () => {
     it('should map to action of type LoadPromotionSuccess only once', () => {
       const id = 'P123';
       const promoId = 'P123';
-      const action = new fromActions.LoadPromotion({ promoId });
-      const completion = new fromActions.LoadPromotionSuccess({ promotion: { id } as Promotion });
+      const action = loadPromotion({ payload: { promoId } });
+      const completion = loadPromotionSuccess({ payload: { promotion: { id } as Promotion } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c----', { c: completion });
 
@@ -81,8 +81,8 @@ describe('Promotions Effects', () => {
 
     it('should map invalid request to action of type LoadPromotionFail only once', () => {
       const promoId = 'invalid';
-      const action = new fromActions.LoadPromotion({ promoId });
-      const completion = new fromActions.LoadPromotionFail({ error: { message: 'invalid' } as HttpError, promoId });
+      const action = loadPromotion({ payload: { promoId } });
+      const completion = loadPromotionFail({ payload: { error: { message: 'invalid' } as HttpError, promoId } });
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c----', { c: completion });
 

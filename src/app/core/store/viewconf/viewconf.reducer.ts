@@ -1,7 +1,9 @@
+import { Action, createReducer, on } from '@ngrx/store';
+
 import { BreadcrumbItem } from 'ish-core/models/breadcrumb-item/breadcrumb-item.interface';
 import { DeviceType } from 'ish-core/models/viewtype/viewtype.types';
 
-import { ViewconfActionTypes, ViewconfActions } from './viewconf.actions';
+import { setBreadcrumbData, setDeviceType, setStickyHeader } from './viewconf.actions';
 
 export interface ViewconfState {
   breadcrumbData: BreadcrumbItem[];
@@ -16,24 +18,22 @@ export const initialState: ViewconfState = {
   _deviceType: 'mobile',
 };
 
-export function viewconfReducer(state: ViewconfState = initialState, action: ViewconfActions): ViewconfState {
-  switch (action.type) {
-    case ViewconfActionTypes.SetBreadcrumbData:
-      return {
-        ...state,
-        breadcrumbData: action.payload.breadcrumbData,
-      };
-    case ViewconfActionTypes.SetDeviceType:
-      return {
-        ...state,
-        _deviceType: action.payload.deviceType,
-      };
-    case ViewconfActionTypes.SetStickyHeader:
-      return {
-        ...state,
-        stickyHeader: action.payload.sticky,
-      };
-  }
-
-  return state;
+export function viewconfReducer(state: ViewconfState = initialState, action: Action): ViewconfState {
+  return reducer(state, action);
 }
+
+const reducer = createReducer(
+  initialState,
+  on(setBreadcrumbData, (state, action) => ({
+    ...state,
+    breadcrumbData: action.payload.breadcrumbData,
+  })),
+  on(setDeviceType, (state, action) => ({
+    ...state,
+    _deviceType: action.payload.deviceType,
+  })),
+  on(setStickyHeader, (state, action) => ({
+    ...state,
+    stickyHeader: action.payload.sticky,
+  }))
+);

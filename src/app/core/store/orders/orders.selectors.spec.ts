@@ -6,17 +6,17 @@ import { LineItem } from 'ish-core/models/line-item/line-item.model';
 import { OrderView } from 'ish-core/models/order/order.model';
 import { Product } from 'ish-core/models/product/product.model';
 import { coreReducers } from 'ish-core/store/core-store.module';
-import { LoadProductSuccess } from 'ish-core/store/shopping/products';
+import { loadProductSuccess } from 'ish-core/store/shopping/products';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import {
-  LoadOrder,
-  LoadOrderSuccess,
-  LoadOrders,
-  LoadOrdersFail,
-  LoadOrdersSuccess,
-  SelectOrder,
+  loadOrder,
+  loadOrderSuccess,
+  loadOrders,
+  loadOrdersFail,
+  loadOrdersSuccess,
+  selectOrder,
 } from './orders.actions';
 import {
   getOrder,
@@ -70,23 +70,23 @@ describe('Orders Selectors', () => {
 
   describe('select order', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadOrdersSuccess({ orders }));
-      store$.dispatch(new SelectOrder({ orderId: orders[1].id }));
+      store$.dispatch(loadOrdersSuccess({ payload: { orders } }));
+      store$.dispatch(selectOrder({ payload: { orderId: orders[1].id } }));
     });
     it('should get a certain order if they are loaded orders', () => {
       expect(getSelectedOrder(store$.state).id).toEqual(orders[1].id);
     });
 
     it('should not get any order if the previously selected order was not found', () => {
-      store$.dispatch(new SelectOrder({ orderId: 'invalid' }));
+      store$.dispatch(selectOrder({ payload: { orderId: 'invalid' } }));
       expect(getSelectedOrder(store$.state)).toBeUndefined();
     });
   });
 
   describe('loading orders', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadOrders());
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'sku' } as Product }));
+      store$.dispatch(loadOrders());
+      store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'sku' } as Product } }));
     });
 
     it('should set the state to loading', () => {
@@ -96,7 +96,7 @@ describe('Orders Selectors', () => {
 
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadOrdersSuccess({ orders }));
+        store$.dispatch(loadOrdersSuccess({ payload: { orders } }));
       });
 
       it('should set loading to false', () => {
@@ -113,7 +113,9 @@ describe('Orders Selectors', () => {
 
     describe('and reporting failure', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadOrdersFail({ error: { message: 'error', error: 'errorMessage' } as HttpError }));
+        store$.dispatch(
+          loadOrdersFail({ payload: { error: { message: 'error', error: 'errorMessage' } as HttpError } })
+        );
       });
 
       it('should not have loaded orders on error', () => {
@@ -126,8 +128,8 @@ describe('Orders Selectors', () => {
 
   describe('loading order', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadOrder({ orderId: orders[0].id }));
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'sku' } as Product }));
+      store$.dispatch(loadOrder({ payload: { orderId: orders[0].id } }));
+      store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'sku' } as Product } }));
     });
 
     it('should set the state to loading', () => {
@@ -136,7 +138,7 @@ describe('Orders Selectors', () => {
 
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadOrderSuccess({ order: orders[0] }));
+        store$.dispatch(loadOrderSuccess({ payload: { order: orders[0] } }));
       });
 
       it('should set loading to false', () => {
@@ -152,7 +154,7 @@ describe('Orders Selectors', () => {
 
     describe('and reporting failure', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadOrdersFail({ error: { message: 'error' } as HttpError }));
+        store$.dispatch(loadOrdersFail({ payload: { error: { message: 'error' } as HttpError } }));
       });
 
       it('should not have loaded orders on error', () => {

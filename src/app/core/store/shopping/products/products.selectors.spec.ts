@@ -10,15 +10,15 @@ import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module'
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import {
-  LoadProduct,
-  LoadProductBundlesSuccess,
-  LoadProductFail,
-  LoadProductLinksSuccess,
-  LoadProductSuccess,
-  LoadProductVariations,
-  LoadProductVariationsFail,
-  LoadProductVariationsSuccess,
-  LoadRetailSetSuccess,
+  loadProduct,
+  loadProductBundlesSuccess,
+  loadProductFail,
+  loadProductLinksSuccess,
+  loadProductSuccess,
+  loadProductVariations,
+  loadProductVariationsFail,
+  loadProductVariationsSuccess,
+  loadRetailSetSuccess,
 } from './products.actions';
 import {
   getProduct,
@@ -71,7 +71,7 @@ describe('Products Selectors', () => {
 
   describe('loading a product', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadProduct({ sku: '' }));
+      store$.dispatch(loadProduct({ payload: { sku: '' } }));
     });
 
     it('should set the state to loading', () => {
@@ -80,7 +80,7 @@ describe('Products Selectors', () => {
 
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadProductSuccess({ product: prod }));
+        store$.dispatch(loadProductSuccess({ payload: { product: prod } }));
       });
 
       it('should set loading to false', () => {
@@ -91,7 +91,7 @@ describe('Products Selectors', () => {
 
     describe('and reporting failure', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadProductFail({ error: { message: 'error' } as HttpError, sku: 'invalid' }));
+        store$.dispatch(loadProductFail({ payload: { error: { message: 'error' } as HttpError, sku: 'invalid' } }));
       });
 
       it('should not have loaded product on error', () => {
@@ -107,7 +107,7 @@ describe('Products Selectors', () => {
 
   describe('state with a product', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadProductSuccess({ product: prod }));
+      store$.dispatch(loadProductSuccess({ payload: { product: prod } }));
     });
 
     describe('but no current router state', () => {
@@ -140,11 +140,13 @@ describe('Products Selectors', () => {
 
   describe('when loading bundles', () => {
     it('should contain the product bundle information on the product', () => {
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'ABC' } as Product }));
+      store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'ABC' } as Product } }));
       store$.dispatch(
-        new LoadProductBundlesSuccess({
-          sku: 'ABC',
-          bundledProducts: [{ sku: 'A', quantity: 1 }, { sku: 'B', quantity: 2 }],
+        loadProductBundlesSuccess({
+          payload: {
+            sku: 'ABC',
+            bundledProducts: [{ sku: 'A', quantity: 1 }, { sku: 'B', quantity: 2 }],
+          },
         })
       );
 
@@ -168,11 +170,13 @@ describe('Products Selectors', () => {
 
   describe('when loading retail sets', () => {
     it('should contain the product retail set information on the product', () => {
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'ABC' } as Product }));
+      store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'ABC' } as Product } }));
       store$.dispatch(
-        new LoadRetailSetSuccess({
-          sku: 'ABC',
-          parts: ['A', 'B'],
+        loadRetailSetSuccess({
+          payload: {
+            sku: 'ABC',
+            parts: ['A', 'B'],
+          },
         })
       );
 
@@ -190,8 +194,10 @@ describe('Products Selectors', () => {
 
   describe('loading product variations', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'SKU', type: 'VariationProductMaster' } as Product }));
-      store$.dispatch(new LoadProductVariations({ sku: 'SKU' }));
+      store$.dispatch(
+        loadProductSuccess({ payload: { product: { sku: 'SKU', type: 'VariationProductMaster' } as Product } })
+      );
+      store$.dispatch(loadProductVariations({ payload: { sku: 'SKU' } }));
     });
 
     it('should set the state to loading', () => {
@@ -200,7 +206,9 @@ describe('Products Selectors', () => {
 
     describe('and reporting success', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadProductVariationsSuccess({ sku: 'SKU', variations: ['VAR'], defaultVariation: 'VAR' }));
+        store$.dispatch(
+          loadProductVariationsSuccess({ payload: { sku: 'SKU', variations: ['VAR'], defaultVariation: 'VAR' } })
+        );
       });
 
       it('should set variations data and set loading to false', () => {
@@ -220,7 +228,9 @@ describe('Products Selectors', () => {
 
     describe('and reporting failure', () => {
       beforeEach(() => {
-        store$.dispatch(new LoadProductVariationsFail({ error: { message: 'error' } as HttpError, sku: 'SKU' }));
+        store$.dispatch(
+          loadProductVariationsFail({ payload: { error: { message: 'error' } as HttpError, sku: 'SKU' } })
+        );
       });
 
       it('should not have loaded product variations on error', () => {
@@ -232,9 +242,9 @@ describe('Products Selectors', () => {
 
   describe('state with multiple products', () => {
     beforeEach(() => {
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'SKU1', name: 'sku1' } as Product }));
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'SKU2', name: 'sku2' } as Product }));
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'SKU3', name: 'sku3' } as Product }));
+      store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'SKU1', name: 'sku1' } as Product } }));
+      store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'SKU2', name: 'sku2' } as Product } }));
+      store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'SKU3', name: 'sku3' } as Product } }));
     });
 
     it('should select various products on entites selector', () => {
@@ -258,11 +268,13 @@ describe('Products Selectors', () => {
 
   describe('when loading product links', () => {
     it('should contain the product link information on the product', () => {
-      store$.dispatch(new LoadProductSuccess({ product: { sku: 'ABC' } as Product }));
+      store$.dispatch(loadProductSuccess({ payload: { product: { sku: 'ABC' } as Product } }));
       store$.dispatch(
-        new LoadProductLinksSuccess({
-          sku: 'ABC',
-          links: { linkType: { products: ['prod'], categories: ['cat'] } },
+        loadProductLinksSuccess({
+          payload: {
+            sku: 'ABC',
+            links: { linkType: { products: ['prod'], categories: ['cat'] } },
+          },
         })
       );
 

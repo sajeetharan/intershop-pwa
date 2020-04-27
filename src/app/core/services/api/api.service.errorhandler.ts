@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { EMPTY, Observable, throwError } from 'rxjs';
 
 import { HttpErrorMapper } from 'ish-core/models/http-error/http-error.mapper';
-import { ServerError, TimeoutError } from 'ish-core/store/error';
+import { serverError, timeoutError } from 'ish-core/store/error';
 
 @Injectable({ providedIn: 'root' })
 export class ApiServiceErrorHandler {
@@ -16,12 +16,12 @@ export class ApiServiceErrorHandler {
 
     if (error.status === 0) {
       console.error(error);
-      this.store.dispatch(new TimeoutError({ error: mappedError }));
+      this.store.dispatch(timeoutError({ payload: { error: mappedError } }));
       return EMPTY;
     }
     if (error.status >= 500 && error.status < 600) {
       console.error(error);
-      this.store.dispatch(new ServerError({ error: mappedError }));
+      this.store.dispatch(serverError({ payload: { error: mappedError } }));
       return EMPTY;
     }
     return throwError(error);

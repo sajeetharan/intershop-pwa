@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
 import { instance, mock } from 'ts-mockito';
 
 import { CMSService } from 'ish-core/services/cms/cms.service';
-import { LogoutUser } from 'ish-core/store/user';
+import { logoutUser } from 'ish-core/store/user';
 
-import { ResetPagelets } from './pagelets.actions';
+import { resetPagelets } from './pagelets.actions';
 import { PageletsEffects } from './pagelets.effects';
 
 describe('Pagelets Effects', () => {
@@ -31,8 +31,8 @@ describe('Pagelets Effects', () => {
 
   describe('resetPageletsAfterLogout$', () => {
     it('should map to action of type ResetPagelets if LogoutUser action triggered', () => {
-      const action = new LogoutUser();
-      const completion = new ResetPagelets();
+      const action = logoutUser();
+      const completion = resetPagelets();
       actions$ = hot('-a-a-a', { a: action });
       const expected$ = cold('-c-c-c', { c: completion });
 

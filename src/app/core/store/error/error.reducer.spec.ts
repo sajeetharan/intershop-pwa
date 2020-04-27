@@ -1,10 +1,10 @@
-import * as using from 'jasmine-data-provider';
+import { using } from 'rxjs';
 import { anything } from 'ts-mockito';
 
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
-import { LoginUserSuccess } from 'ish-core/store/user';
+import { loginUserSuccess } from 'ish-core/store/user';
 
-import { ErrorActionTypes, HttpErrorAction, TimeoutError } from './error.actions';
+import { generalError, serverError, timeoutError } from './error.actions';
 import { errorReducer, initialState } from './error.reducer';
 
 describe('Error Reducer', () => {
@@ -20,7 +20,9 @@ describe('Error Reducer', () => {
 
   describe('reducer', () => {
     it('should return initial state when undefined state is supplied', () => {
-      const newState = errorReducer(undefined, {} as HttpErrorAction);
+      const newState = errorReducer(undefined, {} as ReturnType<
+        typeof generalError | typeof timeoutError | typeof serverError
+      >);
 
       expect(newState).toEqual(initialState);
     });
@@ -30,17 +32,17 @@ describe('Error Reducer', () => {
     return [
       {
         state: initialState,
-        action: {} as HttpErrorAction,
+        action: {} as ReturnType<typeof generalError | typeof timeoutError | typeof serverError>,
         expected: initialState,
       },
       {
         state: initialState,
-        action: new TimeoutError({ error: {} as HttpError }),
-        expected: { current: {}, type: ErrorActionTypes.TimeoutError },
+        action: timeoutError({ payload: { error: {} as HttpError } }),
+        expected: { current: {}, type: timeoutError.type },
       },
       {
         state: initialState,
-        action: new LoginUserSuccess(anything()),
+        action: loginUserSuccess({ payload: anything() }),
         expected: initialState,
       },
     ];
