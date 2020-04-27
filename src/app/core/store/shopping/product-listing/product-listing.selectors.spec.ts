@@ -7,7 +7,7 @@ import { coreReducers } from 'ish-core/store/core-store.module';
 import { shoppingReducers } from 'ish-core/store/shopping/shopping-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { setProductListingPageSize, setProductListingPages } from '.';
+import { setProductListingPageSize, setProductListingPages } from './product-listing.actions';
 import { getProductListingLoading, getProductListingView } from './product-listing.selectors';
 
 describe('Product Listing Selectors', () => {

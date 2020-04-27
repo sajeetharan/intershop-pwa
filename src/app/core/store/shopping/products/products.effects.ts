@@ -211,12 +211,14 @@ export class ProductsEffects {
         map(([product, categoryUniqueId]) => !categoryUniqueId && product),
         whenTruthy(),
         filter(p => !ProductHelper.isFailedLoading(p)),
-        filter(product => !product.defaultCategory()),
+        filter(product => !product.defaultCategory())
+      )
+      .pipe(
         mapToProperty('defaultCategoryId'),
         whenTruthy(),
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        map(categoryId => loadCategory({ payload: { categoryId } }))
       )
-      .pipe(map(categoryId => loadCategory({ payload: { categoryId } })))
   );
   loadRetailSetProductDetail$ = createEffect(() =>
     this.actions$.pipe(

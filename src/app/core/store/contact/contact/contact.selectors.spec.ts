@@ -14,7 +14,7 @@ import {
   loadContact,
   loadContactFail,
   loadContactSuccess,
-} from '.';
+} from './contact.actions';
 import { getContactLoading, getContactSubjects } from './contact.selectors';
 
 describe('Contact Selectors', () => {

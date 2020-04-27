@@ -3,6 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Action, Store } from '@ngrx/store';
 import { anything, capture, spy, verify } from 'ts-mockito';
 
+import { logoutUser } from 'ish-core/store/user';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
 import { LogoutGuard } from './logout.guard';

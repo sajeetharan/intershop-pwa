@@ -9,7 +9,7 @@ import { contentReducers } from 'ish-core/store/content/content-store.module';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { TestStore, ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { loadContentPageSuccess } from '.';
+import { loadContentPageSuccess } from './pages.actions';
 import { getContentPageLoading, getSelectedContentPage } from './pages.selectors';
 
 describe('Pages Selectors', () => {
