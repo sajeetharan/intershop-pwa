@@ -104,7 +104,7 @@ export class OrderTemplateEffects {
   );
 
   /**
-   * Reload Order Template after a creation or update to ensure integrity with server concerning the preferred order template
+   * Reload Order Template after a creation or update
    */
   @Effect()
   reloadOrderTemplate$ = this.actions$.pipe(
@@ -113,7 +113,7 @@ export class OrderTemplateEffects {
       orderTemplateActions.OrderTemplatesActionTypes.CreateOrderTemplateSuccess
     ),
     mapToPayloadProperty('orderTemplate'),
-    filter(orderTemplate => orderTemplate && orderTemplate.preferred),
+    filter(orderTemplate => !!orderTemplate),
     mapTo(new orderTemplateActions.LoadOrderTemplates())
   );
 
@@ -141,7 +141,6 @@ export class OrderTemplateEffects {
       this.orderTemplateService
         .createOrderTemplate({
           title: payload.title,
-          preferred: false,
         })
         .pipe(
           // use created order template data to dispatch addProduct action
@@ -248,7 +247,7 @@ export class OrderTemplateEffects {
       orderTemplate =>
         new SetBreadcrumbData({
           breadcrumbData: [
-            { key: 'account.ordertemplates.link', link: '/account/wishlists' },
+            { key: 'account.ordertemplates.link', link: '/account/order-templates' },
             { text: orderTemplate.title },
           ],
         })

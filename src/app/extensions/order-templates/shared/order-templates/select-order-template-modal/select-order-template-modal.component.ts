@@ -19,8 +19,8 @@ import { Product } from 'ish-core/models/product/product.model';
 import { SelectOption } from 'ish-shared/forms/components/select/select.component';
 import { markAsDirtyRecursive } from 'ish-shared/forms/utils/form-utils';
 
-import { OrderTemplatesFacade } from './../../../facades/order-templates.facade';
-import { OrderTemplate } from './../../../models/order-templates/order-template.model';
+import { OrderTemplatesFacade } from '../../../facades/order-templates.facade';
+import { OrderTemplate } from '../../../models/order-templates/order-template.model';
 
 @Component({
   selector: 'ish-select-order-template-modal',
@@ -40,7 +40,6 @@ export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
    */
   @Output() submitEmitter = new EventEmitter<{ id: string; title: string }>();
 
-  preferredOrderTemplate: OrderTemplate;
   updateOrderTemplateForm: FormGroup;
   orderTemplateOptions: SelectOption[];
 
@@ -63,9 +62,6 @@ export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.orderTemplatesFacade.preferredOrderTemplate$
-      .pipe(take(1))
-      .subscribe(orderTemplate => (this.preferredOrderTemplate = orderTemplate));
     this.determineSelectOptions();
     this.formInit();
     this.orderTemplatesFacade.currentOrderTemplate$
@@ -123,33 +119,18 @@ export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
         this.orderTemplateOptions = [];
       }
       this.setDefaultFormValues();
-      this.addProductToPreferredOrderTemplate();
     });
   }
 
   private setDefaultFormValues() {
-    if (this.showForm && !this.addProductToPreferredOrderTemplate()) {
+    if (this.showForm) {
       if (this.orderTemplateOptions && this.orderTemplateOptions.length > 0) {
-        if (this.preferredOrderTemplate) {
-          this.updateOrderTemplateForm.get('orderTemplate').setValue(this.preferredOrderTemplate.id);
-        } else {
-          this.updateOrderTemplateForm.get('orderTemplate').setValue(this.orderTemplateOptions[0].value);
-        }
+        this.updateOrderTemplateForm.get('orderTemplate').setValue(this.orderTemplateOptions[0].value);
       } else {
         this.updateOrderTemplateForm.get('orderTemplate').setValue('newTemplate');
       }
       this.updateOrderTemplateForm.get('newOrderTemplate').setValue(this.newOrderTemplateInitValue);
     }
-  }
-
-  /* don't show order template selection form but add a product immediately if there is a preferred order template */
-  private addProductToPreferredOrderTemplate(): boolean {
-    if (this.showForm && this.preferredOrderTemplate && this.addMoveProduct === 'add') {
-      this.updateOrderTemplateForm.get('orderTemplate').setValue(this.preferredOrderTemplate.id);
-      this.submitForm();
-      return true;
-    }
-    return false;
   }
 
   /** emit results when the form is valid */

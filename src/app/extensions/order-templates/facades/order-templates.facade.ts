@@ -9,6 +9,7 @@ import {
   AddProductToNewOrderTemplate,
   AddProductToOrderTemplate,
   CreateOrderTemplate,
+  CreateOrderTemplateWithItems,
   DeleteOrderTemplate,
   MoveItemToOrderTemplate,
   RemoveItemFromOrderTemplate,
@@ -16,7 +17,6 @@ import {
   getAllOrderTemplates,
   getOrderTemplateError,
   getOrderTemplateLoading,
-  getPreferredOrderTemplate,
   getSelectedOrderTemplateDetails,
 } from '../store/order-templates';
 
@@ -27,12 +27,18 @@ export class OrderTemplatesFacade {
 
   orderTemplates$: Observable<OrderTemplate[]> = this.store.pipe(select(getAllOrderTemplates));
   currentOrderTemplate$: Observable<OrderTemplate> = this.store.pipe(select(getSelectedOrderTemplateDetails));
-  preferredOrderTemplate$: Observable<OrderTemplate> = this.store.pipe(select(getPreferredOrderTemplate));
   orderTemplateLoading$: Observable<boolean> = this.store.pipe(select(getOrderTemplateLoading));
   orderTemplateError$: Observable<HttpError> = this.store.pipe(select(getOrderTemplateError));
 
   addOrderTemplate(orderTemplate: OrderTemplateHeader): void | HttpError {
     this.store.dispatch(new CreateOrderTemplate({ orderTemplate }));
+  }
+
+  addOrderTemplateWithItems(
+    orderTemplate: OrderTemplateHeader,
+    items: { sku: string; quantity: number }[]
+  ): void | HttpError {
+    this.store.dispatch(new CreateOrderTemplateWithItems({ orderTemplate, items }));
   }
 
   deleteOrderTemplate(id: string): void {

@@ -27,7 +27,6 @@ import {
   getOrderTemplateDetails,
   getOrderTemplateError,
   getOrderTemplateLoading,
-  getPreferredOrderTemplate,
   getSelectedOrderTemplateDetails,
   getSelectedOrderTemplateId,
 } from './order-template.selectors';
@@ -319,18 +318,6 @@ describe('Order Template Selectors', () => {
 
     it('should return correct order template for given id', () => {
       expect(getOrderTemplateDetails(store$.state, { id: orderTemplates[1].id })).toEqual(orderTemplates[1]);
-    });
-  });
-
-  describe('Get Preferred Order Template', () => {
-    const loadOrderTemplateSuccessActions = new LoadOrderTemplatesSuccess({ orderTemplates });
-
-    beforeEach(() => {
-      store$.dispatch(loadOrderTemplateSuccessActions);
-    });
-
-    it('should return correct order template for given title', () => {
-      expect(getPreferredOrderTemplate(store$.state)).toEqual(orderTemplates[0]);
     });
   });
 });

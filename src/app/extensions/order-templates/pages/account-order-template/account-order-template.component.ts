@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
 import { OrderTemplatesFacade } from '../../facades/order-templates.facade';
-import { OrderTemplate, OrderTemplateHeader } from '../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../models/order-templates/order-template.model';
 
 @Component({
   selector: 'ish-account-order-template',
@@ -39,7 +39,7 @@ export class AccountOrderTemplateComponent implements OnInit {
   }
 
   /** dispatch creation request */
-  addOrderTemplate(orderTemplate: OrderTemplateHeader) {
+  addOrderTemplate(orderTemplate: OrderTemplate) {
     this.orderTemplatesFacade.addOrderTemplate(orderTemplate);
   }
 }

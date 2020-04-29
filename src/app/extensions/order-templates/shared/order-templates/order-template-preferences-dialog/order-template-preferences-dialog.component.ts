@@ -61,17 +61,13 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges {
   }
 
   initForm() {
-    this.orderTemplateForm = this.fb.group({
-      title: ['', [Validators.required, Validators.maxLength(35)]],
-      preferred: false,
-    });
+    this.orderTemplateForm = this.fb.group({ title: ['', [Validators.required, Validators.maxLength(35)]] });
   }
 
   patchForm() {
     if (this.orderTemplate) {
       this.orderTemplateForm.setValue({
         title: this.orderTemplate.title,
-        preferred: this.orderTemplate.preferred,
       });
     }
   }
@@ -81,7 +77,6 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges {
     if (this.orderTemplateForm.valid) {
       this.submit.emit({
         id: !this.orderTemplate ? this.orderTemplateForm.get('title').value : this.orderTemplateTitle,
-        preferred: this.orderTemplateForm.get('preferred').value,
         title: this.orderTemplateForm.get('title').value,
         public: false,
       });
@@ -102,7 +97,6 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges {
   hide() {
     this.orderTemplateForm.reset({
       title: '',
-      preferred: false,
     });
     this.submitted = false;
     if (this.modal) {

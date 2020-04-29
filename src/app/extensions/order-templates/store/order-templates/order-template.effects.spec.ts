@@ -574,7 +574,7 @@ describe('Order Template Effects', () => {
             "breadcrumbData": Array [
               Object {
                 "key": "account.ordertemplates.link",
-                "link": "/account/wishlists",
+                "link": "/account/order-templates",
               },
               Object {
                 "text": "testing order template",

@@ -11,10 +11,6 @@
   >
   <h1>{{ orderTemplate?.title }}</h1>
 
-  <p *ngIf="orderTemplate?.preferred" data-testing-id="preferred-order-template-text">
-    {{ 'account.wishlist.header.preferred_wishlist' | translate }}
-  </p>
-
   <div class="section">
     <ng-container *ngIf="orderTemplate.itemsCount && orderTemplate.itemsCount > 0; else noItems" class="section">
       <div class="list-header d-none d-md-flex">
@@ -35,12 +31,19 @@
             <ish-account-order-template-detail-line-item
               [orderTemplateItemData]="item"
               [currentOrderTemplate]="orderTemplate"
+              [selectedItemsForm]="selectedItemsForm"
             ></ish-account-order-template-detail-line-item>
           </div>
         </ng-container>
       </div>
     </ng-container>
   </div>
+  <ish-product-add-to-basket
+    displayType="button"
+    [products]="orderTemplate.items"
+    [class]="'btn btn-primary float-right'"
+    (productToBasket)="addSelectedItemsToCart(orderTemplate)"
+  ></ish-product-add-to-basket>
 
   <ng-template #noItems>
     <p>{{ 'account.wishlist.no_entries' | translate }}</p>
@@ -53,5 +56,5 @@
   ></ish-order-template-preferences-dialog>
 </ng-container>
 
-<a routerLink="/account/wishlists">{{ 'account.wishlist.searchform.return.link' | translate }}</a>
+<a routerLink="/account/order-templates">{{ 'account.order_template.searchform.return.link' | translate }}</a>
 <ish-loading *ngIf="orderTemplateLoading$ | async"></ish-loading>

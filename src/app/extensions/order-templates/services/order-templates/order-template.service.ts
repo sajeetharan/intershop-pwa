@@ -17,7 +17,7 @@ export class OrderTemplateService {
    * @returns           The customer's order templates.
    */
   getOrderTemplates(): Observable<OrderTemplate[]> {
-    return this.apiService.get(`customers/-/wishlists`).pipe(
+    return this.apiService.get(`customers/-/users/-/wishlists`).pipe(
       unpackEnvelope(),
       map(orderTemplateData => orderTemplateData.map(this.orderTemplateMapper.fromDataToIds)),
       map(orderTemplateData => orderTemplateData.map(orderTemplate => this.getOrderTemplate(orderTemplate.id))),
@@ -37,7 +37,7 @@ export class OrderTemplateService {
       return throwError('getOrderTemplate() called without orderTemplateId');
     }
     return this.apiService
-      .get<OrderTemplateData>(`customers/-/wishlists/${orderTemplateId}`)
+      .get<OrderTemplateData>(`customers/-/users/-/wishlists/${orderTemplateId}`)
       .pipe(map(orderTemplateData => this.orderTemplateMapper.fromData(orderTemplateData, orderTemplateId)));
   }
 
@@ -48,7 +48,7 @@ export class OrderTemplateService {
    */
   createOrderTemplate(orderTemplatetData: OrderTemplateHeader): Observable<OrderTemplate> {
     return this.apiService
-      .post('customers/-/wishlists', orderTemplatetData)
+      .post('customers/-/users/-/wishlists', orderTemplatetData)
       .pipe(
         map((response: OrderTemplateData) => this.orderTemplateMapper.fromData(orderTemplatetData, response.title))
       );
@@ -63,7 +63,7 @@ export class OrderTemplateService {
     if (!orderTemplateId) {
       return throwError('deleteOrderTemplatet() called without orderTemplateId');
     }
-    return this.apiService.delete(`customers/-/wishlists/${orderTemplateId}`);
+    return this.apiService.delete(`customers/-/users/-/wishlists/${orderTemplateId}`);
   }
 
   /**
@@ -73,7 +73,7 @@ export class OrderTemplateService {
    */
   updateOrderTemplate(orderTemplate: OrderTemplate): Observable<OrderTemplate> {
     return this.apiService
-      .put(`customers/-/wishlists/${orderTemplate.id}`, orderTemplate)
+      .put(`customers/-/users/-/wishlists/${orderTemplate.id}`, orderTemplate)
       .pipe(map((response: OrderTemplate) => this.orderTemplateMapper.fromUpdate(response, orderTemplate.id)));
   }
 
@@ -92,7 +92,7 @@ export class OrderTemplateService {
       return throwError('addProductToOrderTemplate() called without sku');
     }
     return this.apiService
-      .post(`customers/-/wishlists/${orderTemplateId}/products/${sku}?quantity=${quantity}`)
+      .post(`customers/-/users/-/wishlists/${orderTemplateId}/products/${sku}?quantity=${quantity}`)
       .pipe(concatMap(() => this.getOrderTemplate(orderTemplateId)));
   }
 
@@ -110,7 +110,7 @@ export class OrderTemplateService {
       return throwError('removeProductFromOrderTemplate() called without sku');
     }
     return this.apiService
-      .delete(`customers/-/wishlists/${orderTemplateId}/products/${sku}`)
+      .delete(`customers/-/users/-/wishlists/${orderTemplateId}/products/${sku}`)
       .pipe(concatMap(() => this.getOrderTemplate(orderTemplateId)));
   }
 }

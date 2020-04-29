@@ -11,6 +11,7 @@ import { LoadingComponent } from 'ish-shared/components/common/loading/loading.c
 import { OrderTemplatesFacade } from '../../facades/order-templates.facade';
 import { OrderTemplatePreferencesDialogComponent } from '../../shared/order-templates/order-template-preferences-dialog/order-template-preferences-dialog.component';
 
+import { AccountOrderTemplateListComponent } from './account-order-template-list/account-order-template-list.component';
 import { AccountOrderTemplateComponent } from './account-order-template.component';
 
 describe('Account Order Template Component', () => {
@@ -25,7 +26,7 @@ describe('Account Order Template Component', () => {
       imports: [NgbPopoverModule, TranslateModule.forRoot()],
       declarations: [
         AccountOrderTemplateComponent,
-        MockComponent(AccountOrderTemplateComponent),
+        MockComponent(AccountOrderTemplateListComponent),
         MockComponent(ErrorMessageComponent),
         MockComponent(FaIconComponent),
         MockComponent(LoadingComponent),

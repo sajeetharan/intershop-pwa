@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,6 +15,7 @@ import { ProductIdComponent } from 'ish-shared/components/product/product-id/pro
 import { ProductPriceComponent } from 'ish-shared/components/product/product-price/product-price.component';
 import { ProductQuantityComponent } from 'ish-shared/components/product/product-quantity/product-quantity.component';
 import { ProductVariationDisplayComponent } from 'ish-shared/components/product/product-variation-display/product-variation-display.component';
+import { CheckboxComponent } from 'ish-shared/forms/components/checkbox/checkbox.component';
 import { InputComponent } from 'ish-shared/forms/components/input/input.component';
 import { ProductImageComponent } from 'ish-shell/header/product-image/product-image.component';
 
@@ -31,6 +32,7 @@ describe('Account Order Template Detail Line Item Component', () => {
     TestBed.configureTestingModule({
       declarations: [
         AccountOrderTemplateDetailLineItemComponent,
+        MockComponent(CheckboxComponent),
         MockComponent(FaIconComponent),
         MockComponent(InputComponent),
         MockComponent(ProductAddToBasketComponent),
@@ -59,6 +61,21 @@ describe('Account Order Template Detail Line Item Component', () => {
     fixture = TestBed.createComponent(AccountOrderTemplateDetailLineItemComponent);
     component = fixture.componentInstance;
     element = fixture.nativeElement;
+
+    component.orderTemplateItemData = {
+      id: '1234',
+      sku: 'abdc',
+      creationDate: 123124124,
+      desiredQuantity: { value: 1 },
+    };
+    component.selectItemForm = new FormGroup({
+      sku: new FormControl('abcd'),
+      productCheckbox: new FormControl(true),
+    });
+    const selectedItemsFormGroup: FormGroup[] = [];
+    selectedItemsFormGroup.push(component.selectItemForm);
+    component.selectedItemsForm = new FormArray(selectedItemsFormGroup);
+    fixture.detectChanges();
   });
 
   it('should be created', () => {
