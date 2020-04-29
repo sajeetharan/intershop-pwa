@@ -1,9 +1,7 @@
 <div *ngIf="orderTemplates && orderTemplates.length > 0; else noOrderTemplate" class="list-body">
-  <ng-container *ngTemplateOutlet="orderTemplateRow; context: { orderTemplate: preferredOrderTemplate }"></ng-container>
+  <ng-container *ngTemplateOutlet="orderTemplateRow"></ng-container>
   <ng-container *ngFor="let orderTemplate of orderTemplates">
-    <ng-container *ngIf="!preferredOrderTemplate || orderTemplate.id !== preferredOrderTemplate.id">
-      <ng-container *ngTemplateOutlet="orderTemplateRow; context: { orderTemplate: orderTemplate }"></ng-container>
-    </ng-container>
+    <ng-container *ngTemplateOutlet="orderTemplateRow; context: { orderTemplate: orderTemplate }"></ng-container>
   </ng-container>
 </div>
 <ng-template #noOrderTemplate>
@@ -14,10 +12,7 @@
     <div class="col-5 list-item" data-testing-id="order-template-list-item">
       <a [routerLink]="'/account/order-templates/' + orderTemplate.id" data-testing-id="order-template-list-title">{{
         orderTemplate.title
-      }}</a
-      ><span *ngIf="orderTemplate.preferred" class="input-help pl-3">{{
-        'account.wishlists.table.preferred' | translate
-      }}</span>
+      }}</a>
     </div>
     <div class="col-3 list-item d-none d-md-block">{{ orderTemplate.creationDate | date: 'LLL-dd-yyyy' }}</div>
     <div class="col-2 list-item">
@@ -55,8 +50,8 @@
   #deleteDialog
   (confirmed)="delete($event)"
   [options]="{
-    confirmText: 'account.wishlists.delete_wishlist_dialog.delete_button.text' | translate,
-    rejectText: 'account.wishlists.delete_wishlist_dialog.cancel_button.text' | translate
+    confirmText: 'account.order_template.delete.do_you_really.delete_button.text' | translate,
+    rejectText: 'account.order_template.delete.do_you_really.cancel_button.text' | translate
   }"
-  >{{ 'account.wishlists.delete_wishlist_dialog.are_you_sure_paragraph' | translate }}</ish-modal-dialog
+  >{{ 'account.order_template.delete.do_you_really.text' | translate }}</ish-modal-dialog
 >

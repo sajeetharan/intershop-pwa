@@ -3,9 +3,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NgbModalModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { verify } from 'crypto';
 import { MockComponent } from 'ng-mocks';
-import { spy } from 'ts-mockito';
+import { spy, verify } from 'ts-mockito';
 
 import { CheckboxComponent } from 'ish-shared/forms/components/checkbox/checkbox.component';
 import { InputComponent } from 'ish-shared/forms/components/input/input.component';
@@ -45,14 +44,12 @@ describe('Order Template Preferences Dialog Component', () => {
     fixture.detectChanges();
     component.orderTemplateForm.setValue({
       title: 'test order template',
-      preferred: true,
     });
 
     component.submit.subscribe(emit => {
       expect(emit).toEqual({
         id: 'test order template',
         title: 'test order template',
-        preferred: true,
         public: false,
       });
       done();

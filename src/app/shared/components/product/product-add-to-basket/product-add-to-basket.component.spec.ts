@@ -57,15 +57,9 @@ describe('Product Add To Basket Component', () => {
     expect(() => fixture.detectChanges()).not.toThrow();
   });
 
-  it('should throw an error if input parameter product or products is not set', () => {
+  it('should not render when product and products are undefined', () => {
     component.product = undefined;
     component.products = undefined;
-    expect(() => fixture.detectChanges()).toThrow();
-  });
-
-  it('should not render when product and products are undefined', () => {
-    product = undefined;
-    products = undefined;
     fixture.detectChanges();
     expect(element.querySelector('button')).toBeFalsy();
   });

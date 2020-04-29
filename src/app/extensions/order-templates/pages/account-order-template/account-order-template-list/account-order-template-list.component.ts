@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 
@@ -12,7 +12,7 @@ import { OrderTemplate } from '../../../models/order-templates/order-template.mo
   templateUrl: './account-order-template-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountOrderTemplateListComponent implements OnChanges {
+export class AccountOrderTemplateListComponent {
   /**
    * The list of order templates of the customer.
    */
@@ -24,20 +24,13 @@ export class AccountOrderTemplateListComponent implements OnChanges {
 
   /** The header text of the delete modal. */
   deleteHeader: string;
-  preferredOrderTemplate: OrderTemplate;
 
   constructor(private translate: TranslateService, private productFacade: ShoppingFacade) {}
 
-  ngOnChanges() {
-    // determine preferred order template
-    this.preferredOrderTemplate =
-      this.orderTemplates && this.orderTemplates.length
-        ? this.orderTemplates.find(orderTemplates => orderTemplates.preferred)
-        : undefined;
-  }
-
   addTemplateToCart(orderTemplateId: string) {
-    const products = this.orderTemplates.find(t => t.id === orderTemplateId).items;
+    const products = this.orderTemplates.find(t => t.id === orderTemplateId).items
+      ? this.orderTemplates.find(t => t.id === orderTemplateId).items
+      : [];
 
     if (products.length > 0) {
       products.forEach(product => {

@@ -2,14 +2,13 @@
   type="submit"
   name="addProduct"
   [ngClass]="class"
-  (click)="openModal(modal)"
+  (click)="modal.show()"
   data-testing-id="addToOrderTemplateButton"
 >
   {{ 'order_template.create.heading' | translate }}
 </button>
 
-<ish-select-order-template-modal
+<ish-order-template-preferences-dialog
   #modal
-  [product]=""
-  (submitEmitter)="createOrderTemplate($event)"
-></ish-select-order-template-modal>
+  (submit)="createOrderTemplate($event)"
+></ish-order-template-preferences-dialog>

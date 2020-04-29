@@ -39,8 +39,3 @@ export const getOrderTemplateDetails = createSelector(
   getOrderTemplatesEntities,
   (entities, props: { id: string }): OrderTemplate => props.id && entities[props.id]
 );
-
-export const getPreferredOrderTemplate = createSelector(
-  getAllOrderTemplates,
-  entities => entities.find(e => e.preferred)
-);

@@ -53,11 +53,18 @@ export function orderTemplateReducer(state = initialState, action: OrderTemplate
         loading: false,
       });
     }
+    case OrderTemplatesActionTypes.CreateOrderTemplateSuccess: {
+      const { orderTemplate } = action.payload;
 
+      return orderTemplateAdapter.upsertOne(orderTemplate, {
+        ...state,
+        selected: orderTemplate.id,
+        loading: false,
+      });
+    }
     case OrderTemplatesActionTypes.UpdateOrderTemplateSuccess:
     case OrderTemplatesActionTypes.AddProductToOrderTemplateSuccess:
-    case OrderTemplatesActionTypes.RemoveItemFromOrderTemplateSuccess:
-    case OrderTemplatesActionTypes.CreateOrderTemplateSuccess: {
+    case OrderTemplatesActionTypes.RemoveItemFromOrderTemplateSuccess: {
       const { orderTemplate } = action.payload;
 
       return orderTemplateAdapter.upsertOne(orderTemplate, {

@@ -4,7 +4,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { anyString, instance, mock, verify, when } from 'ts-mockito';
+import { anyNumber, anyString, instance, mock, verify, when } from 'ts-mockito';
 
 import { AccountFacade } from 'ish-core/facades/account.facade';
 import { Product } from 'ish-core/models/product/product.model';
@@ -26,21 +26,18 @@ describe('Product Add To Order Template Component', () => {
       title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemsCount: 0,
-      preferred: true,
       public: false,
     },
     {
       title: 'testing order template 2',
       id: '.AsdHS18FIAAAFuNiUBWx0d',
       itemsCount: 0,
-      preferred: false,
       public: false,
     },
     {
       title: 'new order template',
       id: 'new order template id',
       itemsCount: 0,
-      preferred: false,
       public: false,
     },
   ];
@@ -69,6 +66,7 @@ describe('Product Add To Order Template Component', () => {
     element = fixture.nativeElement;
     when(orderTemplateFacadeMock.orderTemplates$).thenReturn(of(orderTemplateDetails));
     component.product = { name: 'Test Product', sku: 'test sku' } as Product;
+    component.quantity = 1;
   });
 
   it('should be created', () => {
@@ -80,12 +78,12 @@ describe('Product Add To Order Template Component', () => {
   it('should call orderTemplateFacade to add product to order template', () => {
     fixture.detectChanges();
     component.addProductToOrderTemplate({ id: 'testid', title: 'Test Order Template' });
-    verify(orderTemplateFacadeMock.addProductToOrderTemplate(anyString(), anyString())).once();
+    verify(orderTemplateFacadeMock.addProductToOrderTemplate(anyString(), anyString(), anyNumber())).once();
   });
 
   it('should call orderTemplateFacade to add product to new order template', () => {
     fixture.detectChanges();
     component.addProductToOrderTemplate({ id: undefined, title: 'Test Order Template' });
-    verify(orderTemplateFacadeMock.addProductToNewOrderTemplate(anyString(), anyString())).once();
+    verify(orderTemplateFacadeMock.addProductToNewOrderTemplate(anyString(), anyString(), anyNumber())).once();
   });
 });

@@ -12,6 +12,7 @@ export enum OrderTemplatesActionTypes {
   CreateOrderTemplate = '[Order Templates] Create Order Template',
   CreateOrderTemplateSuccess = '[Order Templates API] Create Order Template Success',
   CreateOrderTemplateFail = '[Order Templates API] Create Order Template Fail',
+  CreateOrderTemplateWithItems = '[Order Templates] Create Order Template with basket items',
 
   UpdateOrderTemplate = '[Order Templates] Update Order Template',
   UpdateOrderTemplateSuccess = '[Order Templates API] Update Order Template Success',
@@ -54,6 +55,11 @@ export class LoadOrderTemplatesFail implements Action {
 export class CreateOrderTemplate implements Action {
   readonly type = OrderTemplatesActionTypes.CreateOrderTemplate;
   constructor(public payload: { orderTemplate: OrderTemplateHeader }) {}
+}
+
+export class CreateOrderTemplateWithItems implements Action {
+  readonly type = OrderTemplatesActionTypes.CreateOrderTemplateWithItems;
+  constructor(public payload: { orderTemplate: OrderTemplateHeader; items: { sku: string; quantity: number }[] }) {}
 }
 
 export class CreateOrderTemplateSuccess implements Action {

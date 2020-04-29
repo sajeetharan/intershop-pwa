@@ -3,6 +3,10 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
 
+import { coreReducers } from 'ish-core/store/core-store.module';
+import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
+
+import { OrderTemplatePreferencesDialogComponent } from '../../order-templates/order-template-preferences-dialog/order-template-preferences-dialog.component';
 import { SelectOrderTemplateModalComponent } from '../../order-templates/select-order-template-modal/select-order-template-modal.component';
 
 import { BasketCreateOrderTemplateComponent } from './basket-create-order-template.component';
@@ -14,8 +18,12 @@ describe('Basket Create Order Template Component', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [BasketCreateOrderTemplateComponent, MockComponent(SelectOrderTemplateModalComponent)],
-      imports: [RouterTestingModule, TranslateModule.forRoot()],
+      declarations: [
+        BasketCreateOrderTemplateComponent,
+        MockComponent(OrderTemplatePreferencesDialogComponent),
+        MockComponent(SelectOrderTemplateModalComponent),
+      ],
+      imports: [RouterTestingModule, TranslateModule.forRoot(), ngrxTesting({ reducers: coreReducers })],
     }).compileComponents();
   }));
 

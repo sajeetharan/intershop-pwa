@@ -2757,6 +2757,8 @@
   "account.order_template.add_to_template.no_product.message": "There are no products to be added to the order template.",
   "account.order_template.new_order_template.text": "New Order Template",
   "account.order_template.delete.do_you_really.text": "Do you really want to delete this order template?",
+  "account.order_template.delete.do_you_really.delete_button.text": "Delete",
+  "account.order_template.delete.do_you_really.cancel_button.text": "Cancel",
   "account.order_template.delete.move_products.label": "Move products to other order template before deleting.",
   "account.order_template.edit.heading": "Edit Order Template",
   "account.order_template.edit.button.save.label": "Save Changes",
@@ -2771,5 +2773,6 @@
   "modal.heading.remove.order.template": "Remove Product From Order Template",
   "remove.order.template.confirmation": "Do you really want to remove this product from your order template?",
   "order_template.moved.heading": "Order Template Moved",
-  "order_template.create.heading": "Create Order Template"
+  "order_template.create.heading": "Create Order Template",
+  "account.order_template.searchform.return.link": "Back to Order Templates"
 }

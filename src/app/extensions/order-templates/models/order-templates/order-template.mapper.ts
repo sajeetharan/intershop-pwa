@@ -43,7 +43,6 @@ export class OrderTemplateMapper {
         id: orderTemplateId,
         title: orderTemplateData.title,
         itemsCount: orderTemplateData.itemsCount || 0,
-        preferred: orderTemplateData.preferred,
         public: orderTemplateData.public,
         creationDate: orderTemplateData.creationDate,
         items,
@@ -58,7 +57,6 @@ export class OrderTemplateMapper {
       return {
         id,
         title: orderTemplate.title,
-        preferred: orderTemplate.preferred,
         public: orderTemplate.public,
         creationDate: orderTemplate.creationDate,
       };
@@ -71,7 +69,6 @@ export class OrderTemplateMapper {
       return {
         id: OrderTemplateMapper.parseIDfromURI(orderTemplateData.uri),
         title: orderTemplateData.title,
-        preferred: orderTemplateData.preferred,
       };
     }
   }

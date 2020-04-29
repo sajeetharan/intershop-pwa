@@ -1,6 +1,8 @@
 <ng-container *ngIf="product$ | async as product">
   <div class="d-flex">
     <div class="col-2 list-item d-none d-md-block">
+      <ish-checkbox [form]="selectItemForm" controlName="productCheckbox"> </ish-checkbox>
+
       <a [routerLink]="product | ishProductRoute">
         <ish-product-image [product]="product" imageType="S" class="product-image"></ish-product-image>
       </a>

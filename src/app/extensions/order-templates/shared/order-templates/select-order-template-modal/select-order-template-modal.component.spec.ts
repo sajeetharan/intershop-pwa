@@ -23,7 +23,6 @@ describe('Select Order Template Modal Component', () => {
     title: 'testing order template',
     id: '.SKsEQAE4FIAAAFuNiUBWx0d',
     itemsCount: 0,
-    preferred: true,
     public: false,
   };
 
@@ -47,7 +46,6 @@ describe('Select Order Template Modal Component', () => {
     component = fixture.componentInstance;
     element = fixture.nativeElement;
     when(orderTemplateFacadeMock.currentOrderTemplate$).thenReturn(of(orderTemplateDetails));
-    when(orderTemplateFacadeMock.preferredOrderTemplate$).thenReturn(of());
     when(orderTemplateFacadeMock.orderTemplates$).thenReturn(of([orderTemplateDetails]));
 
     fixture.detectChanges();
@@ -78,7 +76,7 @@ describe('Select Order Template Modal Component', () => {
   it('should emit correct object on form submit with new ordertemplate', () => {
     const emitter = spy(component.submitEmitter);
     component.updateOrderTemplateForm.patchValue({
-      orderTemplate: 'newList',
+      orderTemplate: 'newTemplate',
       newOrderTemplate: 'New Order Template Title',
     });
 
@@ -112,7 +110,7 @@ describe('Select Order Template Modal Component', () => {
 
     it('should return correct title of new order template', () => {
       component.updateOrderTemplateForm.patchValue({
-        orderTemplate: 'newList',
+        orderTemplate: 'newTemplate',
         newOrderTemplate: 'New Order Template Title',
       });
       const title = component.selectedOrderTemplateTitle;
@@ -124,12 +122,12 @@ describe('Select Order Template Modal Component', () => {
     it('should return correct route of known order template', () => {
       component.updateOrderTemplateForm.patchValue({ orderTemplate: 'orderTemplate' });
       const route = component.selectedOrderTemplateRoute;
-      expect(route).toBe('route://account/order-templates/order-template');
+      expect(route).toBe('route://account/order-templates/orderTemplate');
     });
 
     it('should return correct route of new order template', () => {
       component.updateOrderTemplateForm.patchValue({
-        orderTemplate: 'newList',
+        orderTemplate: 'newTemplate',
         newOrderTemplate: 'New Order Template Title',
       });
       component.idAfterCreate = 'idAfterCreate';

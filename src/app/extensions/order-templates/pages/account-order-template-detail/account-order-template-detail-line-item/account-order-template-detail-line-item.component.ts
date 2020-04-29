@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
@@ -20,8 +20,10 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
   private static REQUIRED_COMPLETENESS_LEVEL = ProductCompletenessLevel.List;
   @Input() orderTemplateItemData: OrderTemplateItem;
   @Input() currentOrderTemplate: OrderTemplate;
+  @Input() selectedItemsForm: FormArray;
 
   addToCartForm: FormGroup;
+  selectItemForm: FormGroup;
   product$: Observable<ProductView>;
 
   ngOnInit() {
@@ -48,6 +50,13 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
         this.orderTemplateItemData.desiredQuantity.value ? this.orderTemplateItemData.desiredQuantity.value : 1
       ),
     });
+
+    this.selectItemForm = new FormGroup({
+      productCheckbox: new FormControl(true),
+      sku: new FormControl(this.orderTemplateItemData.sku),
+    });
+
+    this.selectedItemsForm.push(this.selectItemForm);
   }
 
   addToCart(sku: string) {
@@ -73,16 +82,11 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
   }
 
   updateProductQuantity(sku: string, quantity: number) {
-    const updateItems = this.currentOrderTemplate.items.map(item => {
-      if (item.sku === sku) {
-        return { ...item, desiredQuantity: { value: quantity } };
-      }
-      return item;
-    });
-
-    const updatedOrderTemplate = { ...this.currentOrderTemplate, items: updateItems };
-
-    this.orderTemplatesFacade.updateOrderTemplate(updatedOrderTemplate);
+    this.orderTemplatesFacade.addProductToOrderTemplate(
+      this.currentOrderTemplate.id,
+      sku,
+      quantity - this.orderTemplateItemData.desiredQuantity.value
+    );
   }
 
   removeProductFromOrderTemplate(sku: string) {
