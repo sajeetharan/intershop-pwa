@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Store, select } from '@ngrx/store';
-import { concatMap, mapTo, withLatestFrom } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { concatMap, mapTo } from 'rxjs/operators';
 
 import { BasketService } from 'ish-core/services/basket/basket.service';
 import { mapErrorToAction, mapToPayloadProperty } from 'ish-core/utils/operators';
 
 import * as basketActions from './basket.actions';
-import { getCurrentBasketId } from './basket.selectors';
 
 @Injectable()
 export class BasketPromotionCodeEffects {
@@ -20,9 +19,8 @@ export class BasketPromotionCodeEffects {
   addPromotionCodeToBasket$ = this.actions$.pipe(
     ofType<basketActions.AddPromotionCodeToBasket>(basketActions.BasketActionTypes.AddPromotionCodeToBasket),
     mapToPayloadProperty('code'),
-    withLatestFrom(this.store.pipe(select(getCurrentBasketId))),
-    concatMap(([code, basketId]) =>
-      this.basketService.addPromotionCodeToBasket(basketId, code).pipe(
+    concatMap(code =>
+      this.basketService.addPromotionCodeToBasket(code).pipe(
         mapTo(new basketActions.AddPromotionCodeToBasketSuccess()),
         mapErrorToAction(basketActions.AddPromotionCodeToBasketFail)
       )
@@ -45,9 +43,8 @@ export class BasketPromotionCodeEffects {
   removePromotionCodeFromBasket$ = this.actions$.pipe(
     ofType<basketActions.RemovePromotionCodeFromBasket>(basketActions.BasketActionTypes.RemovePromotionCodeFromBasket),
     mapToPayloadProperty('code'),
-    withLatestFrom(this.store.pipe(select(getCurrentBasketId))),
-    concatMap(([code, basketId]) =>
-      this.basketService.removePromotionCodeFromBasket(basketId, code).pipe(
+    concatMap(code =>
+      this.basketService.removePromotionCodeFromBasket(code).pipe(
         mapTo(new basketActions.RemovePromotionCodeFromBasketSuccess()),
         mapErrorToAction(basketActions.RemovePromotionCodeFromBasketFail)
       )

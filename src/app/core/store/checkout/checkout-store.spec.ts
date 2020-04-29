@@ -292,18 +292,6 @@ describe('Checkout Store', () => {
             basketId: "test"
           [Shopping] Load Product Success:
             product: {"name":"test","shortDescription":"test","longDescription":"...
-          [Basket API] Add Items To Basket Success:
-            info: undefined
-          [Shopping] Load Product:
-            sku: "test"
-          [Basket Internal] Load Basket
-          [Shopping] Load Product Success:
-            product: {"name":"test","shortDescription":"test","longDescription":"...
-          [Basket API] Load Basket Success:
-            basket: {"id":"test","lineItems":[1]}
-          [Shopping] Load Product if not Loaded:
-            sku: "test"
-            level: 2
           [Shopping] Load Product:
             sku: "test"
           [Shopping] Load Product Success:
@@ -323,8 +311,8 @@ describe('Checkout Store', () => {
           [Account API] Login User Success:
             customer: {"type":"PrivateCustomer","customerNo":"test"}
             user: {"title":"","firstName":"test","lastName":"test","phoneHome"...
-          [Basket Internal] Merge two baskets
-          [Basket API] Merge two baskets Success:
+          [Basket Internal] Load Basket
+          [Basket API] Load Basket Success:
             basket: {"id":"test","lineItems":[1]}
           [Shopping] Load Product if not Loaded:
             sku: "test"

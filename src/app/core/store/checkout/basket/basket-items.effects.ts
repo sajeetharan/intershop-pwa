@@ -80,16 +80,13 @@ export class BasketItemsEffects {
     ofType<basketActions.AddItemsToBasket>(basketActions.BasketActionTypes.AddItemsToBasket),
     mapToPayload(),
     withLatestFrom(this.store.pipe(select(getCurrentBasketId))),
-    filter(([{ basketId }, currentBasketId]) => !!currentBasketId || !!basketId),
-    concatMap(([payload, currentBasketId]) => {
-      // get basket id from AddItemsToBasket action if set, otherwise use current basket id
-      const basketId = payload.basketId || currentBasketId;
-
-      return this.basketService.addItemsToBasket(basketId, payload.items).pipe(
+    filter(([, basketId]) => !!basketId),
+    concatMap(([payload]) =>
+      this.basketService.addItemsToBasket(payload.items).pipe(
         map(info => new basketActions.AddItemsToBasketSuccess({ info })),
         mapErrorToAction(basketActions.AddItemsToBasketFail)
-      );
-    })
+      )
+    )
   );
 
   /**
@@ -134,15 +131,13 @@ export class BasketItemsEffects {
     map(([{ lineItemUpdates }, { lineItems }]) =>
       LineItemUpdateHelper.filterUpdatesByItems(lineItemUpdates, lineItems as LineItemUpdateHelperItem[])
     ),
-
-    withLatestFrom(this.store.pipe(select(getCurrentBasketId))),
-    concatMap(([updates, basketId]) =>
+    concatMap(updates =>
       concat(
         ...updates.map(update => {
           if (update.quantity === 0) {
-            return this.basketService.deleteBasketItem(basketId, update.itemId);
+            return this.basketService.deleteBasketItem(update.itemId);
           } else {
-            return this.basketService.updateBasketItem(basketId, update.itemId, {
+            return this.basketService.updateBasketItem(update.itemId, {
               quantity: update.quantity > 0 ? { value: update.quantity, unit: update.unit } : undefined,
               product: update.sku,
             });
@@ -175,9 +170,8 @@ export class BasketItemsEffects {
   deleteBasketItem$ = this.actions$.pipe(
     ofType<basketActions.DeleteBasketItem>(basketActions.BasketActionTypes.DeleteBasketItem),
     mapToPayloadProperty('itemId'),
-    withLatestFrom(this.store.pipe(select(getCurrentBasketId))),
-    concatMap(([itemId, basketId]) =>
-      this.basketService.deleteBasketItem(basketId, itemId).pipe(
+    concatMap(itemId =>
+      this.basketService.deleteBasketItem(itemId).pipe(
         map(info => new basketActions.DeleteBasketItemSuccess({ info })),
         mapErrorToAction(basketActions.DeleteBasketItemFail)
       )
