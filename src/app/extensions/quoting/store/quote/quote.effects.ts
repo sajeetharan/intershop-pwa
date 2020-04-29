@@ -153,9 +153,9 @@ export class QuoteEffects {
     ofType<actions.AddQuoteToBasket>(actions.QuoteActionTypes.AddQuoteToBasket),
     mapToPayload(),
     withLatestFrom(this.store.pipe(select(getCurrentBasketId))),
-    filter(([payload, currentBasketId]) => !!currentBasketId || !!payload.basketId),
-    concatMap(([payload, currentBasketId]) =>
-      this.quoteService.addQuoteToBasket(payload.quoteId, currentBasketId || payload.basketId).pipe(
+    filter(([, currentBasketId]) => !!currentBasketId),
+    concatMap(([payload]) =>
+      this.quoteService.addQuoteToBasket(payload.quoteId).pipe(
         map(link => new actions.AddQuoteToBasketSuccess({ link })),
         mapErrorToAction(actions.AddQuoteToBasketFail)
       )
@@ -171,11 +171,9 @@ export class QuoteEffects {
     ofType<actions.AddQuoteToBasket>(actions.QuoteActionTypes.AddQuoteToBasket),
     mapToPayload(),
     withLatestFrom(this.store.pipe(select(getCurrentBasketId))),
-    filter(([payload, basketId]) => !basketId && !payload.basketId),
+    filter(([, basketId]) => !basketId),
     mergeMap(([{ quoteId }]) =>
-      this.basketService
-        .createBasket()
-        .pipe(map(basket => new actions.AddQuoteToBasket({ quoteId, basketId: basket.id })))
+      this.basketService.createBasket().pipe(map(_ => new actions.AddQuoteToBasket({ quoteId })))
     )
   );
 
