@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
 import { mapToParam, ofRoute } from 'ngrx-router';
-import { filter, map, mapTo, mergeMap, switchMap, switchMapTo, withLatestFrom } from 'rxjs/operators';
+import { concat } from 'rxjs';
+import { concatMap, filter, last, map, mapTo, mergeMap, switchMap, switchMapTo, withLatestFrom } from 'rxjs/operators';
 
+import { getCurrentBasket } from 'ish-core/store/checkout/basket';
 import { SuccessMessage } from 'ish-core/store/messages';
 import { UserActionTypes, getUserAuthorized } from 'ish-core/store/user';
 import { SetBreadcrumbData } from 'ish-core/store/viewconf';
@@ -57,6 +59,41 @@ export class OrderTemplateEffects {
         ]),
         mapErrorToAction(orderTemplateActions.CreateOrderTemplateFail)
       )
+    )
+  );
+
+  @Effect()
+  addBasketToNewOrderTemplate$ = this.actions$.pipe(
+    ofType<orderTemplateActions.AddBasketToNewOrderTemplate>(
+      orderTemplateActions.OrderTemplatesActionTypes.AddBasketToNewOrderTemplate
+    ),
+    mapToPayload(),
+    mergeMap(payload =>
+      this.orderTemplateService
+        .createOrderTemplate({
+          title: payload.orderTemplate.title,
+        })
+        .pipe(
+          withLatestFrom(this.store.pipe(select(getCurrentBasket))),
+          // use created order template data to dispatch addProduct action
+          concatMap(([orderTemplate, currentBasket]) => [
+            new orderTemplateActions.CreateOrderTemplateSuccess({ orderTemplate }),
+            concat(
+              ...currentBasket.lineItems.map(lineItem =>
+                this.orderTemplateService.addProductToOrderTemplate(
+                  orderTemplate.id,
+                  lineItem.productSKU,
+                  lineItem.quantity.value
+                )
+              )
+            ).pipe(
+              last(),
+              map(() => new orderTemplateActions.AddBasketToNewOrderTemplateSuccess({ orderTemplate })),
+              mapErrorToAction(orderTemplateActions.AddBasketToNewOrderTemplateFail)
+            ),
+          ]),
+          mapErrorToAction(orderTemplateActions.CreateOrderTemplateFail)
+        )
     )
   );
 

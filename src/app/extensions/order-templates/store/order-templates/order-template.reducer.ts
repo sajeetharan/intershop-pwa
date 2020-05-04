@@ -26,6 +26,7 @@ export function orderTemplateReducer(state = initialState, action: OrderTemplate
   switch (action.type) {
     case OrderTemplatesActionTypes.LoadOrderTemplates:
     case OrderTemplatesActionTypes.CreateOrderTemplate:
+    case OrderTemplatesActionTypes.AddBasketToNewOrderTemplate:
     case OrderTemplatesActionTypes.DeleteOrderTemplate:
     case OrderTemplatesActionTypes.UpdateOrderTemplate: {
       return {
@@ -36,6 +37,7 @@ export function orderTemplateReducer(state = initialState, action: OrderTemplate
     case OrderTemplatesActionTypes.LoadOrderTemplatesFail:
     case OrderTemplatesActionTypes.DeleteOrderTemplateFail:
     case OrderTemplatesActionTypes.CreateOrderTemplateFail:
+    case OrderTemplatesActionTypes.AddBasketToNewOrderTemplateFail:
     case OrderTemplatesActionTypes.UpdateOrderTemplateFail: {
       const { error } = action.payload;
       return {
@@ -53,6 +55,7 @@ export function orderTemplateReducer(state = initialState, action: OrderTemplate
         loading: false,
       });
     }
+    case OrderTemplatesActionTypes.AddBasketToNewOrderTemplateSuccess:
     case OrderTemplatesActionTypes.CreateOrderTemplateSuccess: {
       const { orderTemplate } = action.payload;
 

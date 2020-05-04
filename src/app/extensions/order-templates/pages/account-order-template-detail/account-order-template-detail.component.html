@@ -14,7 +14,7 @@
   <div class="section">
     <ng-container *ngIf="orderTemplate.itemsCount && orderTemplate.itemsCount > 0; else noItems" class="section">
       <div class="list-header d-none d-md-flex">
-        <div class="col-6 list-header-item">{{ 'account.wishlist.table.header.item' | translate }}</div>
+        <div class="col-6 list-header-item">{{ 'account.order_template.table.header.item' | translate }}</div>
         <div class="col-2 list-header-item text-right">
           {{ 'shopping_cart.qty.heading' | translate }}
         </div>
@@ -22,7 +22,7 @@
           Date
         </div>
         <div class="col-2 list-header-item column-price text-right">
-          {{ 'account.wishlist.table.header.price' | translate }}
+          {{ 'account.order_template.table.header.price' | translate }}
         </div>
       </div>
       <div class="list-body">
@@ -46,7 +46,7 @@
   ></ish-product-add-to-basket>
 
   <ng-template #noItems>
-    <p>{{ 'account.wishlist.no_entries' | translate }}</p>
+    <p>{{ 'account.order_template.no_entries' | translate }}</p>
   </ng-template>
 
   <ish-order-template-preferences-dialog
