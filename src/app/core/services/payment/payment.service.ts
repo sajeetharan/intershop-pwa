@@ -57,7 +57,6 @@ export class PaymentService {
     if (!paymentInstrument) {
       return throwError('setBasketPayment() called without paymentInstrument');
     }
-
     return this.apiService
       .put<{ data: PaymentInstrument; included: { paymentMethod: { [id: string]: PaymentMethodBaseData } } }>(
         `baskets/current/payments/open-tender?include=paymentMethod`,

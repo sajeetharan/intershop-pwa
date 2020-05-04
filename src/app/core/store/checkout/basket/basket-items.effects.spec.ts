@@ -112,8 +112,7 @@ describe('Basket Items Effects', () => {
       );
 
       const items = [{ sku: 'SKU', quantity: 1, unit: 'pcs.' }];
-      const basketId = 'BID';
-      const action = new basketActions.AddItemsToBasket({ items, basketId });
+      const action = new basketActions.AddItemsToBasket({ items });
       actions$ = of(action);
 
       effects.addItemsToBasket$.subscribe(() => {

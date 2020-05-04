@@ -132,7 +132,7 @@ describe('Checkout Store', () => {
     when(countryServiceMock.getCountries()).thenReturn(of([{ countryCode: 'DE', name: 'Germany' }]));
 
     const basketServiceMock = mock(BasketService);
-    when(basketServiceMock.getBasket(anything())).thenCall(() => {
+    when(basketServiceMock.getBasket()).thenCall(() => {
       const newBasket = {
         ...basket,
       };
@@ -154,7 +154,7 @@ describe('Checkout Store', () => {
 
       return of(newBasket);
     });
-    when(basketServiceMock.getBasket(anything())).thenCall(() => {
+    when(basketServiceMock.getBasket()).thenCall(() => {
       const newBasket = {
         ...basket,
       };
@@ -198,7 +198,7 @@ describe('Checkout Store', () => {
       return of(newBasket);
     });
 
-    when(basketServiceMock.addItemsToBasket(anything(), anything())).thenReturn(of(undefined));
+    when(basketServiceMock.addItemsToBasket(anything())).thenReturn(of(undefined));
 
     const productsServiceMock = mock(ProductsService);
     when(productsServiceMock.getProduct(anything())).thenReturn(of(product));

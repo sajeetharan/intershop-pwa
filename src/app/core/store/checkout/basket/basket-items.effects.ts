@@ -108,11 +108,11 @@ export class BasketItemsEffects {
     ofType<basketActions.AddItemsToBasket>(basketActions.BasketActionTypes.AddItemsToBasket),
     mapToPayload(),
     withLatestFrom(this.store.pipe(select(getCurrentBasketId))),
-    filter(([payload, basketId]) => !basketId && !payload.basketId),
+    filter(([, basketId]) => !basketId),
     mergeMap(([{ items }]) =>
       this.basketService.createBasket().pipe(
         mapToProperty('id'),
-        map(basketId => new basketActions.AddItemsToBasket({ items, basketId }))
+        map(_ => new basketActions.AddItemsToBasket({ items }))
       )
     )
   );
