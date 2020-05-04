@@ -36,6 +36,10 @@ export enum OrderTemplatesActionTypes {
 
   SelectOrderTemplate = '[Order Templates Internal] Select Order Template',
   ResetOrderTemplateState = '[Order Templates Internal] Reset Order Template State',
+
+  AddBasketToNewOrderTemplate = '[Order Templates] Add basket to New Order Template]',
+  AddBasketToNewOrderTemplateSuccess = '[Order Templates] Add basket to New Order Template Success]',
+  AddBasketToNewOrderTemplateFail = '[Order Templates] Add basket to New Order Template Fail]',
 }
 
 export class LoadOrderTemplates implements Action {
@@ -55,11 +59,6 @@ export class LoadOrderTemplatesFail implements Action {
 export class CreateOrderTemplate implements Action {
   readonly type = OrderTemplatesActionTypes.CreateOrderTemplate;
   constructor(public payload: { orderTemplate: OrderTemplateHeader }) {}
-}
-
-export class CreateOrderTemplateWithItems implements Action {
-  readonly type = OrderTemplatesActionTypes.CreateOrderTemplateWithItems;
-  constructor(public payload: { orderTemplate: OrderTemplateHeader; items: { sku: string; quantity: number }[] }) {}
 }
 
 export class CreateOrderTemplateSuccess implements Action {
@@ -154,6 +153,21 @@ export class ResetOrderTemplateState implements Action {
   readonly type = OrderTemplatesActionTypes.ResetOrderTemplateState;
 }
 
+export class AddBasketToNewOrderTemplate implements Action {
+  readonly type = OrderTemplatesActionTypes.AddBasketToNewOrderTemplate;
+  constructor(public payload: { orderTemplate: OrderTemplateHeader }) {}
+}
+
+export class AddBasketToNewOrderTemplateFail implements Action {
+  readonly type = OrderTemplatesActionTypes.AddBasketToNewOrderTemplateFail;
+  constructor(public payload: { error: HttpError }) {}
+}
+
+export class AddBasketToNewOrderTemplateSuccess implements Action {
+  readonly type = OrderTemplatesActionTypes.AddBasketToNewOrderTemplateSuccess;
+  constructor(public payload: { orderTemplate: OrderTemplate }) {}
+}
+
 export type OrderTemplateAction =
   | LoadOrderTemplates
   | LoadOrderTemplatesSuccess
@@ -176,4 +190,7 @@ export type OrderTemplateAction =
   | RemoveItemFromOrderTemplateSuccess
   | RemoveItemFromOrderTemplateFail
   | SelectOrderTemplate
-  | ResetOrderTemplateState;
+  | ResetOrderTemplateState
+  | AddBasketToNewOrderTemplate
+  | AddBasketToNewOrderTemplateSuccess
+  | AddBasketToNewOrderTemplateFail;

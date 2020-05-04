@@ -9,7 +9,6 @@ import {
   AddProductToNewOrderTemplate,
   AddProductToOrderTemplate,
   CreateOrderTemplate,
-  CreateOrderTemplateWithItems,
   DeleteOrderTemplate,
   MoveItemToOrderTemplate,
   RemoveItemFromOrderTemplate,
@@ -19,6 +18,7 @@ import {
   getOrderTemplateLoading,
   getSelectedOrderTemplateDetails,
 } from '../store/order-templates';
+import { AddBasketToNewOrderTemplate } from '../store/order-templates/order-template.actions';
 
 // tslint:disable:member-ordering
 @Injectable({ providedIn: 'root' })
@@ -34,11 +34,8 @@ export class OrderTemplatesFacade {
     this.store.dispatch(new CreateOrderTemplate({ orderTemplate }));
   }
 
-  addOrderTemplateWithItems(
-    orderTemplate: OrderTemplateHeader,
-    items: { sku: string; quantity: number }[]
-  ): void | HttpError {
-    this.store.dispatch(new CreateOrderTemplateWithItems({ orderTemplate, items }));
+  addBasketToNewOrderTemplate(orderTemplate: OrderTemplateHeader): void | HttpError {
+    this.store.dispatch(new AddBasketToNewOrderTemplate({ orderTemplate }));
   }
 
   deleteOrderTemplate(id: string): void {

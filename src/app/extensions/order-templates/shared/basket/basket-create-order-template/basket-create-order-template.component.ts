@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 import { AccountFacade } from 'ish-core/facades/account.facade';
 import { LineItemView } from 'ish-core/models/line-item/line-item.model';
@@ -15,24 +14,15 @@ import { SelectOrderTemplateModalComponent } from '../../order-templates/select-
   templateUrl: './basket-create-order-template.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BasketCreateOrderTemplateComponent implements OnInit {
+export class BasketCreateOrderTemplateComponent {
   @Input() products: LineItemView[];
   @Input() class?: string;
-  /**
-   * Indicator for loading state of order templates
-   */
-  currentOrderTemplate$: Observable<OrderTemplate>;
 
   constructor(
     private orderTemplatesFacade: OrderTemplatesFacade,
     private accountFacade: AccountFacade,
     private router: Router
   ) {}
-
-  ngOnInit() {
-    this.currentOrderTemplate$ = this.orderTemplatesFacade.currentOrderTemplate$;
-  }
-
   /**
    * if the user is not logged in display login dialog, else open select wishlist dialog
    */
@@ -49,23 +39,6 @@ export class BasketCreateOrderTemplateComponent implements OnInit {
   }
 
   createOrderTemplate(orderTemplate: OrderTemplate) {
-    // Refactor to create reduce in effects to acc multiple requests
-    this.orderTemplatesFacade.addOrderTemplate(orderTemplate);
-    this.currentOrderTemplate$
-      .pipe(
-        filter(s => !!s && !!s.id),
-        take(1)
-      )
-      .subscribe(newOrderTemplate => {
-        this.products.forEach((product, index) => {
-          setTimeout(() => {
-            this.orderTemplatesFacade.addProductToOrderTemplate(
-              newOrderTemplate.id,
-              product.productSKU,
-              product.quantity.value
-            );
-          }, index * 250);
-        });
-      });
+    this.orderTemplatesFacade.addBasketToNewOrderTemplate(orderTemplate);
   }
 }

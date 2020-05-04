@@ -20,7 +20,7 @@
           >
             <ish-input
               controlName="newOrderTemplate"
-              [errorMessages]="{ required: 'account.wishlist.name.error.required' }"
+              [errorMessages]="{ required: 'account.order_template.name.error.required' }"
               [form]="updateOrderTemplateForm"
             ></ish-input>
           </ng-container>
@@ -53,7 +53,7 @@
                   <ish-input
                     controlName="newOrderTemplate"
                     [disabled]="newOrderTemplateDisabled ? 'true' : null"
-                    [errorMessages]="{ required: 'account.wishlist.name.error.required' }"
+                    [errorMessages]="{ required: 'account.order_template.name.error.required' }"
                     [form]="updateOrderTemplateForm"
                     inputClass="col-md-12"
                   ></ish-input>
@@ -69,10 +69,10 @@
           <button
             class="btn btn-secondary"
             type="button"
-            [name]="'account.wishlists.wishlist_form.cancel_button.text' | translate"
+            [name]="'account.order_template.delete.do_you_really.cancel_button.text' | translate"
             (click)="hide()"
           >
-            {{ 'account.wishlists.add_to_wishlist.cancel_button.text' | translate }}
+            {{ 'account.order_template.delete.do_you_really.cancel_button.text' | translate }}
           </button>
         </div>
       </form>
