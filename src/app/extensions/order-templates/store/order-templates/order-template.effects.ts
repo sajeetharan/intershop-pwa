@@ -76,8 +76,7 @@ export class OrderTemplateEffects {
         .pipe(
           withLatestFrom(this.store.pipe(select(getCurrentBasket))),
           // use created order template data to dispatch addProduct action
-          concatMap(([orderTemplate, currentBasket]) => [
-            new orderTemplateActions.CreateOrderTemplateSuccess({ orderTemplate }),
+          concatMap(([orderTemplate, currentBasket]) =>
             concat(
               ...currentBasket.lineItems.map(lineItem =>
                 this.orderTemplateService.addProductToOrderTemplate(
@@ -88,13 +87,19 @@ export class OrderTemplateEffects {
               )
             ).pipe(
               last(),
-              map(() => new orderTemplateActions.AddBasketToNewOrderTemplateSuccess({ orderTemplate })),
+              concatMap(newOrderTemplate => [
+                new orderTemplateActions.AddBasketToNewOrderTemplateSuccess({ orderTemplate: newOrderTemplate }),
+                new SuccessMessage({
+                  message: 'account.order_template.new_from_basket_confirm.heading',
+                  messageParams: { 0: orderTemplate.title },
+                }),
+              ]),
               mapErrorToAction(orderTemplateActions.AddBasketToNewOrderTemplateFail)
-            ),
-          ]),
-          mapErrorToAction(orderTemplateActions.CreateOrderTemplateFail)
+            )
+          )
         )
-    )
+    ),
+    mapErrorToAction(orderTemplateActions.CreateOrderTemplateFail)
   );
 
   @Effect()
