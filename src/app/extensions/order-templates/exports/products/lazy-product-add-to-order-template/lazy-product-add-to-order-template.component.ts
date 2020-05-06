@@ -1,6 +1,5 @@
+import { Product } from './../../../../../core/models/product/product.model';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-
-import { Product } from '../../../../../core/models/product/product.model';
 
 @Component({
   selector: 'ish-lazy-product-add-to-order-template',

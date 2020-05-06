@@ -83,12 +83,16 @@ describe('Product Add To Basket Component', () => {
 
   it('should use default translation when nothing is configured', () => {
     fixture.detectChanges();
-    expect(element.textContent).toMatchInlineSnapshot(`"product.add_to_cart.link"`);
+    expect(element.textContent).toMatchInlineSnapshot(`
+      "product.add_to_cart.link"
+    `);
   });
 
   it('should use configured translation when it is configured', () => {
     component.translationKey = 'abc';
     fixture.detectChanges();
-    expect(element.textContent).toMatchInlineSnapshot(`"abc"`);
+    expect(element.textContent).toMatchInlineSnapshot(`
+      "abc"
+    `);
   });
 });
