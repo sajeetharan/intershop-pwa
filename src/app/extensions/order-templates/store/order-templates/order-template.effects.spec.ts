@@ -524,7 +524,7 @@ describe('Order Template Effects', () => {
     it('should map to action of type SelectOrderTemplate', () => {
       const orderTemplateName = '.SKsEQAE4FIAAAFuNiUBWx0d';
       const action = new RouteNavigation({
-        path: 'account/wishlist/:orderTemplateName',
+        path: 'account/order-templates/:orderTemplateName',
         params: { orderTemplateName },
         queryParams: {},
       });

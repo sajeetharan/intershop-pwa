@@ -31,11 +31,8 @@ export interface Environment {
     | 'advancedVariationHandling'
     | 'businessCustomerRegistration'
     | 'quoting'
-<<<<<<< HEAD
     | 'quickorder'
-=======
     | 'orderTemplates'
->>>>>>> order template feature
     /* Third-party Integrations */
     | 'sentry'
     | 'tracking'

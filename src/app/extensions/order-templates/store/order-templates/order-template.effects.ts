@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
-import { mapToParam, ofRoute } from 'ngrx-router';
 import { concat } from 'rxjs';
-import { concatMap, filter, last, map, mapTo, mergeMap, switchMap, switchMapTo, withLatestFrom } from 'rxjs/operators';
+import { concatMap, filter, last, map, mapTo, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { getCurrentBasket } from 'ish-core/store/checkout/basket';
 import { SuccessMessage } from 'ish-core/store/messages';
+import { selectRouteParam } from 'ish-core/store/router';
 import { UserActionTypes, getUserAuthorized } from 'ish-core/store/user';
 import { SetBreadcrumbData } from 'ish-core/store/viewconf';
-import { mapErrorToAction, mapToPayload, mapToPayloadProperty, whenTruthy } from 'ish-core/utils/operators';
+import {
+  distinctCompareWith,
+  mapErrorToAction,
+  mapToPayload,
+  mapToPayloadProperty,
+  whenTruthy,
+} from 'ish-core/utils/operators';
 
 import { OrderTemplate, OrderTemplateHeader } from '../../models/order-templates/order-template.model';
 import { OrderTemplateService } from '../../services/order-templates/order-template.service';
@@ -250,12 +256,10 @@ export class OrderTemplateEffects {
   );
 
   @Effect()
-  routeListenerForSelectedOrderTemplate$ = this.actions$.pipe(
-    ofRoute(),
-    mapToParam<string>('orderTemplateName'),
-    withLatestFrom(this.store.pipe(select(getSelectedOrderTemplateId))),
-    filter(([routerId, storeId]) => routerId !== storeId),
-    map(([id]) => new orderTemplateActions.SelectOrderTemplate({ id }))
+  routeListenerForSelectedOrderTemplate$ = this.store.pipe(
+    select(selectRouteParam('orderTemplateName')),
+    distinctCompareWith(this.store.pipe(select(getSelectedOrderTemplateId))),
+    map(id => new orderTemplateActions.SelectOrderTemplate({ id }))
   );
 
   /**
@@ -279,11 +283,8 @@ export class OrderTemplateEffects {
   );
 
   @Effect()
-  setOrderTemplateBreadcrumb$ = this.actions$.pipe(
-    ofRoute(),
-    mapToParam('orderTemplateName'),
-    whenTruthy(),
-    switchMapTo(this.store.pipe(select(getSelectedOrderTemplateDetails))),
+  setOrderTemplateBreadcrumb$ = this.store.pipe(
+    select(getSelectedOrderTemplateDetails),
     whenTruthy(),
     map(
       orderTemplate =>
