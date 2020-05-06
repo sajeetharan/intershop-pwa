@@ -33,6 +33,7 @@ export class WishlistWidgetComponent implements OnInit {
     this.tileConfiguration = {
       ...DEFAULT_CONFIGURATION,
       displayAddToWishlist: false,
+      displayAddToOrderTemplate: false,
       displayAddToCompare: false,
       displayAddToQuote: false,
     };

@@ -47,6 +47,7 @@
       (compareToggle)="toggleCompare()"
     ></ish-product-add-to-compare>
     <ish-lazy-product-add-to-order-template
+      *ngIf="configuration.displayAddToOrderTemplate"
       [class]="'btn btn-link mr-0'"
       [product]="product"
       [quantity]="1"

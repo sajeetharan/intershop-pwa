@@ -9,17 +9,10 @@
   <!-- Error message -->
   <ish-error-message [error]="orderTemplateError$ | async"></ish-error-message>
 
-  <div class="section">
-    <div class="list-header d-none d-md-flex">
-      <div class="list-header-item col-5">{{ 'account.order_template.list.table.template' | translate }}</div>
-      <div class="list-header-item col-3">{{ 'account.order_template.list.table.created' | translate }}</div>
-      <div class="list-header-item col-2">{{ 'account.order_template.list.table.item' | translate }}</div>
-    </div>
-    <ish-account-order-template-list
-      [orderTemplates]="orderTemplates$ | async"
-      (deleteOrderTemplate)="deleteOrderTemplate($event)"
-    ></ish-account-order-template-list>
-  </div>
+  <ish-account-order-template-list
+    [orderTemplates]="orderTemplates$ | async"
+    (deleteOrderTemplate)="deleteOrderTemplate($event)"
+  ></ish-account-order-template-list>
 </div>
 
 <ish-order-template-preferences-dialog

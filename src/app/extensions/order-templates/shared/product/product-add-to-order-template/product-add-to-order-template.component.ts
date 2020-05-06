@@ -33,7 +33,7 @@ export class ProductAddToOrderTemplateComponent {
         modal.show();
       } else {
         // stay on the same page after login
-        const queryParams = { returnUrl: this.router.routerState.snapshot.url, messageKey: 'order-templates' };
+        const queryParams = { returnUrl: this.router.routerState.snapshot.url, messageKey: 'ordertemplates' };
         this.router.navigate(['/login'], { queryParams });
       }
     });

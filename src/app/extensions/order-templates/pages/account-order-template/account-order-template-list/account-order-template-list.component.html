@@ -1,8 +1,15 @@
-<div *ngIf="orderTemplates && orderTemplates.length > 0; else noOrderTemplate" class="list-body">
-  <ng-container *ngTemplateOutlet="orderTemplateRow"></ng-container>
-  <ng-container *ngFor="let orderTemplate of orderTemplates">
-    <ng-container *ngTemplateOutlet="orderTemplateRow; context: { orderTemplate: orderTemplate }"></ng-container>
-  </ng-container>
+<div *ngIf="orderTemplates && orderTemplates.length > 0; else noOrderTemplate" class="section">
+  <div class="list-header d-none d-md-flex">
+    <div class="list-header-item col-5">{{ 'account.order_template.list.table.template' | translate }}</div>
+    <div class="list-header-item col-3">{{ 'account.order_template.list.table.created' | translate }}</div>
+    <div class="list-header-item col-2">{{ 'account.order_template.list.table.item' | translate }}</div>
+  </div>
+  <div class="list-body">
+    <ng-container *ngTemplateOutlet="orderTemplateRow"></ng-container>
+    <ng-container *ngFor="let orderTemplate of orderTemplates">
+      <ng-container *ngTemplateOutlet="orderTemplateRow; context: { orderTemplate: orderTemplate }"></ng-container>
+    </ng-container>
+  </div>
 </div>
 <ng-template #noOrderTemplate>
   <p>{{ 'account.order_template.list.no_templates.text' | translate }}</p>
