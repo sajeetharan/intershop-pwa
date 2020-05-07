@@ -1,4 +1,4 @@
-import { OrderTemplateState } from './order-templates/order-template.reducer';
+import { OrderTemplateState } from './order-template/order-template.reducer';
 
 export interface OrderTemplatesState {
   orderTemplates: OrderTemplateState;

@@ -4,9 +4,9 @@ import { concatMap, defaultIfEmpty, map, switchMap } from 'rxjs/operators';
 
 import { ApiService, unpackEnvelope } from 'ish-core/services/api/api.service';
 
-import { OrderTemplateData } from '../../models/order-templates/order-template.interface';
-import { OrderTemplateMapper } from '../../models/order-templates/order-template.mapper';
-import { OrderTemplate, OrderTemplateHeader } from '../../models/order-templates/order-template.model';
+import { OrderTemplateData } from '../../models/order-template/order-template.interface';
+import { OrderTemplateMapper } from '../../models/order-template/order-template.mapper';
+import { OrderTemplate, OrderTemplateHeader } from '../../models/order-template/order-template.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrderTemplateService {

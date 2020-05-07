@@ -12,11 +12,11 @@ import { OrderTemplatesFacade } from '../../facades/order-templates.facade';
 import { OrderTemplatePreferencesDialogComponent } from '../../shared/order-templates/order-template-preferences-dialog/order-template-preferences-dialog.component';
 
 import { AccountOrderTemplateListComponent } from './account-order-template-list/account-order-template-list.component';
-import { AccountOrderTemplateComponent } from './account-order-template.component';
+import { AccountOrderTemplatePageComponent } from './account-order-template-page.component';
 
-describe('Account Order Template Component', () => {
-  let component: AccountOrderTemplateComponent;
-  let fixture: ComponentFixture<AccountOrderTemplateComponent>;
+describe('Account Order Template Page Component', () => {
+  let component: AccountOrderTemplatePageComponent;
+  let fixture: ComponentFixture<AccountOrderTemplatePageComponent>;
   let element: HTMLElement;
 
   beforeEach(async(() => {
@@ -25,7 +25,7 @@ describe('Account Order Template Component', () => {
     TestBed.configureTestingModule({
       imports: [NgbPopoverModule, TranslateModule.forRoot()],
       declarations: [
-        AccountOrderTemplateComponent,
+        AccountOrderTemplatePageComponent,
         MockComponent(AccountOrderTemplateListComponent),
         MockComponent(ErrorMessageComponent),
         MockComponent(FaIconComponent),
@@ -37,7 +37,7 @@ describe('Account Order Template Component', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AccountOrderTemplateComponent);
+    fixture = TestBed.createComponent(AccountOrderTemplatePageComponent);
     component = fixture.componentInstance;
     element = fixture.nativeElement;
   });

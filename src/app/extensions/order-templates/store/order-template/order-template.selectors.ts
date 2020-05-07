@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
 
-import { OrderTemplate } from '../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../models/order-template/order-template.model';
 import { getOrderTemplatesState } from '../order-templates-store';
 
 import { initialState, orderTemplateAdapter } from './order-template.reducer';

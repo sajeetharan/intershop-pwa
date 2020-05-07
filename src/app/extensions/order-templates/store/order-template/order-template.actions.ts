@@ -2,7 +2,7 @@ import { Action } from '@ngrx/store';
 
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
-import { OrderTemplate, OrderTemplateHeader } from '../../models/order-templates/order-template.model';
+import { OrderTemplate, OrderTemplateHeader } from '../../models/order-template/order-template.model';
 
 export enum OrderTemplatesActionTypes {
   LoadOrderTemplates = '[Order Templates Internal] Load Order Templates',

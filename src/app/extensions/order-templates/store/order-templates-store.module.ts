@@ -3,9 +3,9 @@ import { EffectsModule } from '@ngrx/effects';
 import { ActionReducerMap, ReducerManager, Store, combineReducers } from '@ngrx/store';
 import { take } from 'rxjs/operators';
 
+import { OrderTemplateEffects } from './order-template/order-template.effects';
+import { orderTemplateReducer } from './order-template/order-template.reducer';
 import { OrderTemplatesState } from './order-templates-store';
-import { OrderTemplateEffects } from './order-templates/order-template.effects';
-import { orderTemplateReducer } from './order-templates/order-template.reducer';
 
 export const orderTemplatesReducers: ActionReducerMap<OrderTemplatesState> = {
   orderTemplates: orderTemplateReducer,

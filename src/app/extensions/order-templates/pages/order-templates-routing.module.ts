@@ -8,15 +8,15 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('./account-order-template/account-order-template.module').then(m => m.AccountOrderTemplateModule),
+      import('./account-order-template/account-order-template-page.module').then(m => m.AccountOrderTemplatePageModule),
     canActivate: [FeatureToggleGuard, AuthGuard],
     data: { feature: 'orderTemplates', breadcrumbData: [{ key: 'account.ordertemplates.link' }] },
   },
   {
     path: ':orderTemplateName',
     loadChildren: () =>
-      import('./account-order-template-detail/account-order-template-detail.module').then(
-        m => m.AccountOrderTemplateDetailModule
+      import('./account-order-template-detail/account-order-template-detail-page.module').then(
+        m => m.AccountOrderTemplateDetailPageModule
       ),
     canActivate: [FeatureToggleGuard, AuthGuard],
     data: { feature: 'orderTemplates' },

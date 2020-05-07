@@ -14,11 +14,11 @@ import { ProductAddToBasketComponent } from 'ish-shared/components/product/produ
 import { OrderTemplatePreferencesDialogComponent } from '../../shared/order-templates/order-template-preferences-dialog/order-template-preferences-dialog.component';
 
 import { AccountOrderTemplateDetailLineItemComponent } from './account-order-template-detail-line-item/account-order-template-detail-line-item.component';
-import { AccountOrderTemplateDetailComponent } from './account-order-template-detail.component';
+import { AccountOrderTemplateDetailPageComponent } from './account-order-template-detail-page.component';
 
-describe('Account Order Template Detail Component', () => {
-  let component: AccountOrderTemplateDetailComponent;
-  let fixture: ComponentFixture<AccountOrderTemplateDetailComponent>;
+describe('Account Order Template Detail Page Component', () => {
+  let component: AccountOrderTemplateDetailPageComponent;
+  let fixture: ComponentFixture<AccountOrderTemplateDetailPageComponent>;
   let element: HTMLElement;
 
   beforeEach(async(() => {
@@ -30,7 +30,7 @@ describe('Account Order Template Detail Component', () => {
         ngrxTesting({ reducers: coreReducers }),
       ],
       declarations: [
-        AccountOrderTemplateDetailComponent,
+        AccountOrderTemplateDetailPageComponent,
         MockComponent(AccountOrderTemplateDetailLineItemComponent),
         MockComponent(ErrorMessageComponent),
         MockComponent(FaIconComponent),
@@ -42,7 +42,7 @@ describe('Account Order Template Detail Component', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AccountOrderTemplateDetailComponent);
+    fixture = TestBed.createComponent(AccountOrderTemplateDetailPageComponent);
     component = fixture.componentInstance;
     element = fixture.nativeElement;
   });

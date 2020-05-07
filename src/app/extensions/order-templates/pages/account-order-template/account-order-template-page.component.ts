@@ -4,14 +4,14 @@ import { Observable } from 'rxjs';
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
 import { OrderTemplatesFacade } from '../../facades/order-templates.facade';
-import { OrderTemplate } from '../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../models/order-template/order-template.model';
 
 @Component({
-  selector: 'ish-account-order-template',
-  templateUrl: './account-order-template.component.html',
+  selector: 'ish-account-order-template-page',
+  templateUrl: './account-order-template-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountOrderTemplateComponent implements OnInit {
+export class AccountOrderTemplatePageComponent implements OnInit {
   /**
    * The list of order templates of the customer.
    */

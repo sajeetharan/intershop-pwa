@@ -5,7 +5,7 @@ import { take } from 'rxjs/operators';
 import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
 import { ModalDialogComponent } from 'ish-shared/components/common/modal-dialog/modal-dialog.component';
 
-import { OrderTemplate } from '../../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../../models/order-template/order-template.model';
 
 @Component({
   selector: 'ish-account-order-template-list',

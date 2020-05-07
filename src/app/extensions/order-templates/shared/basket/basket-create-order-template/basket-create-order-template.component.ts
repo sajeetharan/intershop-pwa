@@ -6,7 +6,7 @@ import { AccountFacade } from 'ish-core/facades/account.facade';
 import { LineItemView } from 'ish-core/models/line-item/line-item.model';
 
 import { OrderTemplatesFacade } from '../../../facades/order-templates.facade';
-import { OrderTemplate } from '../../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../../models/order-template/order-template.model';
 import { SelectOrderTemplateModalComponent } from '../../order-templates/select-order-template-modal/select-order-template-modal.component';
 
 @Component({

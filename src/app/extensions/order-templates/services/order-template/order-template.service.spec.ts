@@ -4,8 +4,8 @@ import { anything, instance, mock, verify, when } from 'ts-mockito';
 
 import { ApiService } from 'ish-core/services/api/api.service';
 
-import { OrderTemplateData } from '../../models/order-templates/order-template.interface';
-import { OrderTemplate, OrderTemplateHeader } from '../../models/order-templates/order-template.model';
+import { OrderTemplateData } from '../../models/order-template/order-template.interface';
+import { OrderTemplate, OrderTemplateHeader } from '../../models/order-template/order-template.model';
 
 import { OrderTemplateService } from './order-template.service';
 
@@ -88,30 +88,6 @@ describe('Order Template Service', () => {
       done();
     });
   });
-
-  // it("should add a product to a order template when 'addProductToOrderTemplate' is called", done => {
-  //   const orderTemplateId = '1234';
-  //   const sku = 'abcd';
-  //   const quantity = 1;
-
-  //   when(
-  //     apiServiceMock.post(
-  //       `customers/-/users/-/wishlists/${orderTemplateId}/products/${sku}?quantity)=${quantity}`,
-  //       anything()
-  //     )
-  //   ).thenReturn(of({}));
-  //   when(apiServiceMock.get(`customers/-/users/-/wishlists/${orderTemplateId}`)).thenReturn(
-  //     of({ title: 'order template title' } as OrderTemplateData)
-  //   );
-
-  //   orderTemplateService.addProductToOrderTemplate(orderTemplateId, sku, quantity).subscribe(() => {
-  //     verify(
-  //       apiServiceMock.post(`customers/-/users/-/wishlists/${orderTemplateId}/products/${sku}?quantity=${quantity}`)
-  //     ).once();
-  //     verify(apiServiceMock.get(`customers/-/users/-/wishlists/${orderTemplateId}`)).once();
-  //     done();
-  //   });
-  // });
 
   it("should remove a product from a order template when 'removeProductToOrderTemplate' is called", done => {
     const orderTemplateId = '1234';

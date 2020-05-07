@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Store, combineReducers } from '@ngrx/store';
 import { cold, hot } from 'jest-marbles';
-import { RouteNavigation } from 'ngrx-router';
 import { of, throwError } from 'rxjs';
 import { anyNumber, anyString, anything, instance, mock, verify, when } from 'ts-mockito';
 
@@ -19,8 +20,8 @@ import { LoginUserSuccess, LogoutUser } from 'ish-core/store/user';
 import { userReducer } from 'ish-core/store/user/user.reducer';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 
-import { OrderTemplate } from '../../models/order-templates/order-template.model';
-import { OrderTemplateService } from '../../services/order-templates/order-template.service';
+import { OrderTemplate } from '../../models/order-template/order-template.model';
+import { OrderTemplateService } from '../../services/order-template/order-template.service';
 import { orderTemplatesReducers } from '../order-templates-store.module';
 
 import {
@@ -55,6 +56,7 @@ describe('Order Template Effects', () => {
   let orderTemplateServiceMock: OrderTemplateService;
   let effects: OrderTemplateEffects;
   let store$: Store<{}>;
+  let router: Router;
 
   const customer = { customerNo: 'CID', type: 'SMBCustomer' } as Customer;
 
@@ -84,6 +86,9 @@ describe('Order Template Effects', () => {
       declarations: [DummyComponent],
       imports: [
         FeatureToggleModule,
+        RouterTestingModule.withRoutes([
+          { path: 'account/order-templates/:orderTemplateName', component: DummyComponent },
+        ]),
         ngrxTesting({
           reducers: {
             orderTemplates: combineReducers(orderTemplatesReducers),
@@ -92,6 +97,7 @@ describe('Order Template Effects', () => {
             user: userReducer,
             configuration: configurationReducer,
           },
+          routerStore: true,
         }),
       ],
       providers: [
@@ -103,6 +109,7 @@ describe('Order Template Effects', () => {
 
     effects = TestBed.get(OrderTemplateEffects);
     store$ = TestBed.get(Store);
+    router = TestBed.get(Router);
 
     store$.dispatch(new ApplyConfiguration({ features: ['orderTemplates'] }));
   });
@@ -206,7 +213,6 @@ describe('Order Template Effects', () => {
       const createdOrderTemplate: OrderTemplate = {
         id: '1234',
         title: 'title',
-        preferred: true,
         public: false,
       };
       const action = new CreateOrderTemplateSuccess({ orderTemplate: createdOrderTemplate });
@@ -316,7 +322,6 @@ describe('Order Template Effects', () => {
       const updatedOrderTemplate: OrderTemplate = {
         id: '1234',
         title: 'title',
-        preferred: true,
         public: false,
       };
       const action = new UpdateOrderTemplateSuccess({ orderTemplate: updatedOrderTemplate });
@@ -522,16 +527,15 @@ describe('Order Template Effects', () => {
 
   describe('routeListenerForSelectedOrderTemplate$', () => {
     it('should map to action of type SelectOrderTemplate', () => {
-      const orderTemplateName = '.SKsEQAE4FIAAAFuNiUBWx0d';
-      const action = new RouteNavigation({
-        path: 'account/order-templates/:orderTemplateName',
-        params: { orderTemplateName },
-        queryParams: {},
+      router.navigateByUrl('/account/order-templates/.SKsEQAE4FIAAAFuNiUBWx0d');
+
+      effects.routeListenerForSelectedOrderTemplate$.subscribe(action => {
+        expect(action).toMatchInlineSnapshot(`
+          [Order Templates Internal] Select Order Template:
+            id: ".SKsEQAE4FIAAAFuNiUBWx0d"
+        `);
+        done();
       });
-      const completion = new SelectOrderTemplate({ id: orderTemplateName });
-      actions$ = hot('-a-a-a', { a: action });
-      const expected$ = cold('-c-c-c', { c: completion });
-      expect(effects.routeListenerForSelectedOrderTemplate$).toBeObservable(expected$);
     });
   });
 
@@ -567,7 +571,6 @@ describe('Order Template Effects', () => {
     });
 
     it('should set the breadcrumb of the selected Order Template', done => {
-      actions$ = of(new RouteNavigation({ path: 'any', params: { orderTemplateName: orderTemplates[0].id } }));
       effects.setOrderTemplateBreadcrumb$.subscribe(action => {
         expect(action.payload).toMatchInlineSnapshot(`
           Object {

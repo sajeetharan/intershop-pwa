@@ -2,7 +2,7 @@ import { EntityState, createEntityAdapter } from '@ngrx/entity';
 
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
-import { OrderTemplate } from '../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../models/order-template/order-template.model';
 
 import { OrderTemplateAction, OrderTemplatesActionTypes } from './order-template.actions';
 
@@ -50,7 +50,7 @@ export function orderTemplateReducer(state = initialState, action: OrderTemplate
 
     case OrderTemplatesActionTypes.LoadOrderTemplatesSuccess: {
       const { orderTemplates } = action.payload;
-      return orderTemplateAdapter.addAll(orderTemplates, {
+      return orderTemplateAdapter.setAll(orderTemplates, {
         ...state,
         loading: false,
       });

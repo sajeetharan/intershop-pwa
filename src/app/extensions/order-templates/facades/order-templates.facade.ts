@@ -4,8 +4,9 @@ import { Observable } from 'rxjs';
 
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
-import { OrderTemplate, OrderTemplateHeader } from '../models/order-templates/order-template.model';
+import { OrderTemplate, OrderTemplateHeader } from '../models/order-template/order-template.model';
 import {
+  AddBasketToNewOrderTemplate,
   AddProductToNewOrderTemplate,
   AddProductToOrderTemplate,
   CreateOrderTemplate,
@@ -17,10 +18,7 @@ import {
   getOrderTemplateError,
   getOrderTemplateLoading,
   getSelectedOrderTemplateDetails,
-} from '../store/order-templates';
-import { AddBasketToNewOrderTemplate } from '../store/order-templates/order-template.actions';
-
-// tslint:disable:member-ordering
+} from '../store/order-template';
 @Injectable({ providedIn: 'root' })
 export class OrderTemplatesFacade {
   constructor(private store: Store<{}>) {}

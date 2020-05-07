@@ -6,14 +6,14 @@ import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
 import { OrderTemplatesFacade } from '../../facades/order-templates.facade';
-import { OrderTemplate } from '../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../models/order-template/order-template.model';
 
 @Component({
-  selector: 'ish-account-order-template-detail',
-  templateUrl: './account-order-template-detail.component.html',
+  selector: 'ish-account-order-template-detail-page',
+  templateUrl: './account-order-template-detail-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountOrderTemplateDetailComponent implements OnInit, OnDestroy {
+export class AccountOrderTemplateDetailPageComponent implements OnInit, OnDestroy {
   orderTemplate$: Observable<OrderTemplate>;
   orderTemplateError$: Observable<HttpError>;
   orderTemplateLoading$: Observable<boolean>;
@@ -36,7 +36,9 @@ export class AccountOrderTemplateDetailComponent implements OnInit, OnDestroy {
 
     // On item moved or deleted clear form array
     this.orderTemplate$.subscribe(() => {
-      this.selectedItemsForm.controls.length > 0 ? this.createSelectedItemsForm() : undefined;
+      if (this.selectedItemsForm.controls.length > 0) {
+        this.createSelectedItemsForm();
+      }
     });
   }
 

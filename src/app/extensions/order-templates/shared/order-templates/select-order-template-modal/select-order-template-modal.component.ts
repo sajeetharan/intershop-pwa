@@ -20,7 +20,7 @@ import { SelectOption } from 'ish-shared/forms/components/select/select.componen
 import { markAsDirtyRecursive } from 'ish-shared/forms/utils/form-utils';
 
 import { OrderTemplatesFacade } from '../../../facades/order-templates.facade';
-import { OrderTemplate } from '../../../models/order-templates/order-template.model';
+import { OrderTemplate } from '../../../models/order-template/order-template.model';
 
 @Component({
   selector: 'ish-select-order-template-modal',

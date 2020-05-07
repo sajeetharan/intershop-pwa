@@ -17,8 +17,8 @@ import {
   whenTruthy,
 } from 'ish-core/utils/operators';
 
-import { OrderTemplate, OrderTemplateHeader } from '../../models/order-templates/order-template.model';
-import { OrderTemplateService } from '../../services/order-templates/order-template.service';
+import { OrderTemplate, OrderTemplateHeader } from '../../models/order-template/order-template.model';
+import { OrderTemplateService } from '../../services/order-template/order-template.service';
 
 import * as orderTemplateActions from './order-template.actions';
 import {
@@ -273,7 +273,7 @@ export class OrderTemplateEffects {
   );
 
   /**
-   * Trigger ResetORderTemplateState action after LogoutUser.
+   * Trigger ResetOrderTemplateState action after LogoutUser.
    */
   @Effect()
   resetOrderTemplateStateAfterLogout$ = this.actions$.pipe(

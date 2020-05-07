@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { Product } from 'ish-core/models/product/product.model';
+
 @Component({
   selector: 'ish-lazy-product-add-to-order-template',
   templateUrl: './lazy-product-add-to-order-template.component.html',

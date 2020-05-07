@@ -7,7 +7,7 @@ import { ProductView } from 'ish-core/models/product-view/product-view.model';
 import { ProductCompletenessLevel } from 'ish-core/models/product/product.model';
 
 import { OrderTemplatesFacade } from '../../../facades/order-templates.facade';
-import { OrderTemplate, OrderTemplateItem } from '../../../models/order-templates/order-template.model';
+import { OrderTemplate, OrderTemplateItem } from '../../../models/order-template/order-template.model';
 
 @Component({
   selector: 'ish-account-order-template-detail-line-item',
