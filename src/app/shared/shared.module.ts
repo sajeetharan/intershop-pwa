@@ -219,9 +219,9 @@ const exportedComponents = [
 ];
 
 @NgModule({
-  imports: [...importExportModules, OrderTemplatesExportsModule],
+  imports: [...importExportModules],
   declarations: [...declaredComponents, ...exportedComponents],
-  exports: [...exportedComponents, ...importExportModules, OrderTemplatesExportsModule],
+  exports: [...exportedComponents, ...importExportModules],
   entryComponents: [
     CMSCarouselComponent,
     CMSContainerComponent,
