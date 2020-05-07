@@ -74,6 +74,7 @@ describe('Product Tile Component', () => {
     fixture.detectChanges();
     expect(findAllIshElements(element)).toMatchInlineSnapshot(`
       Array [
+        "ish-lazy-product-add-to-order-template"
         "ish-lazy-product-add-to-quote",
         "ish-lazy-product-add-to-wishlist",
         "ish-product-add-to-basket",

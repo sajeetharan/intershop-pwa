@@ -52,14 +52,12 @@ describe('Order Template Selectors', () => {
       title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemsCount: 0,
-      preferred: true,
       public: false,
     },
     {
       title: 'testing order template 2',
       id: '.AsdHS18FIAAAFuNiUBWx0d',
       itemsCount: 0,
-      preferred: false,
       public: false,
     },
   ];
@@ -129,7 +127,6 @@ describe('Order Template Selectors', () => {
       const createOrderTemplateAction = new CreateOrderTemplate({
         orderTemplate: {
           title: 'create title',
-          preferred: true,
         },
       });
 

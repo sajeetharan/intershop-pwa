@@ -65,14 +65,12 @@ describe('Order Template Effects', () => {
       title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemsCount: 0,
-      preferred: true,
       public: false,
     },
     {
       title: 'testing order template 2',
       id: '.AsdHS18FIAAAFuNiUBWx0d',
       itemsCount: 0,
-      preferred: false,
       public: false,
     },
   ];
@@ -164,7 +162,6 @@ describe('Order Template Effects', () => {
     ];
     const createOrderTemplateData = {
       title: 'testing order template',
-      preferred: true,
       public: false,
     };
     beforeEach(() => {
@@ -208,21 +205,6 @@ describe('Order Template Effects', () => {
 
       expect(effects.createOrderTemplate$).toBeObservable(expected$);
     });
-
-    it('should map to action of type LoadOrderTemplates if the order template is created as preferred', () => {
-      const createdOrderTemplate: OrderTemplate = {
-        id: '1234',
-        title: 'title',
-        public: false,
-      };
-      const action = new CreateOrderTemplateSuccess({ orderTemplate: createdOrderTemplate });
-      const completion = new LoadOrderTemplates();
-      actions$ = hot('-a-a-a', { a: action });
-      const expected$ = cold('-c-c-c', { c: completion });
-
-      expect(effects.reloadOrderTemplate$).toBeObservable(expected$);
-    });
-  });
 
   describe('deleteOrderTemplate$', () => {
     const id = orderTemplates[0].id;
@@ -274,7 +256,6 @@ describe('Order Template Effects', () => {
         title: 'testing order template',
         id: '.SKsEQAE4FIAAAFuNiUBWx0d',
         itemCount: 0,
-        preferred: true,
         public: false,
       },
     ];
@@ -317,21 +298,6 @@ describe('Order Template Effects', () => {
 
       expect(effects.updateOrderTemplate$).toBeObservable(expected$);
     });
-
-    it('should map to action of type LoadOrderTemplates if the order template is updated as preferred', () => {
-      const updatedOrderTemplate: OrderTemplate = {
-        id: '1234',
-        title: 'title',
-        public: false,
-      };
-      const action = new UpdateOrderTemplateSuccess({ orderTemplate: updatedOrderTemplate });
-      const completion = new LoadOrderTemplates();
-      actions$ = hot('-a-a-a', { a: action });
-      const expected$ = cold('-c-c-c', { c: completion });
-
-      expect(effects.reloadOrderTemplate$).toBeObservable(expected$);
-    });
-  });
 
   describe('addProductToOrderTemplate$', () => {
     const payload = {
@@ -392,7 +358,6 @@ describe('Order Template Effects', () => {
       title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemCount: 0,
-      preferred: true,
       public: false,
     };
     beforeEach(() => {
@@ -435,7 +400,6 @@ describe('Order Template Effects', () => {
       title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemCount: 0,
-      preferred: true,
       public: false,
     };
     beforeEach(() => {
@@ -483,7 +447,7 @@ describe('Order Template Effects', () => {
       title: 'testing order template',
       id: '.SKsEQAE4FIAAAFuNiUBWx0d',
       itemCount: 0,
-      preferred: true,
+
       public: false,
     };
     beforeEach(() => {
