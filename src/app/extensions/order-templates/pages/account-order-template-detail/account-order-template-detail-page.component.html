@@ -19,7 +19,7 @@
           {{ 'shopping_cart.qty.heading' | translate }}
         </div>
         <div class="col-2 list-header-item text-right">
-          Date
+         {{'account.order_template.table.header.date_added' | translate}}
         </div>
         <div class="col-2 list-header-item column-price text-right">
           {{ 'account.order_template.table.header.price' | translate }}
@@ -56,5 +56,5 @@
   ></ish-order-template-preferences-dialog>
 </ng-container>
 
-<a routerLink="/account/order-templates">{{ 'account.order_template.searchform.return.link' | translate }}</a>
+<a routerLink="/account/order-templates">{{ 'account.order_template.list.link.back' | translate }}</a>
 <ish-loading *ngIf="orderTemplateLoading$ | async"></ish-loading>

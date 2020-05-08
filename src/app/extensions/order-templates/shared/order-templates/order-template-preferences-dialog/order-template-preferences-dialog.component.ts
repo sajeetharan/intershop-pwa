@@ -54,9 +54,9 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges {
   ngOnChanges() {
     this.patchForm();
     if (this.orderTemplate) {
-      this.primaryButton = 'account.wishlists.edit_wishlist_form.save_button.text';
+      this.primaryButton = 'account.order_templates.edit_form.save_button.text';
       this.orderTemplateTitle = this.orderTemplate.title;
-      this.modalHeader = 'account.wishlist.list.edit';
+      this.modalHeader = 'account.order_template.edit.heading';
     }
   }
 

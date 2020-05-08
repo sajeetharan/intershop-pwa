@@ -297,7 +297,7 @@ describe('Order Template Effects', () => {
       const action = new UpdateOrderTemplate({ orderTemplate: orderTemplateDetailData[0] });
       const completion1 = new UpdateOrderTemplateSuccess({ orderTemplate: orderTemplateDetailData[0] });
       const completion2 = new SuccessMessage({
-        message: 'account.wishlists.edit_wishlist.confirmation',
+        message: 'account.order_templates.edit.confirmation',
         messageParams: { 0: orderTemplateDetailData[0].title },
       });
       actions$ = hot('-a----a----a', { a: action });
