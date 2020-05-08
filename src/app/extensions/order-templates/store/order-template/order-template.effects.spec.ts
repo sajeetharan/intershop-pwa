@@ -205,6 +205,7 @@ describe('Order Template Effects', () => {
 
       expect(effects.createOrderTemplate$).toBeObservable(expected$);
     });
+  });
 
   describe('deleteOrderTemplate$', () => {
     const id = orderTemplates[0].id;
@@ -298,7 +299,7 @@ describe('Order Template Effects', () => {
 
       expect(effects.updateOrderTemplate$).toBeObservable(expected$);
     });
-
+  });
   describe('addProductToOrderTemplate$', () => {
     const payload = {
       orderTemplateId: '.SKsEQAE4FIAAAFuNiUBWx0d',
@@ -490,7 +491,7 @@ describe('Order Template Effects', () => {
   });
 
   describe('routeListenerForSelectedOrderTemplate$', () => {
-    it('should map to action of type SelectOrderTemplate', () => {
+    it('should map to action of type SelectOrderTemplate', done => {
       router.navigateByUrl('/account/order-templates/.SKsEQAE4FIAAAFuNiUBWx0d');
 
       effects.routeListenerForSelectedOrderTemplate$.subscribe(action => {

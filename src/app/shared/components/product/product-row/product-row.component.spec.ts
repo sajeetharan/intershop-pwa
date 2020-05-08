@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent, MockPipe } from 'ng-mocks';
+import { LazyProductAddToOrderTemplateComponent } from 'src/app/extensions/order-templates/exports/products/lazy-product-add-to-order-template/lazy-product-add-to-order-template.component';
 
 import { FeatureToggleModule } from 'ish-core/feature-toggle.module';
 import { ProductView } from 'ish-core/models/product-view/product-view.model';
@@ -44,6 +45,7 @@ describe('Product Row Component', () => {
         ngrxTesting({ reducers: { configuration: configurationReducer } }),
       ],
       declarations: [
+        MockComponent(LazyProductAddToOrderTemplateComponent),
         MockComponent(LazyProductAddToQuoteComponent),
         MockComponent(LazyProductAddToWishlistComponent),
         MockComponent(ProductAddToBasketComponent),
@@ -82,6 +84,7 @@ describe('Product Row Component', () => {
     fixture.detectChanges();
     expect(findAllIshElements(element)).toMatchInlineSnapshot(`
       Array [
+        "ish-lazy-product-add-to-order-template",
         "ish-lazy-product-add-to-quote",
         "ish-lazy-product-add-to-wishlist",
         "ish-product-add-to-basket",
