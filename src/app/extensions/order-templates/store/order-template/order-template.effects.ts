@@ -142,7 +142,7 @@ export class OrderTemplateEffects {
         mergeMap(orderTemplate => [
           new orderTemplateActions.UpdateOrderTemplateSuccess({ orderTemplate }),
           new SuccessMessage({
-            message: 'account.wishlists.edit_wishlist.confirmation',
+            message: 'account.order_templates.edit.confirmation',
             messageParams: { 0: orderTemplate.title },
           }),
         ]),

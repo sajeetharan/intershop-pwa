@@ -18,10 +18,7 @@
           *ngIf="product.type === 'Bundle'"
           [productBundleSKU]="product.sku"
         ></ish-product-bundle-display>
-        <p *ngIf="product.inStock; else noInStock">{{ 'account.order_template.table.in_stock' | translate }}</p>
-        <ng-template #noInStock>
-          <p>{{ 'account.order_template.table.not_accessible' | translate }}</p>
-        </ng-template>
+       <ish-product-inventory [product]="product"></ish-product-inventory>
         <div class="btn-group mb-2">
           <a class="btn-tool" (click)="moveDialog.show()" data-testing-id="move-order-template">
             <fa-icon

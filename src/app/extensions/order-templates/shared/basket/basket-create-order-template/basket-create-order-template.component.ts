@@ -24,7 +24,7 @@ export class BasketCreateOrderTemplateComponent {
     private router: Router
   ) {}
   /**
-   * if the user is not logged in display login dialog, else open select wishlist dialog
+   * if the user is not logged in display login dialog, else open select order template dialog
    */
   openModal(modal: SelectOrderTemplateModalComponent) {
     this.accountFacade.isLoggedIn$.pipe(take(1)).subscribe(isLoggedIn => {

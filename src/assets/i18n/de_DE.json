@@ -2754,10 +2754,11 @@
   "account.order_template.add_to_template.no_product.message": "Es gibt keine Produkte, die der Bestellvorlage hinzugefügt werden können.",
   "account.order_template.new_order_template.text": "Neue Bestellvorlage",
   "account.order_template.delete.do_you_really.text": "Wollen Sie diese Bestellvorlage wirklich löschen?",
+  "account.order_template.delete.button.text": "Löschen",
   "account.order_template.delete.move_products.label": "Produkte vor dem Löschen in andere Bestellvorlage verschieben.",
   "account.order_template.edit.heading": "Bestellvorlage bearbeiten",
   "account.order_template.edit.button.save.label": "Änderungen speichern",
-  "account.order_template.move.added.text": "zu Bestellvorlage hinzugefügt",
+  "account.order_template.move.added.text": "{{0}} zu Bestellvorlage <a callback=\"callbackHideDialogModal\" href=\"{{2}}\">{{1}}</a> hinzugefügt.",
   "account.order_template.create.button.create.label": "Anlegen",
   "account.order_template.form.name.label": "Name der Bestellvorlage",
   "account.order_template.form.name.error.required": "Geben Sie einen Namen für die Bestellvorlage an.",
@@ -2768,5 +2769,17 @@
   "modal.heading.remove.order.template": "Produkt aus Bestellvorlage entfernen",
   "remove.order.template.confirmation": "Wollen Sie dieses Produkt wirklich aus Ihrer Bestellvorlage entfernen?",
   "order_template.moved.heading": "Bestellvorlage verschoben",
-  "order_template.create.heading": "Bestellvorlage anlegen"
+  "order_template.create.heading": "Bestellvorlage anlegen",
+  "account.order_template.table.header.item": "Artikelbeschreibung",
+  "account.order_template.table.header.date_added": "Hinzugefügt am",
+  "account.order_template.table.header.price": "Preis",
+  "account.order_template.no_entries": "Derzeit befinden sich keine Artikel in der Bestellvorlage.",
+  "account.order_template.name.error.required": "Zum Erstellen einer neuen Bestellvorlage geben Sie bitte einen Namen ein.",
+  "account.order_templates.edit_form.save_button.text": "Änderungen speichern",
+  "account.order_templates.edit.confirmation": "Ihre Bestellvorlage \"{{0}}\" wurde aktualisiert.",
+  "account.order_template.items": {
+    "=0": "0 Artikel",
+    "=1": "1 Artikel",
+    "other": "# Artikel"
+  }
 }
