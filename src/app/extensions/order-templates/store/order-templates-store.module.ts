@@ -11,7 +11,7 @@ export const orderTemplatesReducers: ActionReducerMap<OrderTemplatesState> = {
   orderTemplates: orderTemplateReducer,
 };
 
-export const orderTemplatesEffects = [OrderTemplateEffects];
+const orderTemplatesEffects = [OrderTemplateEffects];
 
 const orderTemplatesFeature = 'orderTemplates';
 

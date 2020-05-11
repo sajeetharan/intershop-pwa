@@ -18,7 +18,7 @@
           *ngIf="product.type === 'Bundle'"
           [productBundleSKU]="product.sku"
         ></ish-product-bundle-display>
-       <ish-product-inventory [product]="product"></ish-product-inventory>
+        <ish-product-inventory [product]="product"></ish-product-inventory>
         <div class="btn-group mb-2">
           <a class="btn-tool" (click)="moveDialog.show()" data-testing-id="move-order-template">
             <fa-icon

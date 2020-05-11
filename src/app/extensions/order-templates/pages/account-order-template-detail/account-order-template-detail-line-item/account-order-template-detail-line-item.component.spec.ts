@@ -12,6 +12,7 @@ import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 import { ProductAddToBasketComponent } from 'ish-shared/components/product/product-add-to-basket/product-add-to-basket.component';
 import { ProductBundleDisplayComponent } from 'ish-shared/components/product/product-bundle-display/product-bundle-display.component';
 import { ProductIdComponent } from 'ish-shared/components/product/product-id/product-id.component';
+import { ProductInventoryComponent } from 'ish-shared/components/product/product-inventory/product-inventory.component';
 import { ProductPriceComponent } from 'ish-shared/components/product/product-price/product-price.component';
 import { ProductQuantityComponent } from 'ish-shared/components/product/product-quantity/product-quantity.component';
 import { ProductVariationDisplayComponent } from 'ish-shared/components/product/product-variation-display/product-variation-display.component';
@@ -39,6 +40,7 @@ describe('Account Order Template Detail Line Item Component', () => {
         MockComponent(ProductBundleDisplayComponent),
         MockComponent(ProductIdComponent),
         MockComponent(ProductImageComponent),
+        MockComponent(ProductInventoryComponent),
         MockComponent(ProductPriceComponent),
         MockComponent(ProductQuantityComponent),
         MockComponent(ProductVariationDisplayComponent),
