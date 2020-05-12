@@ -24,8 +24,10 @@ export class CartPage {
   }
 
   private addToWishlistButton = () => cy.get('ish-shopping-basket').find('[data-testing-id="addToWishlistButton"]');
-  private addToOrderTemplateButton = () =>
-    cy.get('ish-shopping-basket').find('[data-testing-id="addToOrderTemplateButton"]');
+
+  private addToOrderTemplateButton() {
+    return cy.get('ish-shopping-basket').find('[data-testing-id="addToOrderTemplateButton"]');
+  }
 
   get lineItems() {
     return cy.get(this.tag).find('div.pli-description');

@@ -36,9 +36,12 @@ export class ProductDetailPage {
     return cy.get('ish-product-detail').find('ish-product-detail-actions [data-testing-id*="wishlist"] .share-label');
   }
 
+  private addToOrderTemplateButton() {
+    return cy.get('ish-product-detail').find('[data-testing-id="addToOrderTemplateButton"]');
+  }
+
   private addToQuoteRequestButton = () => cy.get('ish-product-detail').find('[data-testing-id="addToQuoteButton"]');
-  private addToOrderTemplateButton = () =>
-    cy.get('ish-product-detail').find('[data-testing-id="addToOrderTemplateButton"]');
+
   private quantityInput = () => cy.get('ish-product-detail').find('[data-testing-id="quantity"]');
 
   isComplete() {
