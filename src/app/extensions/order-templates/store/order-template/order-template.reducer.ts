@@ -16,7 +16,7 @@ export const orderTemplateAdapter = createEntityAdapter<OrderTemplate>({
   selectId: orderTemplate => orderTemplate.id,
 });
 
-export const initialState = orderTemplateAdapter.getInitialState({
+export const initialState: OrderTemplateState = orderTemplateAdapter.getInitialState({
   loading: false,
   selected: undefined,
   error: undefined,

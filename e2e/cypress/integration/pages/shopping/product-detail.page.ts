@@ -41,6 +41,7 @@ export class ProductDetailPage {
   }
 
   private addToQuoteRequestButton = () => cy.get('ish-product-detail').find('[data-testing-id="addToQuoteButton"]');
+
   private quantityInput = () => cy.get('ish-product-detail').find('[data-testing-id="quantity"]');
 
   isComplete() {
