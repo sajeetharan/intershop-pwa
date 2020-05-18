@@ -21,7 +21,6 @@ describe('Order Template Mapper', () => {
       const orderTemplateData: OrderTemplateData = {
         title: 'order template title',
         itemsCount: 3,
-        public: true,
         items: [
           {
             attributes: [
@@ -55,13 +54,11 @@ describe('Order Template Mapper', () => {
       const updateOrderTeplateData: OrderTemplate = {
         id: orderTeplateId,
         title: 'title',
-        public: false,
       };
       const mapped = orderTemplateMapper.fromUpdate(updateOrderTeplateData, orderTeplateId);
 
       expect(mapped).toHaveProperty('id', orderTeplateId);
       expect(mapped).toHaveProperty('title', 'title');
-      expect(mapped).toHaveProperty('public', false);
     });
   });
 });

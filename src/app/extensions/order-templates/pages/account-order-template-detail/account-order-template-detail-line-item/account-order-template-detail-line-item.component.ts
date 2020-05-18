@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
 import { ProductView } from 'ish-core/models/product-view/product-view.model';
@@ -8,13 +9,12 @@ import { ProductCompletenessLevel } from 'ish-core/models/product/product.model'
 
 import { OrderTemplatesFacade } from '../../../facades/order-templates.facade';
 import { OrderTemplate, OrderTemplateItem } from '../../../models/order-template/order-template.model';
-
 @Component({
   selector: 'ish-account-order-template-detail-line-item',
   templateUrl: './account-order-template-detail-line-item.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, OnInit {
+export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, OnInit, OnDestroy {
   constructor(private productFacade: ShoppingFacade, private orderTemplatesFacade: OrderTemplatesFacade) {}
 
   private static REQUIRED_COMPLETENESS_LEVEL = ProductCompletenessLevel.List;
@@ -25,6 +25,8 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
   addToCartForm: FormGroup;
   selectItemForm: FormGroup;
   product$: Observable<ProductView>;
+
+  private destroy$ = new Subject<void>();
 
   ngOnInit() {
     this.initForm();
@@ -37,18 +39,23 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
     }
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+  }
+
   updateQuantities() {
-    this.addToCartForm.valueChanges.subscribe(val =>
-      this.updateProductQuantity(this.orderTemplateItemData.sku, val.quantity)
-    );
+    this.addToCartForm.valueChanges
+      .pipe(
+        debounceTime(800),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(val => this.updateProductQuantity(this.orderTemplateItemData.sku, val.quantity));
   }
 
   /** init form in the beginning */
   private initForm() {
     this.addToCartForm = new FormGroup({
-      quantity: new FormControl(
-        this.orderTemplateItemData.desiredQuantity.value ? this.orderTemplateItemData.desiredQuantity.value : 1
-      ),
+      quantity: new FormControl(this.orderTemplateItemData.desiredQuantity.value || 1),
     });
 
     this.selectItemForm = new FormGroup({

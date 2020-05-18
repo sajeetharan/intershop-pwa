@@ -2,10 +2,11 @@ import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockPipe } from 'ng-mocks';
 import { anything, capture, instance, mock, spy, verify } from 'ts-mockito';
 
 import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
+import { DatePipe } from 'ish-core/pipes/date.pipe';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';
 import { ModalDialogComponent } from 'ish-shared/components/common/modal-dialog/modal-dialog.component';
@@ -58,6 +59,7 @@ describe('Account Order Template List Component', () => {
         MockComponent(FaIconComponent),
         MockComponent(ModalDialogComponent),
         MockComponent(ProductAddToBasketComponent),
+        MockPipe(DatePipe),
       ],
       imports: [
         // tslint:disable-next-line: ng-module-sorted-fields

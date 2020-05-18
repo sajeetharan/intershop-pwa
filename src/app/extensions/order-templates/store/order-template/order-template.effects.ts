@@ -151,20 +151,6 @@ export class OrderTemplateEffects {
     )
   );
 
-  /**
-   * Reload Order Template after a creation or update
-   */
-  @Effect()
-  reloadOrderTemplate$ = this.actions$.pipe(
-    ofType<orderTemplateActions.UpdateOrderTemplateSuccess | orderTemplateActions.CreateOrderTemplateSuccess>(
-      orderTemplateActions.OrderTemplatesActionTypes.UpdateOrderTemplateSuccess,
-      orderTemplateActions.OrderTemplatesActionTypes.CreateOrderTemplateSuccess
-    ),
-    mapToPayloadProperty('orderTemplate'),
-    filter(orderTemplate => !!orderTemplate),
-    mapTo(new orderTemplateActions.LoadOrderTemplates())
-  );
-
   @Effect()
   addProductToOrderTemplate$ = this.actions$.pipe(
     ofType<orderTemplateActions.AddProductToOrderTemplate>(

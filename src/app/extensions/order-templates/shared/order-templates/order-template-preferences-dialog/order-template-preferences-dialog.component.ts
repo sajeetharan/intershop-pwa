@@ -4,6 +4,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   TemplateRef,
   ViewChild,
@@ -20,12 +21,21 @@ import { OrderTemplate } from '../../../models/order-template/order-template.mod
   templateUrl: './order-template-preferences-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderTemplatePreferencesDialogComponent implements OnChanges {
+/**
+ * The Order Templates Preferences Dialog shows the modal to create/edit a order template.
+ *
+ * @example
+ * <ish-order-template-preferences-dialog
+    (submit)="createOrderTemplate($event)">
+   </ish-order-template-preferences-dialog>
+ */
+export class OrderTemplatePreferencesDialogComponent implements OnChanges, OnInit {
   /**
    * Predefined order template to fill the form with, if there is no order template a new order template will be created
    */
   @Input() orderTemplate: OrderTemplate;
 
+  @Input() newModalTitle?: string;
   /**
    * Emits the data of the new order template to create.
    */
@@ -42,13 +52,19 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges {
   // localization keys, default = for new
   primaryButton = 'account.order_template.new_from_order.button.create.label';
   orderTemplateTitle = 'account.order_template.new_order_template.text';
-  modalHeader = 'account.order_template.list.button.add_template.label';
+  modalHeader = '';
 
   // tslint:disable-next-line:no-any
   @ViewChild('modal', { static: false }) modalTemplate: TemplateRef<any>;
 
   constructor(private fb: FormBuilder, private ngbModal: NgbModal) {
     this.initForm();
+  }
+
+  ngOnInit() {
+    this.modalHeader = this.newModalTitle
+      ? 'account.order_template.new_from_basket.heading'
+      : 'account.order_template.list.button.add_template.label';
   }
 
   ngOnChanges() {
@@ -78,7 +94,6 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges {
       this.submit.emit({
         id: !this.orderTemplate ? this.orderTemplateForm.get('title').value : this.orderTemplateTitle,
         title: this.orderTemplateForm.get('title').value,
-        public: false,
       });
 
       this.hide();

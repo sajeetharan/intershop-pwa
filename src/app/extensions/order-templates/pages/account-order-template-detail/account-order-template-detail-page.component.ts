@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ShoppingFacade } from 'ish-core/facades/shopping.facade';
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
@@ -35,7 +36,7 @@ export class AccountOrderTemplateDetailPageComponent implements OnInit, OnDestro
     this.createSelectedItemsForm();
 
     // On item moved or deleted clear form array
-    this.orderTemplate$.subscribe(() => {
+    this.orderTemplate$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       if (this.selectedItemsForm.controls.length > 0) {
         this.createSelectedItemsForm();
       }

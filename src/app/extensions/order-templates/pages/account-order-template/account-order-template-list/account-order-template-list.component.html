@@ -21,7 +21,7 @@
         orderTemplate.title
       }}</a>
     </div>
-    <div class="col-3 list-item d-none d-md-block">{{ orderTemplate.creationDate | date: 'LLL-dd-yyyy' }}</div>
+    <div class="col-3 list-item d-none d-md-block">{{ orderTemplate.creationDate | ishDate: 'shortDate' }}</div>
     <div class="col-2 list-item">
       {{ orderTemplate.itemsCount | i18nPlural: ('account.order_template.items' | translate) || { other: '#' } }}
     </div>

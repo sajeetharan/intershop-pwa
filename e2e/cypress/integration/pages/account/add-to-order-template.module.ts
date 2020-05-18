@@ -12,14 +12,16 @@ export class AddToOrderTemplateModule {
   addProductToOrderTemplateFromList(product: string, title: string, modal: boolean = true) {
     if (modal) {
       cy.get(this.contextSelector)
-        .find(`ish-product-item div[data-testing-sku="${product}"] button.add-to-order-template`)
+        .find(`ish-product-item div[data-testing-sku="${product}"] ish-product-add-to-order-template button`)
         .click();
-      cy.get(`[data-testing-id="${title}"]`).click();
+      if (title) {
+        cy.get(`[data-testing-id="${title}"]`).click();
+      }
       cy.get('[class="modal-footer"] button.btn-primary').click();
       this.closeAddProductToOrderTemplateModal('link');
     } else {
       cy.get(this.contextSelector)
-        .find(`ish-product-item div[data-testing-sku="${product}"] button.add-to-order-template`)
+        .find(`ish-product-item div[data-testing-sku="${product}"] ish-product-add-to-order-template button`)
         .click();
       this.closeAddProductToOrderTemplateModal('link');
     }

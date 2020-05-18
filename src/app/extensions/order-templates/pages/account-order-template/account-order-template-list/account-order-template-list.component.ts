@@ -22,9 +22,6 @@ export class AccountOrderTemplateListComponent {
    */
   @Output() deleteOrderTemplate = new EventEmitter<string>();
 
-  /** The header text of the delete modal. */
-  deleteHeader: string;
-
   constructor(private translate: TranslateService, private productFacade: ShoppingFacade) {}
 
   addTemplateToCart(orderTemplateId: string) {

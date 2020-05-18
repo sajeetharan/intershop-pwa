@@ -13,6 +13,15 @@ import { SelectOrderTemplateModalComponent } from '../../order-templates/select-
   templateUrl: './product-add-to-order-template.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+/**
+ * The Product Add To Order Template Component adds a product to a order template.
+ *
+ * @example
+ * <ish-product-add-to-order-template
+ *               [product]=product
+ *               displayType="icon"
+ * ></ish-product-add-to-order-template>
+ */
 export class ProductAddToOrderTemplateComponent {
   @Input() product: Product;
   @Input() quantity: number;

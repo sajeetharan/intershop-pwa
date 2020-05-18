@@ -50,7 +50,6 @@ describe('Order Template Preferences Dialog Component', () => {
       expect(emit).toEqual({
         id: 'test order template',
         title: 'test order template',
-        public: false,
       });
       done();
     });

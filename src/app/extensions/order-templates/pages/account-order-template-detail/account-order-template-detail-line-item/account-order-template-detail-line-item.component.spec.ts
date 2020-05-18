@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -6,6 +5,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent, MockPipe } from 'ng-mocks';
 
+import { DatePipe } from 'ish-core/pipes/date.pipe';
 import { ProductRoutePipe } from 'ish-core/routing/product/product-route.pipe';
 import { coreReducers } from 'ish-core/store/core-store.module';
 import { ngrxTesting } from 'ish-core/utils/dev/ngrx-testing';

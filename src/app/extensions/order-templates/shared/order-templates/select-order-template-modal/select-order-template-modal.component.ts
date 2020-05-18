@@ -27,6 +27,9 @@ import { OrderTemplate } from '../../../models/order-template/order-template.mod
   templateUrl: './select-order-template-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+/**
+ * The order template select modal displays a list of order templates. The user can select one order template  or enter a name for a new order template  in order to add or move an item to the selected order template .
+ */
 export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
   @Input() product: Product;
 
@@ -75,7 +78,7 @@ export class SelectOrderTemplateModalComponent implements OnInit, OnDestroy {
         this.newOrderTemplateInitValue = res;
         this.setDefaultFormValues();
       });
-    this.updateOrderTemplateForm.valueChanges.subscribe(changes => {
+    this.updateOrderTemplateForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(changes => {
       if (changes.orderTemplate !== 'newTemplate') {
         this.updateOrderTemplateForm.get('newOrderTemplate').clearValidators();
       } else {

@@ -41,7 +41,6 @@ describe('Order Template Service', () => {
             "id": "1234",
             "items": Array [],
             "itemsCount": 0,
-            "public": undefined,
             "title": undefined,
           },
         ]
