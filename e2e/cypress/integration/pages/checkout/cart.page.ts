@@ -29,6 +29,10 @@ export class CartPage {
     return cy.get('ish-shopping-basket').find('[data-testing-id="addToOrderTemplateButton"]');
   }
 
+  private addBasketToOrderTemplateButton() {
+    return cy.get('ish-shopping-basket').find('[data-testing-id="addBasketToOrderTemplateButton"]');
+  }
+
   get lineItems() {
     return cy.get(this.tag).find('div.pli-description');
   }
@@ -39,6 +43,10 @@ export class CartPage {
 
   addProductToOrderTemplate() {
     this.addToOrderTemplateButton().click();
+  }
+
+  addBasketToOrderTemplate() {
+    this.addBasketToOrderTemplateButton().click();
   }
 
   lineItem(idx: number) {

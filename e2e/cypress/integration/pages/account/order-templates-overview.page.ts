@@ -14,6 +14,15 @@ export class OrderTemplatesOverviewPage {
     cy.get('[data-testing-id="order-template-dialog-submit"]').click();
   }
 
+  addOrderTemplateToCart(id: string) {
+    this.orderTemplatesArray
+      .find('a')
+      .contains(id)
+      .closest('[data-testing-id="order-template-list-item-container"]')
+      .find('[data-testing-id="addToCartButton"]')
+      .click();
+  }
+
   deleteOrderTemplateById(id: string) {
     this.orderTemplatesArray
       .find('a')

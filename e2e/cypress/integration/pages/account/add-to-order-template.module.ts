@@ -1,6 +1,12 @@
 export class AddToOrderTemplateModule {
   constructor(private contextSelector: string = 'ish-product-listing') {}
 
+  addNewOrderTemplate(name: string) {
+    cy.wait(500);
+    cy.get('[class="modal-body"] input').type(name);
+    cy.get('[class="modal-footer"] button.btn-primary').click();
+  }
+
   addProductToOrderTemplateFromPage(title: string = '', modal: boolean = false) {
     if (modal) {
       cy.get(`[data-testing-id="${title}"]`).click();
