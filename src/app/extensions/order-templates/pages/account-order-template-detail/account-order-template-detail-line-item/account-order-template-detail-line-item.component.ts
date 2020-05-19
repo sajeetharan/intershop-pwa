@@ -66,10 +66,6 @@ export class AccountOrderTemplateDetailLineItemComponent implements OnChanges, O
     this.selectedItemsForm.push(this.selectItemForm);
   }
 
-  addToCart(sku: string) {
-    this.productFacade.addProductToBasket(sku, Number(this.addToCartForm.get('quantity').value));
-  }
-
   moveItemToOtherOrderTemplate(sku: string, orderTemplateMoveData: { id: string; title: string }) {
     if (orderTemplateMoveData.id) {
       this.orderTemplatesFacade.moveItemToOrderTemplate(

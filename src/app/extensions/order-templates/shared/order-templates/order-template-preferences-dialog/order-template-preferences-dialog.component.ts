@@ -4,7 +4,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   TemplateRef,
   ViewChild,
@@ -29,13 +28,13 @@ import { OrderTemplate } from '../../../models/order-template/order-template.mod
     (submit)="createOrderTemplate($event)">
    </ish-order-template-preferences-dialog>
  */
-export class OrderTemplatePreferencesDialogComponent implements OnChanges, OnInit {
+export class OrderTemplatePreferencesDialogComponent implements OnChanges {
   /**
    * Predefined order template to fill the form with, if there is no order template a new order template will be created
    */
   @Input() orderTemplate: OrderTemplate;
 
-  @Input() newModalTitle?: string;
+  @Input() modalTitle?: string;
   /**
    * Emits the data of the new order template to create.
    */
@@ -52,7 +51,7 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges, OnIni
   // localization keys, default = for new
   primaryButton = 'account.order_template.new_from_order.button.create.label';
   orderTemplateTitle = 'account.order_template.new_order_template.text';
-  modalHeader = '';
+  modalHeader = 'account.order_template.list.button.add_template.label';
 
   // tslint:disable-next-line:no-any
   @ViewChild('modal', { static: false }) modalTemplate: TemplateRef<any>;
@@ -61,14 +60,9 @@ export class OrderTemplatePreferencesDialogComponent implements OnChanges, OnIni
     this.initForm();
   }
 
-  ngOnInit() {
-    this.modalHeader = this.newModalTitle
-      ? 'account.order_template.new_from_basket.heading'
-      : 'account.order_template.list.button.add_template.label';
-  }
-
   ngOnChanges() {
     this.patchForm();
+    this.modalHeader = this.modalTitle || this.modalHeader;
     if (this.orderTemplate) {
       this.primaryButton = 'account.order_templates.edit_form.save_button.text';
       this.orderTemplateTitle = this.orderTemplate.title;
