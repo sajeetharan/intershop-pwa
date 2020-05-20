@@ -4,7 +4,17 @@ import { routerNavigatedAction } from '@ngrx/router-store';
 import { Store, select } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
 import { EMPTY } from 'rxjs';
-import { catchError, concatMap, debounceTime, distinctUntilChanged, map, sample, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  sample,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 
 import { ProductListingMapper } from 'ish-core/models/product-listing/product-listing.mapper';
 import { ProductsService } from 'ish-core/services/products/products.service';
@@ -39,12 +49,12 @@ export class SearchEffects {
    */
   @Effect()
   triggerSearch$ = this.store.pipe(
-    ofUrl(/^\/search.*/),
-    select(selectRouteParam('searchTerm')),
     sample(this.actions$.pipe(ofType(routerNavigatedAction))),
+    ofUrl(/^\/search.*/),
     whenTruthy(),
-    map(searchTerm => new LoadMoreProducts({ id: { type: 'search', value: searchTerm } })),
-    distinctUntilChanged(isEqual)
+    withLatestFrom(this.store.pipe(select(selectRouteParam('searchTerm')))),
+    distinctUntilChanged(isEqual),
+    map(([, searchTerm]) => new LoadMoreProducts({ id: { type: 'search', value: searchTerm } }))
   );
 
   @Effect()
