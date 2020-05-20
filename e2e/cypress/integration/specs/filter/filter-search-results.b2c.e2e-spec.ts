@@ -10,7 +10,7 @@ const _ = {
   results: 23,
   filter: {
     name: 'Price',
-    entryName: 'ProductSalePriceGross_100_-_250',
+    entryName: 'ProductSalePriceGross_100_0_TO_249_99',
     results: 16,
   },
 };
