@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Link } from 'ish-core/models/link/link.model';
@@ -16,5 +17,13 @@ export class UsersService {
       resolveLinks<UserData>(this.apiService),
       map(users => users.map(UserMapper.fromData))
     );
+  }
+
+  deleteUser(customerItemUserKey: string) {
+    if (!customerItemUserKey) {
+      return throwError('deleteUser() called without customerItemUserKey');
+    }
+
+    return this.apiService.delete(`customers/-/users/${customerItemUserKey}`);
   }
 }

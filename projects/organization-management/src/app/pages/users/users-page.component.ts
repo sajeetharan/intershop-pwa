@@ -23,4 +23,8 @@ export class UsersPageComponent implements OnInit {
     this.error$ = this.organizationManagementFacade.usersError$;
     this.loading$ = this.organizationManagementFacade.usersLoading$;
   }
+
+  deleteUser(user: User) {
+    this.organizationManagementFacade.deleteUser(user);
+  }
 }

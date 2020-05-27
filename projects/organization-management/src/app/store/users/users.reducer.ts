@@ -21,6 +21,7 @@ const initialState: UsersState = usersAdapter.getInitialState({
 
 export function usersReducer(state = initialState, action: UsersAction): UsersState {
   switch (action.type) {
+    case UsersActionTypes.DeleteUser:
     case UsersActionTypes.LoadUsers: {
       return {
         ...state,
@@ -28,6 +29,7 @@ export function usersReducer(state = initialState, action: UsersAction): UsersSt
       };
     }
 
+    case UsersActionTypes.DeleteUserFail:
     case UsersActionTypes.LoadUsersFail: {
       const { error } = action.payload;
       return {
@@ -42,6 +44,16 @@ export function usersReducer(state = initialState, action: UsersAction): UsersSt
 
       return {
         ...usersAdapter.upsertMany(users, state),
+        loading: false,
+        error: undefined,
+      };
+    }
+
+    case UsersActionTypes.DeleteUserSuccess: {
+      const { user } = action.payload;
+
+      return {
+        ...usersAdapter.removeOne(user.businessPartnerNo, state),
         loading: false,
         error: undefined,
       };
