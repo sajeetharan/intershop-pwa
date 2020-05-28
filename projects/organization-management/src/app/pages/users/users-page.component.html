@@ -1,9 +1,41 @@
+<h1>
+  User Management
+  <a class="btn btn-secondary float-right">{{ 'account.user.list.link.add_user' | translate }}</a>
+</h1>
+
 <pre *ngIf="error$ | async as error">{{ error }}</pre>
 
-<ul>
-  <li *ngFor="let user of users$ | async">
-    <a [routerLink]="[user.businessPartnerNo]">{{ user.firstName }} {{ user.lastName }} -- {{ user.email }}</a>
-  </li>
-</ul>
+<div class="container">
+  <div class="row" *ngFor="let user of users$ | async">
+    <div class="col">
+      <a [routerLink]="[user.businessPartnerNo]">{{ user.firstName }} {{ user.lastName }}</a>
+    </div>
+    <div class="col">roles...</div>
+    <div class="col">
+      budgets...
+
+      <!-- delete address: is only possible if the customer has more than one address -->
+      <a
+        class="btn-tool float-right"
+        title="{{ 'account.user.delete_user_dialog.header' | translate: { '0': user.firstName, '1': user.lastName } }}"
+        (click)="modalDialog.show(user)"
+      >
+        <fa-icon [icon]="['fas', 'trash-alt']"></fa-icon>
+      </a>
+
+      <ish-modal-dialog
+        #modalDialog
+        [options]="{
+          titleText: 'account.user.delete_user_dialog.header' | translate: { '0': user.firstName, '1': user.lastName },
+          confirmText: 'account.user.delete_user_dialog.delete_button.text' | translate,
+          rejectText: 'account.user.delete_user_dialog.cancel_button.text' | translate
+        }"
+        (confirmed)="deleteUser($event)"
+      >
+        <p>{{ 'account.user.delete_user_dialog.are_you_sure_paragraph' | translate }}</p>
+      </ish-modal-dialog>
+    </div>
+  </div>
+</div>
 
 <ish-loading *ngIf="loading$ | async"></ish-loading>
